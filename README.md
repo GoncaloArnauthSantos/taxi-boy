@@ -30,11 +30,10 @@ This repository hosts the source code for **TourBooking**, a modern web applicat
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/tourbooking.git
+   git clone https://github.com/GoncaloArnauthSantos/taxi-boy.git
    ```
 2. Install dependencies:
    ```bash
-   cd tourbooking
    npm install
    ```
 3. Start the development server:
