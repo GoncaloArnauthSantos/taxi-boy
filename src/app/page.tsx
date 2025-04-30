@@ -1,9 +1,7 @@
-const Home = () => {
-  return (
-    <main>
-      <h1 >Hello world! 2</h1>
-    </main>
-  )
+import Home from "@/views/home"
+
+const RootPage = () => {
+  return <Home/>
 }
 
-export default Home
+export default RootPage
