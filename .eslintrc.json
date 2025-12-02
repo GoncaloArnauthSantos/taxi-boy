@@ -1,9 +1,14 @@
 {
   "extends": ["next/core-web-vitals", "next/typescript"],
   "rules": {
-    "semi": ["warn", "never"],
+    "semi": "off",
+    "@typescript-eslint/semi": "off",
     "quotes": ["warn", "double"],
-    "no-unused-vars": "warn",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error", { 
+      "argsIgnorePattern": "^_",
+      "varsIgnorePattern": "^_"
+    }],
     "no-console": "error",
     "indent": ["warn", 2],
     "comma-dangle": ["warn", "always-multiline"],
