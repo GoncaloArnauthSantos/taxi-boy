@@ -1,7 +1,7 @@
 // This file will be your API layer for fetching tours
 // Currently uses static data, but ready to be replaced with CMS fetch
 
-import { tours, type Tour, LOCATIONS, type Location } from "./tours"
+import { tours, type Tour, type Location } from "./tours"
 
 /**
  * Fetch all tours from CMS/API

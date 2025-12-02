@@ -25,6 +25,27 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   
   /**
+   * ESLint Configuration
+   * 
+   * Fail build on ESLint errors (not just warnings)
+   * This ensures you catch errors before deploying
+   */
+  eslint: {
+    // Fail build on ESLint errors
+    ignoreDuringBuilds: false,
+  },
+  
+  /**
+   * TypeScript Configuration
+   * 
+   * Fail build on TypeScript errors
+   */
+  typescript: {
+    // Fail build on TypeScript errors
+    ignoreBuildErrors: false,
+  },
+  
+  /**
    * Image Configuration
    * 
    * Configure image patterns to support local images and prevent memory issues
