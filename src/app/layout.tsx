@@ -1,10 +1,35 @@
 // app/layout.tsx
+import { Metadata } from "next"
 import "./globals.css"
-import MainHeader from "@/components/MainHeader"
+import { Analytics } from "@vercel/analytics/next"
+import { Header } from "@/components/generic/Header"
+import { Footer } from "@/components/generic/Footer"
 
-export const metadata = {
-  title: "TourBooking",
-  description: "Explore and book amazing tours in Portugal",
+import { Inter } from "next/font/google"
+
+//  Using Inter font for modern, clean typography
+const inter = Inter({ subsets: ["latin"] })
+
+export const metadata: Metadata = {
+  title: "Lisbon Taxi Tours - Premium Custom Tours",
+  description: "Experience Lisbon with a multilingual driver offering personalized taxi tours around the city and surrounding areas",
+  icons: {
+    icon: [
+      {
+        url: "/icon-light-32x32.png",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/icon-dark-32x32.png",
+        media: "(prefers-color-scheme: dark)",
+      },
+      {
+        url: "/icon.svg",
+        type: "image/svg+xml",
+      },
+    ],
+    apple: "/apple-icon.png",
+  },
 }
 
 export default function RootLayout({children}: {
@@ -13,14 +38,15 @@ export default function RootLayout({children}: {
 
   return (
     <html lang="en">
-      <body>
-        <MainHeader />
-        <main className="py-6 m-6">{children}</main>
-        <footer className="bg-secondary text-white p-4 fixed bottom-0 w-full">
-          <div className="container text-center">
-            <p>&copy; 2024 TourBooking. All rights reserved.</p>
-          </div>
-        </footer>
+      <body className={`${inter.className} antialiased`}>
+        <div className="min-h-screen flex flex-col">
+          <Header />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </div>
+        <Analytics />
       </body>
     </html>
   )
