@@ -51,7 +51,20 @@ const nextConfig: NextConfig = {
    * Configure image patterns to support local images and prevent memory issues
    */
   images: {
-    remotePatterns: [],
+    remotePatterns: [
+      // Prismic CMS images
+      {
+        protocol: 'https',
+        hostname: 'images.prismic.io',
+        pathname: '/**',
+      },
+      // Unsplash images (for placeholder/test images)
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
+    ],
     // Allow SVG images
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',

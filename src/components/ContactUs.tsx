@@ -1,11 +1,16 @@
 "use client"
 
-import { useState } from "react";
-import { Button } from "./ui/Button";
-import { DriverInfoDialog } from "./DriverInfoDialog";
+import { useState } from "react"
+import { Button } from "./ui/Button"
+import { DriverInfoDialog } from "./DriverInfoDialog"
+import type { Driver } from "@/cms/types"
 
-const ContactUs = () => {
-  const [driverDialogOpen, setDriverDialogOpen] = useState<boolean>(false);
+type Props = {
+  driver: Driver | null
+}
+
+const ContactUs = ({ driver }: Props) => {
+  const [driverDialogOpen, setDriverDialogOpen] = useState<boolean>(false)
 
   return (
     <>
@@ -44,13 +49,15 @@ const ContactUs = () => {
         </div>
       </div>
 
-      {/* Driver Info Dialog */}
-      <DriverInfoDialog
-        open={driverDialogOpen}
-        onOpenChange={setDriverDialogOpen}
-      />
+      { driver && (
+        <DriverInfoDialog
+          open={driverDialogOpen}
+          onOpenChange={setDriverDialogOpen}
+          driver={driver}
+        />
+      )}
     </>
-  );
-};
+  )
+}
 
-export default ContactUs;
+export default ContactUs
