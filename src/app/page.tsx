@@ -2,7 +2,7 @@ import WhyChooseUs from "@/components/WhyChooseUs"
 import Banner from "@/components/Banner"
 import PopularTours from "@/components/PopularTours"
 import ReadyToExplore from "@/components/ReadyToExplore"
-import ContactUs from "@/components/ContactUs"
+import ContactUsWithDriver from "@/components/ContactUsWithDriver"
 
 export default function HomePage() {
   return (
@@ -24,7 +24,7 @@ export default function HomePage() {
       </section>
 
       <section id="contact" className="py-16 lg:py-24 bg-muted/30">
-        <ContactUs />
+        <ContactUsWithDriver />
       </section>
     </>
   )
