@@ -1,7 +1,8 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { Globe, Clock, Star, MessageCircle, type LucideIcon } from "lucide-react"
 
-export function cn(...inputs: ClassValue[]) {
+export const cn = (...inputs: ClassValue[]): string => {
   return twMerge(clsx(inputs))
 }
 
@@ -14,6 +15,27 @@ const LANGUAGE_FLAGS: Record<string, string> = {
   Italian: "🇮🇹",
 };
 
-export function getLanguageFlag(language: string): string {
-  return LANGUAGE_FLAGS[language] || "🌐";
+export const getLanguageFlag = (language: string): string => {
+  return LANGUAGE_FLAGS[language] || "🌐";  
+}
+
+/**
+ * Icon name to Lucide icon component mapping
+ */
+const ICON_MAP: Record<string, LucideIcon> = {
+  Globe,
+  Clock,
+  Star,
+  MessageCircle,
+};
+
+/**
+ * Get a Lucide icon component by name
+ * 
+ * @param iconName - The name of the icon (must match a key in ICON_MAP)
+ * @returns The icon component or null if not found
+ */
+export const getIcon = (iconName?: string): LucideIcon | null => {
+  if (!iconName) return null
+  return ICON_MAP[iconName] || null
 }

@@ -10,7 +10,7 @@ import { tours, type Tour, type Location } from "./tours"
  *   const response = await fetch(`${CMS_URL}/tours`)
  *   return response.json()
  */
-export async function fetchTours(): Promise<Tour[]> {
+export const fetchTours = async (): Promise<Tour[]> => {
   // Simulate API delay (remove in production)
   // await new Promise(resolve => setTimeout(resolve, 100))
   
@@ -23,12 +23,12 @@ export async function fetchTours(): Promise<Tour[]> {
  * Server-side filtering function
  * Can be used for initial server-rendered filtered results
  */
-export function filterTours(
+export const filterTours = (
   tours: Tour[],
   searchQuery: string,
   selectedLocations: string[],
   selectedDuration: string
-): Tour[] {
+): Tour[] => {
   return tours.filter((tour) => {
     const matchesSearch = tour.title
       .toLowerCase()

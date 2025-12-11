@@ -9,7 +9,7 @@ import { revalidatePath } from "next/cache"
  * 
  */
 
-export async function POST(request: NextRequest) {
+const POST = async (request: NextRequest) => {
   try {
     // Prismic sends the secret in the request body
     const body = await request.json()
@@ -57,10 +57,11 @@ export async function POST(request: NextRequest) {
  * GET endpoint for testing
  * Useful for verifying the endpoint is accessible
  */
-export async function GET() {
+const GET = async () => {
   return NextResponse.json({
     message: "Revalidation endpoint is active",
     timestamp: Date.now(),
   })
 }
 
+export { GET, POST };

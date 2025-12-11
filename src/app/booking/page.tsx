@@ -9,8 +9,8 @@ import { CheckCircle2 } from "lucide-react";
 import BookingForm from "@/components/BookingForm";
 
 
-export default function BookingPage() {
-  const [submitted, setSubmitted] = useState(false);
+const BookingPage = () => {
+  const [submitted, setSubmitted] = useState<boolean>(false);
 
 
   if (submitted) {
@@ -61,4 +61,6 @@ export default function BookingPage() {
       </div>
     </div>
   );
-}
+};
+
+export default BookingPage;

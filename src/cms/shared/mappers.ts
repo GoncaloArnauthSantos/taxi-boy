@@ -11,7 +11,7 @@ import type { CMSImage } from "../types"
 /**
  * Extract plain text from Prismic Rich Text
  */
-export function asText(richText: unknown): string {
+export const asText = (richText: unknown): string => {
   if (!richText) return ""
   return prismic.asText(richText as prismic.RichTextField)
 }
@@ -19,7 +19,7 @@ export function asText(richText: unknown): string {
 /**
  * Extract HTML from Prismic Rich Text
  */
-export function asHTML(richText: unknown): string {
+export const asHTML = (richText: unknown): string => {
   if (!richText) return ""
   return prismic.asHTML(richText as prismic.RichTextField)
 }
@@ -27,11 +27,12 @@ export function asHTML(richText: unknown): string {
 /**
  * Map Prismic Image to our CMSImage type
  */
-export function mapImage(image: unknown): CMSImage | null {
+export const mapImage = (image: unknown): CMSImage | null => {
   const img = image as prismic.ImageField | null | undefined
   if (!img?.url) return null
 
   return {
+    id: img.id || "",
     url: img.url,
     alt: img.alt || "",
     copyright: img.copyright || "",

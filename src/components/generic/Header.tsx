@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/Button"
 import { Menu, X } from "lucide-react"
 
-export function Header() {
+const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
@@ -98,3 +98,5 @@ export function Header() {
     </header>
   )
 }
+
+export default Header;

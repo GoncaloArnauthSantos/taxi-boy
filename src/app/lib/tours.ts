@@ -1,3 +1,7 @@
+// ⚠️ TEMPORARY: This file contains static tour data
+// TODO: Update BookingForm.tsx to use tours from CMS (getAllTours from @/cms/tours)
+// This file can be removed once BookingForm is migrated to CMS
+
 export const LOCATIONS = [
   "Lisbon",
   "Alfama",
@@ -260,6 +264,6 @@ export const tours: Tour[] = [
   },
 ]
 
-export function getTourById(id: string): Tour | undefined {
+export const getTourById = (id: string): Tour | undefined => {
   return tours.find((tour) => tour.id === id)
 }

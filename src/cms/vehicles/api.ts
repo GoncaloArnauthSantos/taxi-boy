@@ -16,7 +16,7 @@ import { logError } from "../shared/logger"
  * @param id - The ID of the vehicle document
  * @returns The vehicle data or null if not found
  */
-export async function getVehicleByID(id: string): Promise<Vehicle | null> {
+export const getVehicleByID = async (id: string): Promise<Vehicle | null> => {
   try {
     const client = createClient()
     const document = await client.getByID(id)
@@ -38,7 +38,7 @@ export async function getVehicleByID(id: string): Promise<Vehicle | null> {
  * @param uid - The UID of the vehicle document
  * @returns The vehicle data or null if not found
  */
-export async function getVehicleByUID(uid: string): Promise<Vehicle | null> {
+export const getVehicleByUID = async (uid: string): Promise<Vehicle | null> => {
   try {
     const client = createClient()
     const document = await client.getByUID("vehicle", uid)
@@ -60,10 +60,10 @@ export async function getVehicleByUID(uid: string): Promise<Vehicle | null> {
  * @param options - Optional query options
  * @returns Array of vehicles
  */
-export async function getAllVehicles(options?: {
-  pageSize?: number
-  page?: number
-}): Promise<Vehicle[]> {
+export const getAllVehicles = async (options?: {
+  pageSize?: number;
+  page?: number;
+}): Promise<Vehicle[]> => {
   try {
     const client = createClient()
     const response = await client.getByType("vehicle", {
@@ -88,5 +88,5 @@ export async function getAllVehicles(options?: {
     })
     return []
   }
-}
+};
 

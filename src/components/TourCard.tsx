@@ -3,23 +3,27 @@ import { Button } from "@/components/ui/Button"
 import { Card, CardContent, CardFooter } from "@/components/ui/Card"
 import { Clock, Euro } from "lucide-react"
 import Image from "next/image"
+import type { Tour } from "@/cms/types"
 
-type TourCardProps = {
+type Props = {
   id: string
   title: string
   description: string
   duration: number
   price: number
-  bannerImage: string
+  bannerImage: Tour["bannerImage"]
 }
 
-export function TourCard({ id, title, description, duration, price, bannerImage }: TourCardProps) {
+const TourCard = ({ id, title, description, duration, price, bannerImage }: Props) => {
+  const bannerImageUrl = bannerImage?.url || "/placeholder.svg"
+  const bannerImageAlt = bannerImage?.alt || title
+
   return (
     <Card className="group overflow-hidden border-border hover:shadow-xl transition-all duration-300">
       <div className="relative overflow-hidden aspect-[4/3]">
         <Image
-          src={bannerImage || "/placeholder.svg"}
-          alt={title}
+          src={bannerImageUrl}
+          alt={bannerImageAlt}
           className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
           width={500}
           height={300}
@@ -48,3 +52,5 @@ export function TourCard({ id, title, description, duration, price, bannerImage 
     </Card>
   )
 }
+
+export default TourCard

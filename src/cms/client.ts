@@ -6,7 +6,7 @@
 
 import * as prismic from "@prismicio/client"
 
-export function createClient() {
+export const createClient = () => {
   const endpoint = process.env.CMS_ENDPOINT
 
   if (!endpoint) {

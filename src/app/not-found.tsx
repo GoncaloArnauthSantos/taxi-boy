@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/Button"
 import { MapPin, Home, Compass } from "lucide-react"
 
-export default function NotFound() {
+const NotFound = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-muted/20 px-4">
       <div className="max-w-2xl w-full text-center space-y-8">
@@ -53,3 +53,5 @@ export default function NotFound() {
     </div>
   )
 }
+
+export default NotFound;

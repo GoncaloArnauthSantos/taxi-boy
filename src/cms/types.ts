@@ -30,6 +30,7 @@ export type CMSRichText = Array<{
 }>
 
 export type CMSImage = {
+  id: string
   url: string
   alt?: string
   copyright?: string
@@ -37,5 +38,55 @@ export type CMSImage = {
     width: number
     height: number
   }
+}
+
+export type ImageWithLabel = {
+  id: string
+  image: CMSImage | null
+  label: string
+  title: string
+  iconName?: string
+}
+
+export type WhyChooseUs = {
+  id: string
+  title: string
+  label: string
+  reasons: ImageWithLabel[]
+}
+
+export type PageSection = {
+  id: string
+  uid?: string
+  title: string
+  label: string
+  buttonText: string
+}
+
+export type FooterContactInfo = {
+  id: string
+  uid?: string
+  email: string
+  phoneNumber: string
+  location: string
+}
+
+export type Location = {
+  id: string
+  value: string
+}
+
+export type Tour = {
+  id: string
+  uid: string
+  title: string
+  description: string
+  longDescription: string
+  locations: Location[]
+  bannerImage: CMSImage | null
+  images: CMSImage[]
+  duration: number
+  price: number
+  includedItems: string[]
 }
 

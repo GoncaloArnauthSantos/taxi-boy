@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Clock, Euro } from "lucide-react";
-import { Tour } from "@/app/lib/tours";
+import type { Tour } from "@/cms/types";
 
 type Props = {
   tour: Tour;
@@ -11,8 +11,8 @@ const Hero = ({ tour }: Props) => {
   return (
     <>
       <Image
-        src={bannerImage || "/placeholder.svg"}
-        alt={title}
+        src={bannerImage?.url || "/placeholder.svg"}
+        alt={bannerImage?.alt || title}
         className="w-full h-full object-cover"
         width={1000}
         height={500}
@@ -25,7 +25,6 @@ const Hero = ({ tour }: Props) => {
           </h1>
           <div className="flex flex-wrap items-center gap-4 text-white/90">
             <div className="flex items-center gap-2">
-              §§
               <Clock className="w-5 h-5" />
               <span className="text-lg">{duration}h</span>
             </div>

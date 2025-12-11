@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Mail, Phone, MapPin } from "lucide-react"
 
-export function Footer() {
+const Footer = () => {
   return (
     <footer className="bg-primary text-primary-foreground">
       <div className="container mx-auto px-4 lg:px-8 py-12 lg:py-16">
@@ -74,3 +74,5 @@ export function Footer() {
     </footer>
   )
 }
+
+export default Footer;

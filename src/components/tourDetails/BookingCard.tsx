@@ -2,14 +2,15 @@ import { Globe } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "../ui/Card";
 import Link from "next/link";
-import { Tour } from "@/app/lib/tours";
+import type { Tour } from "@/cms/types";
 
 type Props = {
   tour: Tour;
-}
+  languages: string[];
+};
 
-const BookingCard = ({ tour }: Props) => {
-  const { price, duration, languages } = tour;
+const BookingCard = ({ tour, languages }: Props) => {
+  const { price, duration } = tour;
   
   return (
     <Card className="sticky top-24 border-border">
@@ -55,9 +56,9 @@ const BookingCard = ({ tour }: Props) => {
 
         <div className="text-center text-sm text-muted-foreground">
           Questions?{" "}
-          <a href="#contact" className="text-primary hover:underline">
+          <Link href="/#contact" className="text-primary hover:underline">
             Contact us
-          </a>
+          </Link>
         </div>
       </CardContent>
     </Card>
