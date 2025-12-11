@@ -11,9 +11,9 @@ import { asText, mapImage } from "../shared"
 /**
  * Map a Prismic Vehicle document to our Vehicle type
  */
-export function mapVehicle(
+export const mapVehicle = (
   document: prismic.PrismicDocument | null | undefined
-): Vehicle | null {
+): Vehicle | null => {
   if (!document?.data) return null
 
   const data = document.data as {

@@ -1,6 +1,5 @@
 "use client";
 
-import { LOCATIONS } from "@/app/lib/tours";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -19,6 +18,7 @@ type Props = {
   selectedLocations: string[];
   selectedDuration: string;
   hasActiveFilters: boolean;
+  availableLocations: string[];
   setSearchQuery: (searchQuery: string) => void;
   setSelectedDuration: (selectedDuration: string) => void;
   toggleLocation: (location: string) => void;
@@ -32,6 +32,7 @@ const ToursFilter = ({
   selectedLocations,
   selectedDuration,
   hasActiveFilters,
+  availableLocations,
   setSearchQuery,
   setSelectedDuration,
   toggleLocation,
@@ -91,7 +92,7 @@ const ToursFilter = ({
               </DropdownMenuTrigger>
 
               <DropdownMenuContent className="w-[200px]">
-                {LOCATIONS.map((location) => (
+                {availableLocations.map((location) => (
                   <DropdownMenuCheckboxItem
                     key={location}
                     checked={selectedLocations.includes(location)}
@@ -185,7 +186,7 @@ const ToursFilter = ({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-full">
-                  {LOCATIONS.map((location) => (
+                  {availableLocations.map((location) => (
                     <DropdownMenuCheckboxItem
                       key={location}
                       checked={selectedLocations.includes(location)}

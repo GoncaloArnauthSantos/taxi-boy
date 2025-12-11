@@ -9,7 +9,7 @@ import { useState, useEffect } from "react"
  * @returns boolean - true if viewport width is less than breakpoint
  * 
  */
-export function useIsMobile(breakpoint: number = 768): boolean {
+export const useIsMobile = (breakpoint: number = 768): boolean => {
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {

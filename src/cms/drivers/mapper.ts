@@ -13,9 +13,9 @@ import { logError } from "../shared/logger"
 /**
  * Map a Prismic Driver document to our Driver type
  */
-export async function mapDriver(
+export const mapDriver = async (
   document: prismic.PrismicDocument
-): Promise<Driver> {
+): Promise<Driver> => {
   
   const data = document.data as {
     name?: unknown
@@ -57,7 +57,7 @@ export async function mapDriver(
       driverId: document.id,
       function: "mapDriver",
     })
-    
+
     throw new Error(`Driver photo is required for driver ${document.id}`)
   }
 
@@ -71,13 +71,3 @@ export async function mapDriver(
     vehicles,
   }
 }
-
-/**
- * Map multiple Prismic Driver documents
- */
-export async function mapDrivers(
-  documents: prismic.PrismicDocument[]
-): Promise<Driver[]> {
-  return Promise.all(documents.map(mapDriver))
-}
-

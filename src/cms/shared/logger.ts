@@ -18,11 +18,11 @@ interface LogContext {
  * @param error - Error object or additional context
  * @param context - Additional context (function name, document ID, etc.)
  */
-export function logError(
+export const logError = (
   message: string,
   error?: unknown,
   context?: LogContext
-): void {
+): void => {
   const isDevelopment = process.env.NODE_ENV === "development"
 
   if (isDevelopment) {
@@ -47,7 +47,7 @@ export function logError(
 /**
  * Log a warning with context
  */
-export function logWarning(message: string, context?: LogContext): void {
+export const logWarning = (message: string, context?: LogContext): void => {
   const isDevelopment = process.env.NODE_ENV === "development"
 
   if (isDevelopment) {
@@ -61,7 +61,7 @@ export function logWarning(message: string, context?: LogContext): void {
 /**
  * Log info (for debugging)
  */
-export function logInfo(message: string, context?: LogContext): void {
+export const logInfo = (message: string, context?: LogContext): void => {
   const isDevelopment = process.env.NODE_ENV === "development"
 
   if (isDevelopment) {

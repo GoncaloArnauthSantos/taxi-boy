@@ -1,15 +1,9 @@
 /**
  * Driver Module
- * 
+ *
  * Re-exports all driver-related functions for convenient importing.
  */
 
-export { mapDriver, mapDrivers } from "./mapper"
-export {
-  getDriverByID,
-  getDriverByUID,
-  getFirstDriver,
-  getAllDrivers,
-} from "./api"
-export type { Driver } from "../types"
-
+export { mapDriver } from "./mapper";
+export { getDriver } from "./api";
+export type { Driver } from "../types";

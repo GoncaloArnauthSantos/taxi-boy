@@ -2,8 +2,8 @@
 import { Metadata } from "next"
 import "./globals.css"
 import { Analytics } from "@vercel/analytics/next"
-import { Header } from "@/components/generic/Header"
-import { Footer } from "@/components/generic/Footer"
+import Header from "@/components/generic/Header"
+import Footer from "@/components/generic/Footer"
 
 import { Inter } from "next/font/google"
 
@@ -32,9 +32,9 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({children}: {
+const RootLayout = ({children}: {
     children: React.ReactNode;
-}) {
+}) => {
 
   return (
     <html lang="en">
@@ -51,3 +51,5 @@ export default function RootLayout({children}: {
     </html>
   )
 }
+
+export default RootLayout;

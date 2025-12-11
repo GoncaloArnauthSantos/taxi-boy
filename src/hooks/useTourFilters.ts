@@ -2,9 +2,14 @@
 
 import { useState, useMemo, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { tours, LOCATIONS, type Location } from "@/app/lib/tours"
+import type { Tour } from "@/cms/types"
 
-export function useTourFilters() {
+type Props = {
+  tours: Tour[]
+  locations: string[]
+}
+
+const useTourFilters = ({ tours, locations }: Props) => {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -15,8 +20,8 @@ export function useTourFilters() {
     const locationsParam = searchParams.get("location")
     return locationsParam
       ? locationsParam
-          .split(",")
-          .filter((loc) => LOCATIONS.includes(loc as Location))
+        .split(",")
+        .filter((loc) => locations.includes(loc))
       : []
   })
   const [selectedDuration, setSelectedDuration] = useState<string>(
@@ -47,7 +52,7 @@ export function useTourFilters() {
       const matchesLocation =
         selectedLocations.length === 0 ||
         selectedLocations.some((loc) =>
-          tour.locations.includes(loc as Location)
+          tour.locations.some((tourLocation) => tourLocation.value === loc)
         )
       const matchesDuration =
         selectedDuration === "all" ||
@@ -59,7 +64,7 @@ export function useTourFilters() {
 
       return matchesSearch && matchesLocation && matchesDuration
     })
-  }, [searchQuery, selectedLocations, selectedDuration])
+  }, [tours, searchQuery, selectedLocations, selectedDuration])
 
   // Helper functions
   const toggleLocation = (location: string) => {
@@ -87,14 +92,14 @@ export function useTourFilters() {
 
   const getDurationLabel = (duration: string) => {
     switch (duration) {
-      case "short":
-        return "Short (≤4h)"
-      case "medium":
-        return "Medium (5-7h)"
-      case "long":
-        return "Long (8+h)"
-      default:
-        return "All Durations"
+    case "short":
+      return "Short (≤4h)"
+    case "medium":
+      return "Medium (5-7h)"
+    case "long":
+      return "Long (8+h)"
+    default:
+      return "All Durations"
     }
   }
 
@@ -117,3 +122,4 @@ export function useTourFilters() {
   }
 }
 
+export default useTourFilters
