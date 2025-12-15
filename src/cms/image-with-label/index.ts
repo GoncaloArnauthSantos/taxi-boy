@@ -7,6 +7,7 @@
 export { mapImageWithLabel } from "./mapper"
 export {
   getImageWithLabelByID,
+  getImageWithLabelByUID,
 } from "./api"
 export type { ImageWithLabel } from "../types"
 

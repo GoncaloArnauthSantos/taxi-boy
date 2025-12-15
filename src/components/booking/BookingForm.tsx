@@ -1,42 +1,28 @@
 "use client";
 
-import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { tours } from "@/app/lib/tours";
 import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/Popover";
-import {
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/Select";
-import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { Input } from "./ui/Input";
-import { Textarea } from "./ui/Textarea";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/Calendar";
-import { COUNTRY_CODES, LANGUAGES } from "@/constants";
-import { format } from "date-fns";
+import { Input } from "../ui/Input";
+import { Textarea } from "../ui/Textarea";
+import { COUNTRY_CODES } from "@/constants";
 import { cn } from "@/lib/utils";
+import type { Tour } from "@/cms/types";
+import FormSelect from "./FormSelect";
+import FormDatePicker from "./FormDatePicker";
 
 type Props = {
   setSubmitted: (submitted: boolean) => void;
+  tours: Tour[];
+  languages: string[];
 };
 
 type BookingFormValues = z.infer<typeof bookingFormSchema>;
 
-const BookingForm = ({ setSubmitted }: Props) => {
-  const [calendarOpen, setCalendarOpen] = useState(false)
-
+const BookingForm = ({ setSubmitted, tours, languages }: Props) => {
   const {
     register,
     handleSubmit,
@@ -49,9 +35,8 @@ const BookingForm = ({ setSubmitted }: Props) => {
     defaultValues: {
       countryCode: "+351",
       message: "",
-      tour: "", // Always provide default value for controlled components
-      language: "", // Always provide default value for controlled components
-      // date is optional, so we don't set a default (it will be undefined, which is fine for Date)
+      tour: "",
+      language: "",
     },
   });
 
@@ -73,9 +58,21 @@ const BookingForm = ({ setSubmitted }: Props) => {
     }
   };
 
-  const formatDate = (date: Date) => {
-    return format(date, "EEEE, MMMM d, yyyy");
-  };
+  // Prepare options for selects
+  const languageOptions = languages.map((lang) => ({
+    value: lang,
+    label: lang,
+  }));
+
+  const tourOptions = tours.map((tour) => ({
+    value: tour.id,
+    label: `${tour.title} - €${tour.price}`,
+  }));
+
+  const countryCodeOptions = COUNTRY_CODES.map((item) => ({
+    value: item.code,
+    label: `${item.code} ${item.country}`,
+  }));
 
   return (
     <Card className="border-border">
@@ -128,31 +125,14 @@ const BookingForm = ({ setSubmitted }: Props) => {
                 Phone Number <span className="text-destructive">*</span>
               </Label>
               <div className="flex gap-2">
-                <Controller
+                <FormSelect
                   name="countryCode"
                   control={control}
-                  render={({ field }) => (
-                    <Select
-                      value={field.value || "+351"}
-                      onValueChange={field.onChange}
-                    >
-                      <SelectTrigger
-                        className={cn(
-                          "w-[140px]",
-                          errors.countryCode && "border-destructive"
-                        )}
-                      >
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {COUNTRY_CODES.map((item) => (
-                          <SelectItem key={item.code} value={item.code}>
-                            {item.code} {item.country}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                  options={countryCodeOptions}
+                  error={errors.countryCode?.message}
+                  hideLabel
+                  defaultValue="+351"
+                  className="w-[140px]"
                 />
                 <div className="flex-1 space-y-2">
                   <Input
@@ -173,11 +153,6 @@ const BookingForm = ({ setSubmitted }: Props) => {
                   )}
                 </div>
               </div>
-              {errors.countryCode && (
-                <p className="text-sm text-destructive" role="alert">
-                  {errors.countryCode.message}
-                </p>
-              )}
             </div>
           </div>
 
@@ -200,141 +175,38 @@ const BookingForm = ({ setSubmitted }: Props) => {
                 </p>
               )}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="language">
-                Preferred Language <span className="text-destructive">*</span>
-              </Label>
-              <Controller
-                name="language"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    value={field.value || ""}
-                    onValueChange={field.onChange}
-                  >
-                    <SelectTrigger
-                      id="language"
-                      className={cn(errors.language && "border-destructive")}
-                    >
-                      <SelectValue placeholder="Select language" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {LANGUAGES.map((language) => (
-                        <SelectItem
-                          key={language.code}
-                          value={language.code}
-                          className="cursor-pointer"
-                        >
-                          {language.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              {errors.language && (
-                <p className="text-sm text-destructive" role="alert">
-                  {errors.language.message}
-                </p>
-              )}
-            </div>
+
+            {/* Language Selection */}
+            <FormSelect
+              name="language"
+              control={control}
+              label="Preferred Language"
+              placeholder="Select language"
+              options={languageOptions}
+              error={errors.language?.message}
+              required
+            />
           </div>
 
           {/* Tour Selection */}
-          <div className="space-y-2">
-            <Label htmlFor="tour">
-              Select Tour <span className="text-destructive">*</span>
-            </Label>
-            <Controller
-              name="tour"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  value={field.value || ""}
-                  onValueChange={field.onChange}
-                >
-                  <SelectTrigger
-                    id="tour"
-                    className={cn(errors.tour && "border-destructive")}
-                  >
-                    <SelectValue placeholder="Choose a tour" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {tours.map((tour) => (
-                      <SelectItem
-                        key={tour.id}
-                        value={tour.id}
-                        className="cursor-pointer"
-                      >
-                        {tour.title} - €{tour.price}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.tour && (
-              <p className="text-sm text-destructive" role="alert">
-                {errors.tour.message}
-              </p>
-            )}
-          </div>
+          <FormSelect
+            name="tour"
+            control={control}
+            label="Select Tour"
+            placeholder="Choose a tour"
+            options={tourOptions}
+            error={errors.tour?.message}
+            required
+          />
 
           {/* Date Picker */}
-          <div className="space-y-2">
-            <Label>
-              Preferred Date <span className="text-destructive">*</span>
-            </Label>
-            <Controller
-              name="date"
-              control={control}
-              render={({ field }) => (
-                <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal cursor-pointer",
-                        !field.value && "text-muted-foreground",
-                        errors.date && "border-destructive",
-                        "hover:bg-accent transition-colors"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {field.value ? (
-                        formatDate(field.value)
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 shadow-lg" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value || undefined}
-                      onSelect={(date) => {
-                        field.onChange(date || undefined)
-                        // Close popover when date is selected
-                        if (date) {
-                          setCalendarOpen(false)
-                        }
-                      }}
-                      disabled={(date) =>
-                        date < new Date(new Date().setHours(0, 0, 0, 0))
-                      }
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              )}
-            />
-            {errors.date && (
-              <p className="text-sm text-destructive" role="alert">
-                {errors.date.message}
-              </p>
-            )}
-          </div>
+          <FormDatePicker
+            name="date"
+            control={control}
+            label="Preferred Date"
+            error={errors.date?.message}
+            required
+          />
 
           {/* Additional Message */}
           <div className="space-y-2">

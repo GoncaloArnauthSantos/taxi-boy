@@ -4,8 +4,14 @@ import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/Button"
 import { Menu, X } from "lucide-react"
+import { ImageWithLabel } from "@/cms/image-with-label"
 
-const Header = () => {
+type Props = {
+  logo: ImageWithLabel | null
+}
+
+const Header = ({ logo }: Props) => {
+  const { title = "", label = "" } = logo || {};
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
@@ -18,8 +24,8 @@ const Header = () => {
               LT
             </div>
             <div className="hidden sm:block">
-              <div className="font-bold text-lg text-foreground">Lisbon Tours</div>
-              <div className="text-xs text-muted-foreground">Premium Experiences</div>
+              <div className="font-bold text-lg text-foreground">{title}</div>
+              <div className="text-xs text-muted-foreground">{label}</div>
             </div>
           </Link>
 
@@ -34,7 +40,7 @@ const Header = () => {
             <Link href="/booking" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
               Book Now
             </Link>
-            <Link href="/#contact" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
+            <Link href="/contact" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
               Contact
             </Link>
           </nav>
@@ -82,7 +88,7 @@ const Header = () => {
                 Book Now
               </Link>
               <Link
-                href="/#contact"
+                href="/contact"
                 className="text-sm font-medium text-foreground hover:text-primary transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >

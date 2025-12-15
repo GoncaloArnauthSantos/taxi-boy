@@ -37,3 +37,12 @@ export const getDriver = async (): Promise<Driver | null> => {
     return null
   }
 }
+
+export const getDriverLanguages = async (): Promise<string[]> => {
+  const driver = await getDriver()
+  if (!driver) {
+    return []
+  }
+
+  return driver.languages
+}

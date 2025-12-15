@@ -63,12 +63,12 @@ export type PageSection = {
   buttonText: string
 }
 
-export type FooterContactInfo = {
+export type Contact = {
   id: string
   uid?: string
   email: string
-  phoneNumber: string
-  location: string
+  phone: string
+  address: string
 }
 
 export type Location = {

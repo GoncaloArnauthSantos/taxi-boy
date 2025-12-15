@@ -30,4 +30,26 @@ export const getImageWithLabelByID = async (id: string): Promise<ImageWithLabel 
     logError("Failed to fetch ImageWithLabel by ID", error, { imageWithLabelId: id, function: "getImageWithLabelByID" })
     return null
   }
-} 
+}
+
+/**
+ * Fetch an ImageWithLabel by UID
+ * 
+ * @param uid - The UID of the ImageWithLabel document
+ * @returns The ImageWithLabel data or null if not found
+ */
+export const getImageWithLabelByUID = async (uid: string): Promise<ImageWithLabel | null> => {
+  try {
+    const client = createClient()
+    const document = await client.getByUID("imagewithlabel", uid)
+
+    if (!document || document.type !== "imagewithlabel") {
+      return null
+    }
+
+    return mapImageWithLabel(document)
+  } catch (error) {
+    logError("Failed to fetch ImageWithLabel by UID", error, { imageWithLabelUid: uid, function: "getImageWithLabelByUID" })
+    return null
+  }
+}

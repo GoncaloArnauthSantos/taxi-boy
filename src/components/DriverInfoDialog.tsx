@@ -62,10 +62,9 @@ const DriverInfoDialog = ({ open, onOpenChange, driver }: Props) => {
           </div>
 
           <div>
-            <div
-              className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: description }}
-            />
+            <p className="text-muted-foreground leading-relaxed prose prose-sm max-w-none">
+              {description}
+            </p>
           </div>
 
           <div>
