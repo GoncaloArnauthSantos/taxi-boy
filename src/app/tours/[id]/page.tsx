@@ -6,8 +6,8 @@ import BookingCard from "@/components/tourDetails/BookingCard";
 import Gallery from "@/components/tourDetails/Gallery";
 import { Badge } from "@/components/ui/Badge";
 import { MapPin, Check } from "lucide-react";
-import { getDriver } from "@/cms/drivers";
 import { logError } from "@/cms/shared/logger";
+import { getDriverLanguages } from "@/cms/drivers/api";
 
 export const generateStaticParams = async () => {
   try {
@@ -29,9 +29,9 @@ type Props = {
 
 const TourDetailsPage = async ({ params }: Props) => {
   const { id } = await params;
-  const [tour, driver] = await Promise.all([
+  const [tour, languages] = await Promise.all([
     getTourByID(id),
-    getDriver(),
+    getDriverLanguages(),
   ]);
 
   if (!tour) {
@@ -99,7 +99,7 @@ const TourDetailsPage = async ({ params }: Props) => {
             </div>
 
             <div className="lg:col-span-1">
-              <BookingCard tour={tour} languages={driver?.languages || []} />
+              <BookingCard tour={tour} languages={languages} />
             </div>
           </div>
         </div>

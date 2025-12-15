@@ -7,15 +7,17 @@ import { getDriver } from "@/cms/drivers"
 import { getWhyChooseUs } from "@/cms/why-choose-us"
 import { getPageSectionByUID } from "@/cms/page-sections"
 import { getPopularTours } from "@/cms/tours"
+import { getContacts } from "@/cms/contact"
 
 const HomePage = async () => {
-  const [driver, whyChooseUsContent, popularToursSection, popularTours, readyToExploreContent, contactUsContent] = await Promise.all([
+  const [driver, whyChooseUsContent, popularToursSection, popularTours, readyToExploreContent, contactUsContent, contactInfo] = await Promise.all([
     getDriver(),
     getWhyChooseUs(),
     getPageSectionByUID("tours-section"),
     getPopularTours(),
     getPageSectionByUID("ready-to-explore"),
     getPageSectionByUID("get-in-touch"),
+    getContacts(),
   ]);
 
   return (
@@ -37,7 +39,7 @@ const HomePage = async () => {
       </section>
 
       <section id="contact" className="py-16 lg:py-24 bg-muted/30">
-        <ContactUs content={contactUsContent} driver={driver} />
+        <ContactUs content={contactUsContent} driver={driver} contactInfo={contactInfo} />
       </section>
     </>
   )

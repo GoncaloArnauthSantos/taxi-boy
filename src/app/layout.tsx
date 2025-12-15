@@ -6,6 +6,7 @@ import Header from "@/components/generic/Header"
 import Footer from "@/components/generic/Footer"
 
 import { Inter } from "next/font/google"
+import { getImageWithLabelByUID } from "@/cms/image-with-label"
 
 //  Using Inter font for modern, clean typography
 const inter = Inter({ subsets: ["latin"] })
@@ -32,15 +33,16 @@ export const metadata: Metadata = {
   },
 }
 
-const RootLayout = ({children}: {
+const RootLayout = async ({children}: {
     children: React.ReactNode;
 }) => {
+  const headerLogo = await getImageWithLabelByUID("header-logo");
 
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased`}>
         <div className="min-h-screen flex flex-col">
-          <Header />
+          <Header logo={headerLogo} />
           <main className="flex-1">
             {children}
           </main>

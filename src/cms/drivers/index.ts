@@ -5,5 +5,5 @@
  */
 
 export { mapDriver } from "./mapper";
-export { getDriver } from "./api";
+export { getDriver, getDriverLanguages } from "./api";
 export type { Driver } from "../types";

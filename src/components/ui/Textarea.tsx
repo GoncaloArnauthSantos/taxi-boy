@@ -7,14 +7,16 @@ const Textarea = React.forwardRef<
   React.ComponentProps<"textarea">
 >(({ className, ...props }, ref) => {
   return (
-    <textarea
-      className={cn(
-        "flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        className
-      )}
-      ref={ref}
-      {...props}
-    />
+      <textarea
+          className={cn(
+            "flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+            // "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-0",
+            "focus-visible:outline-2 focus-visible:outline-border focus-visible:outline-offset-0",
+            className
+          )}
+        ref={ref}
+        {...props}
+      />
   )
 })
 Textarea.displayName = "Textarea"

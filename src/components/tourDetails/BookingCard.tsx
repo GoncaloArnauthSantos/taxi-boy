@@ -56,7 +56,7 @@ const BookingCard = ({ tour, languages }: Props) => {
 
         <div className="text-center text-sm text-muted-foreground">
           Questions?{" "}
-          <Link href="/#contact" className="text-primary hover:underline">
+          <Link href="/contact" className="text-primary hover:underline">
             Contact us
           </Link>
         </div>

@@ -6,7 +6,7 @@
 
 import * as prismic from "@prismicio/client"
 import type { Driver, Vehicle } from "../types"
-import { asText, asHTML, mapImage } from "../shared"
+import { asText, mapImage } from "../shared"
 import { getVehicleByID, mapVehicle } from "../vehicles"
 import { logError } from "../shared/logger"
 
@@ -65,7 +65,7 @@ export const mapDriver = async (
     id: document.id,
     name: asText(data.name),
     label: asText(data.label),
-    description: asHTML(data.description),
+    description: asText(data.description),
     photo: mappedPhoto,
     languages: (data.languages || []).map((lang) => asText(lang.language)),
     vehicles,
