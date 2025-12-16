@@ -89,4 +89,3 @@ export type Tour = {
   price: number
   includedItems: string[]
 }
-
