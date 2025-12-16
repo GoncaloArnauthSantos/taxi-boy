@@ -13,7 +13,7 @@ import type {
 import { randomUUID } from "crypto";
 
 // In-memory storage (will be lost on server restart)
-let BOOKINGS_STORE_DATA: Booking[] = [];
+const BOOKINGS_STORE_DATA: Booking[] = [];
 
 /**
  * Create a new booking
