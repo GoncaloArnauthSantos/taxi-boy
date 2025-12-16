@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -13,6 +14,9 @@ import { cn } from "@/lib/utils";
 import type { Tour } from "@/cms/types";
 import FormSelect from "./FormSelect";
 import FormDatePicker from "./FormDatePicker";
+import { bookingFormSchema } from "@/app/api/bookings/schema";
+import { createBooking, BookingApiError } from "@/api/bookings";
+import { logError } from "@/cms/shared/logger";
 
 type Props = {
   setSubmitted: (submitted: boolean) => void;
@@ -23,6 +27,8 @@ type Props = {
 type BookingFormValues = z.infer<typeof bookingFormSchema>;
 
 const BookingForm = ({ setSubmitted, tours, languages }: Props) => {
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -33,28 +39,30 @@ const BookingForm = ({ setSubmitted, tours, languages }: Props) => {
     resolver: zodResolver(bookingFormSchema),
     mode: "onSubmit", // Only validate on submit, not on change/blur
     defaultValues: {
-      countryCode: "+351",
+      phonePhoneCountryCode: "+351",
       message: "",
-      tour: "",
+      tourId: "",
       language: "",
     },
   });
 
   const onSubmit = async (formData: BookingFormValues) => {
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Here you would send data to your API
-      // Example: await fetch('/api/bookings', { method: 'POST', body: JSON.stringify(formData) })
-      void formData; // Will be used when API is integrated
-
+      setSubmitError(null);
+      await createBooking(formData);
       setSubmitted(true);
       reset();
     } catch (error) {
-      // Handle error - you could add toast notification here
-      // For now, we'll just prevent submission
-      throw error;
+      logError("Error submitting booking", error, { formData: formData, function: "onSubmit" });
+      
+      const errorMessage =
+        error instanceof BookingApiError
+          ? error.message
+          : error instanceof Error
+            ? error.message
+            : "Failed to submit booking. Please try again.";
+      
+      setSubmitError(errorMessage);
     }
   };
 
@@ -69,10 +77,42 @@ const BookingForm = ({ setSubmitted, tours, languages }: Props) => {
     label: `${tour.title} - €${tour.price}`,
   }));
 
-  const countryCodeOptions = COUNTRY_CODES.map((item) => ({
+  const phonePhoneCountryCodeOptions = COUNTRY_CODES.map((item) => ({
     value: item.code,
     label: `${item.code} ${item.country}`,
   }));
+
+  const FakeButton = () => {
+    return (
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full sm:w-auto"
+        disabled={isSubmitting}
+        onClick={() => {
+          if (!tours.length || !languages.length) return;
+
+          const nextWeek = new Date();
+          nextWeek.setDate(nextWeek.getDate() + 7);
+
+          reset({
+            name: "John Silva",
+            email: "john@example.com",
+            phonePhoneCountryCode: "+351",
+            phoneNumber: "912345678",
+            country: "Portugal",
+            language: languages[0],
+            tourId: tours[0]?.id ?? "",
+            date: nextWeek,
+            message:
+              "We would like a private tour around Belém and Alfama with some photo stops.",
+          });
+        }}
+      >
+        Fill with demo data
+      </Button>
+    );
+  };
 
   return (
     <Card className="border-border">
@@ -126,10 +166,10 @@ const BookingForm = ({ setSubmitted, tours, languages }: Props) => {
               </Label>
               <div className="flex gap-2">
                 <FormSelect
-                  name="countryCode"
+                  name="phonePhoneCountryCode"
                   control={control}
-                  options={countryCodeOptions}
-                  error={errors.countryCode?.message}
+                  options={phonePhoneCountryCodeOptions}
+                  error={errors.phonePhoneCountryCode?.message}
                   hideLabel
                   defaultValue="+351"
                   className="w-[140px]"
@@ -190,12 +230,12 @@ const BookingForm = ({ setSubmitted, tours, languages }: Props) => {
 
           {/* Tour Selection */}
           <FormSelect
-            name="tour"
+            name="tourId"
             control={control}
             label="Select Tour"
             placeholder="Choose a tour"
             options={tourOptions}
-            error={errors.tour?.message}
+            error={errors.tourId?.message}
             required
           />
 
@@ -226,14 +266,26 @@ const BookingForm = ({ setSubmitted, tours, languages }: Props) => {
             )}
           </div>
 
-          <Button
-            type="submit"
-            className="w-full sm:w-auto mx-auto block bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer"
-            size="lg"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Booking..." : "Booking Request"}
-          </Button>
+          {submitError && (
+            <div className="rounded-md bg-destructive/10 border border-destructive/20 p-3">
+              <p className="text-sm text-destructive" role="alert">
+                {submitError}
+              </p>
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
+            <Button
+              type="submit"
+              className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer"
+              size="lg"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Booking..." : "Booking Request"}
+            </Button>
+
+            <FakeButton />
+          </div>
 
           <p className="text-sm text-muted-foreground text-center leading-relaxed">
             By submitting this form, you agree to be contacted via email or
@@ -246,43 +298,3 @@ const BookingForm = ({ setSubmitted, tours, languages }: Props) => {
 };
 
 export default BookingForm;
-
-// Zod validation schema
-const bookingFormSchema = z.object({
-  name: z
-    .string()
-    .min(2, "Name must be at least 2 characters")
-    .max(100, "Name must be less than 100 characters")
-    .regex(
-      /^[a-zA-Z\s'-]+$/,
-      "Name can only contain letters, spaces, hyphens, and apostrophes"
-    ),
-  email: z.string().email("Please enter a valid email address"),
-  countryCode: z.string().min(1, "Country code is required"),
-  phoneNumber: z
-    .string()
-    .min(6, "Phone number must be at least 6 digits")
-    .max(15, "Phone number must be less than 15 digits")
-    .regex(
-      /^[\d\s\-\(\)]+$/,
-      "Phone number can only contain digits, spaces, hyphens, and parentheses"
-    ),
-  country: z
-    .string()
-    .min(2, "Country name must be at least 2 characters")
-    .max(100, "Country name must be less than 100 characters"),
-  language: z.string().min(1, "Please select a preferred language"),
-  tour: z.string().min(1, "Please select a tour"),
-  date: z
-    .date({
-      message: "Please select a preferred date",
-    })
-    .refine(
-      (date) => date >= new Date(new Date().setHours(0, 0, 0, 0)),
-      "Date must be today or in the future"
-    ),
-  message: z
-    .string()
-    .max(1000, "Message must be less than 1000 characters")
-    .optional(),
-});
