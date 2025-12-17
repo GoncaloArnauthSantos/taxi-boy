@@ -1,8 +1,7 @@
 /**
- * In-Memory Booking Store
+ * Booking Store
  *
- * Simple in-memory storage for bookings during development.
- * This will be replaced with a database in the next phase.
+ * Database operations for bookings using Supabase.
  */
 
 import type {
@@ -10,116 +9,218 @@ import type {
   BookingPaymentStatus,
   BookingStatus,
 } from "@/domain/booking";
-import { randomUUID } from "crypto";
+import { createClient } from "@/db/client";
+import { logError } from "@/cms/shared/logger";
+import {
+  mapBookingToInsert,
+  mapBookingPatchToUpdate,
+  mapRowToBooking,
+} from "@/db/bookings/mapper";
 
-// In-memory storage (will be lost on server restart)
-const BOOKINGS_STORE_DATA: Booking[] = [];
 
 /**
  * Create a new booking
  */
-export const createBooking = (
-  input: Omit<Booking, "id" | "createdAt" | "updatedAt">
-): Booking => {
-  const now = new Date().toISOString();
+export const createBooking = async (
+  input: Omit<Booking, "id" | "createdAt" | "updatedAt" | "deletedAt">
+): Promise<Booking> => {
+  try {
+    const supabase = createClient();
+    const insertData = mapBookingToInsert(input);
 
-  const booking: Booking = {
-    ...input,
-    id: randomUUID(),
-    createdAt: now,
-    updatedAt: now,
-  };
+    const { data, error } = await supabase
+      .from("bookings")
+      .insert(insertData)
+      .select()
+      .single();
 
-  BOOKINGS_STORE_DATA.push(booking);
+    if (error) {
+      logError("Failed to create booking", error, { input });
+      throw error;
+    }
 
-  return booking;
+    if (!data) {
+      throw new Error("No data returned from database");
+    }
+
+    return mapRowToBooking(data);
+  } catch (error) {
+    logError("Error creating booking", error, { input });
+    throw error;
+  }
 };
 
 /**
- * Get a booking by ID
+ * Get a booking by ID (only active bookings, excludes soft deleted)
  */
-export const getBookingById = (id: string): Booking | null => {
-  const booking = BOOKINGS_STORE_DATA.find((b) => b.id === id);
+export const getBookingById = async (id: string): Promise<Booking | null> => {
+  try {
+    const supabase = createClient();
 
-  if (!booking) return null;
+    const { data, error } = await supabase
+      .from("bookings")
+      .select("*")
+      .eq("id", id)
+      .is("deleted_at", null)
+      .limit(1);
 
-  return booking;
+    if (error) {
+      logError("Failed to fetch booking by ID", error, { bookingId: id });
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+      return null;
+    }
+
+    const [booking] = data;
+    return mapRowToBooking(booking);
+  } catch (error) {
+    logError("Error fetching booking by ID", error, { bookingId: id });
+    throw error;
+  }
 };
 
 /**
- * Get all bookings (optionally filtered)
+ * Filters for fetching bookings.
  */
-export const getAllBookings = (filters?: {
+export interface GetAllBookingsFilters {
   status?: BookingStatus;
   paymentStatus?: BookingPaymentStatus;
   future?: boolean;
   past?: boolean;
-}): Booking[] => {
-  let bookings = [...BOOKINGS_STORE_DATA];
+}
 
-  if (filters?.status) {
-    bookings = bookings.filter((b) => b.status === filters.status);
-  }
+/**
+ * Get all bookings (optionally filtered)
+ */
+export const getAllBookings = async (filters: GetAllBookingsFilters = {}): Promise<Booking[]> => {
+  try {
+    const supabase = createClient();
+    // Only fetch active bookings (exclude soft deleted)
+    let query = supabase
+      .from("bookings")
+      .select("*")
+      .is("deleted_at", null);
 
-  if (filters?.paymentStatus) {
-    bookings = bookings.filter(
-      (b) => b.paymentStatus === filters.paymentStatus
-    );
-  }
+    // Apply status filter
+    if (filters?.status) {
+      query = query.eq("status", filters.status);
+    }
 
-  // Filter by date (future/past)
-  if (filters?.future !== undefined || filters?.past !== undefined) {
-    const now = new Date();
+    // Apply payment status filter
+    if (filters?.paymentStatus) {
+      query = query.eq("payment_status", filters.paymentStatus);
+    }
 
-    bookings = bookings.filter((b) => {
-      const bookingDate = new Date(b.clientSelectedDate);
-      const isFuture = bookingDate >= now;
-      const isPast = bookingDate < now;
+    // Apply date filters (future/past)
+    const now = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
 
-      if (filters.future !== undefined) {
-        return filters.future ? isFuture : !isFuture;
+    if (filters?.future !== undefined) {
+      if (filters.future) {
+        query = query.gte("client_selected_date", now);
+      } else {
+        query = query.lt("client_selected_date", now);
       }
-      if (filters.past !== undefined) {
-        return filters.past ? isPast : !isPast;
-      }
-      return true;
-    });
-  }
+    }
 
-  return bookings;
+    if (filters?.past !== undefined) {
+      if (filters.past) {
+        query = query.lt("client_selected_date", now);
+      } else {
+        query = query.gte("client_selected_date", now);
+      }
+    }
+
+    // Order by creation date (most recent first) for consistent results
+    query = query.order("created_at", { ascending: false });
+
+    const { data, error } = await query;
+
+    if (error) {
+      logError("Failed to fetch bookings", error, { filters });
+      throw error;
+    }
+
+    if (!data) {
+      return [];
+    }
+
+    return data.map(mapRowToBooking);
+  } catch (error) {
+    logError("Error fetching bookings", error, { filters });
+    throw error;
+  }
 };
 
 /**
  * Update a booking by ID
+ * Only updates active bookings (excludes soft deleted bookings)
  */
-export const updateBooking = (
+export const updateBooking = async (
   id: string,
-  patch: Partial<Omit<Booking, "id" | "createdAt">>
-): Booking | null => {
-  const index = BOOKINGS_STORE_DATA.findIndex((b) => b.id === id);
+  patch: Partial<Omit<Booking, "id" | "createdAt" | "updatedAt" | "deletedAt">>
+): Promise<Booking | null> => {
+  try {
+    const supabase = createClient();
+    const updateData = mapBookingPatchToUpdate(patch);
 
-  if (index === -1) return null;
+    // Only update active bookings (exclude soft deleted)
+    const { data, error } = await supabase
+      .from("bookings")
+      .update(updateData)
+      .eq("id", id)
+      .is("deleted_at", null)
+      .select()
+      .limit(1);
 
-  const updated: Booking = {
-    ...BOOKINGS_STORE_DATA[index],
-    ...patch,
-    updatedAt: new Date().toISOString(),
-  };
+    if (error) {
+      logError("Failed to update booking", error, { bookingId: id, patch });
+      throw error;
+    }
 
-  BOOKINGS_STORE_DATA[index] = updated;
+    if (!data || data.length === 0) {
+      return null;
+    }
 
-  return updated;
+    const [booking] = data;
+    return mapRowToBooking(booking);
+  } catch (error) {
+    logError("Error updating booking", error, { bookingId: id, patch });
+    throw error;
+  }
 };
 
 /**
- * Delete a booking by ID
+ * Soft delete a booking by ID
+ * Sets deleted_at timestamp instead of physically deleting the record
  */
-export const deleteBooking = (id: string): boolean => {
-  const index = BOOKINGS_STORE_DATA.findIndex((b) => b.id === id);
+export const deleteBooking = async (id: string): Promise<boolean> => {
+  try {
+    const supabase = createClient();
 
-  if (index === -1) return false;
+    // Soft delete: update deleted_at instead of deleting the record
+    // Only update if deleted_at is NULL (not already deleted)
+    const { data, error } = await supabase
+      .from("bookings")
+      .update({ deleted_at: new Date().toISOString() })
+      .eq("id", id)
+      .is("deleted_at", null)
+      .select();
 
-  BOOKINGS_STORE_DATA.splice(index, 1);
+    if (error) {
+      logError("Failed to soft delete booking", error, { bookingId: id });
+      throw error;
+    }
 
-  return true;
+    // If there is no data or empty, booking was not found or already deleted
+    if (!data || data.length === 0) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    logError("Error soft deleting booking", error, { bookingId: id });
+    throw error;
+  }
 };

@@ -12,12 +12,13 @@ export type Booking = {
   clientCountry: string
   clientLanguage: string
   clientSelectedDate: string
-  clientMessage?: string
-  tourId: string
+  clientMessage: string | null
+  tourId: string  
   createdAt: string
   updatedAt: string
   status: BookingStatus
   price: number
   paymentStatus: BookingPaymentStatus
-  paymentMethod?: BookingPaymentMethod
+  paymentMethod: BookingPaymentMethod | null
+  deletedAt: string | null
 }

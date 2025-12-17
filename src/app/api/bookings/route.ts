@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from "next/server"
 import { bookingFormSchema, transformFormToBooking } from "./schema"
-import { createBooking, getAllBookings } from "./store"
+import { createBooking, getAllBookings, GetAllBookingsFilters } from "./store"
 import { getTourByID } from "@/cms/tours"
 import { logError } from "@/cms/shared/logger"
 import { BookingPaymentStatus, BookingStatus } from "@/domain/booking"
@@ -18,19 +18,16 @@ const VALID_PAYMENT_STATUSES: BookingPaymentStatus[] = ["pending", "paid", "fail
  * Parse and validate query parameters for bookings filtering
  * 
  * @param searchParams - URL search parameters from the request
- * @returns Object with validated filter parameters
+ * @returns Object with validated filter parameters or throws error for conflicting filters
  * 
  * @example
  * // Query: ?status=pending&future=true
  * // Returns: { status: "pending", future: true }
+ * 
+ * @throws {Error} If conflicting date filters are provided (future=true & past=true)
  */
-const parseBookingsQuery = (searchParams: URLSearchParams) => {
-  const filters: {
-    status?: BookingStatus
-    paymentStatus?: BookingPaymentStatus
-    future?: boolean
-    past?: boolean
-  } = {}
+const parseBookingsQuery = (searchParams: URLSearchParams): GetAllBookingsFilters => {
+  const filters: GetAllBookingsFilters = {}
 
   // Validate and parse status
   const statusParam = searchParams.get("status")
@@ -49,18 +46,36 @@ const parseBookingsQuery = (searchParams: URLSearchParams) => {
 
   // Parse future (boolean from string)
   const futureParam = searchParams.get("future")
+  let futureValue: boolean | undefined
   if (futureParam === "true") {
-    filters.future = true
+    futureValue = true
   } else if (futureParam === "false") {
-    filters.future = false
+    futureValue = false
   }
 
   // Parse past (boolean from string)
   const pastParam = searchParams.get("past")
+  let pastValue: boolean | undefined
   if (pastParam === "true") {
-    filters.past = true
+    pastValue = true
   } else if (pastParam === "false") {
-    filters.past = false
+    pastValue = false
+  }
+
+  // Validate: cannot have both future=true and past=true (conflicting filters)
+  if (futureValue === true && pastValue === true) {
+    throw new Error(
+      "Conflicting date filters: cannot filter for both future=true and past=true. " +
+      "Use only one date filter or use future=false with past=true for past bookings."
+    )
+  }
+
+  // Assign validated values
+  if (futureValue !== undefined) {
+    filters.future = futureValue
+  }
+  if (pastValue !== undefined) {
+    filters.past = pastValue
   }
 
   return filters
@@ -91,12 +106,11 @@ const parseBookingsQuery = (searchParams: URLSearchParams) => {
  * // Get all bookings
  * GET /api/bookings
  */
-export const GET = async (request: NextRequest) => {
+export const GET = async (request: NextRequest): Promise<NextResponse> => {
   try {
     const filters = parseBookingsQuery(request.nextUrl.searchParams)
-    const hasFilters = Object.keys(filters).length > 0
 
-    const bookings = getAllBookings(hasFilters ? filters : undefined)
+    const bookings = await getAllBookings(filters)
 
     return NextResponse.json(bookings, { status: 200 })
   } catch (error) {
@@ -138,7 +152,7 @@ export const GET = async (request: NextRequest) => {
  * @returns {Array} [error.details] - Validation error details (on validation failure)
  * 
  */
-export const POST = async (request: NextRequest) => {
+export const POST = async (request: NextRequest): Promise<NextResponse> => {
   try {
     const body = await request.json()
     
@@ -173,7 +187,7 @@ export const POST = async (request: NextRequest) => {
     const bookingInput = transformFormToBooking(formData, tour.price)
 
     // Create booking
-    const booking = createBooking(bookingInput)
+    const booking = await createBooking(bookingInput)
 
     return NextResponse.json(booking, { status: 201 })
   } catch (error) {

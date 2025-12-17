@@ -82,38 +82,6 @@ const BookingForm = ({ setSubmitted, tours, languages }: Props) => {
     label: `${item.code} ${item.country}`,
   }));
 
-  const FakeButton = () => {
-    return (
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full sm:w-auto"
-        disabled={isSubmitting}
-        onClick={() => {
-          if (!tours.length || !languages.length) return;
-
-          const nextWeek = new Date();
-          nextWeek.setDate(nextWeek.getDate() + 7);
-
-          reset({
-            name: "John Silva",
-            email: "john@example.com",
-            phonePhoneCountryCode: "+351",
-            phoneNumber: "912345678",
-            country: "Portugal",
-            language: languages[0],
-            tourId: tours[0]?.id ?? "",
-            date: nextWeek,
-            message:
-              "We would like a private tour around Belém and Alfama with some photo stops.",
-          });
-        }}
-      >
-        Fill with demo data
-      </Button>
-    );
-  };
-
   return (
     <Card className="border-border">
       <CardHeader className="space-y-1 pb-8">
@@ -283,8 +251,6 @@ const BookingForm = ({ setSubmitted, tours, languages }: Props) => {
             >
               {isSubmitting ? "Booking..." : "Booking Request"}
             </Button>
-
-            <FakeButton />
           </div>
 
           <p className="text-sm text-muted-foreground text-center leading-relaxed">
