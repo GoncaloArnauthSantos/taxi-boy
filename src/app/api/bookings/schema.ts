@@ -73,7 +73,7 @@ export type BookingPatch = z.infer<typeof bookingPatchSchema>;
 export const transformFormToBooking = (
   formData: BookingFormValues,
   price: number
-): Omit<Booking, "id" | "createdAt" | "updatedAt"> => {
+): Omit<Booking, "id" | "createdAt" | "updatedAt" | "deletedAt"> => {
   const {
     name,
     email,
@@ -94,10 +94,11 @@ export const transformFormToBooking = (
     clientCountry: country,
     clientLanguage: language,
     clientSelectedDate: date.toISOString(),
-    clientMessage: message,
+    clientMessage: message ?? null,
     price,
     tourId,
     status: "pending",
     paymentStatus: "pending",
+    paymentMethod: null,
   };
 };

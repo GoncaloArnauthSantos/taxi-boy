@@ -16,6 +16,19 @@ type BookingRouteContext = {
 }
 
 /**
+ * UUID v4 validation regex
+ * Matches standard UUID format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+ */
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
+/**
+ * Validate if a string is a valid UUID v4
+ */
+const isValidUUID = (id: string): boolean => {
+  return UUID_REGEX.test(id)
+}
+
+/**
  * GET /api/bookings/:id
  *
  * Fetch a single booking by ID.
@@ -40,7 +53,16 @@ export const GET = async (
 ) => {
   try {
     const { id } = await params
-    const booking = getBookingById(id)
+
+    // Validate UUID format before querying database
+    if (!isValidUUID(id)) {
+      return NextResponse.json(
+        { error: "Invalid booking ID format" },
+        { status: 400 }
+      )
+    }
+
+    const booking = await getBookingById(id)
 
     if (!booking) {
       return NextResponse.json(
@@ -93,6 +115,15 @@ export const PATCH = async (
 ) => {
   try {
     const { id } = await params
+
+    // Validate UUID format before querying database
+    if (!isValidUUID(id)) {
+      return NextResponse.json(
+        { error: "Invalid booking ID format" },
+        { status: 400 }
+      )
+    }
+
     const body = await request.json()
 
     // Validate patch data
@@ -108,7 +139,7 @@ export const PATCH = async (
     const patch = validationResult.data
 
     // Check if booking exists
-    const existingBooking = getBookingById(id)
+    const existingBooking = await getBookingById(id)
     if (!existingBooking) {
       return NextResponse.json(
         { error: "Booking not found" },
@@ -117,7 +148,7 @@ export const PATCH = async (
     }
 
     // Update booking
-    const updated = updateBooking(id, patch)
+    const updated = await updateBooking(id, patch)
 
     if (!updated) {
       return NextResponse.json(
@@ -170,7 +201,16 @@ export const DELETE = async (
 ) => {
   try {
     const { id } = await params
-    const deleted = deleteBooking(id)
+
+    // Validate UUID format before querying database
+    if (!isValidUUID(id)) {
+      return NextResponse.json(
+        { error: "Invalid booking ID format" },
+        { status: 400 }
+      )
+    }
+
+    const deleted = await deleteBooking(id)
 
     if (!deleted) {
       return NextResponse.json(
