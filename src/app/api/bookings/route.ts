@@ -8,8 +8,9 @@ import { NextRequest, NextResponse } from "next/server"
 import { bookingFormSchema, transformFormToBooking } from "./schema"
 import { createBooking, getAllBookings, GetAllBookingsFilters } from "./store"
 import { getTourByID } from "@/cms/tours"
-import { logError } from "@/cms/shared/logger"
+import { logError, logInfo } from "@/cms/shared/logger"
 import { BookingPaymentStatus, BookingStatus } from "@/domain/booking"
+import { sendBookingConfirmationEmails } from "@/email/send"
 
 const VALID_STATUSES: BookingStatus[] = ["pending", "confirmed", "cancelled"]
 const VALID_PAYMENT_STATUSES: BookingPaymentStatus[] = ["pending", "paid", "failed"]
@@ -188,6 +189,17 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
     // Create booking
     const booking = await createBooking(bookingInput)
+
+    logInfo("Booking created successfully", { bookingId: booking.id })
+
+    // Send confirmation emails asynchronously (fire and forget)
+    // Don't block the response if email sending fails
+    sendBookingConfirmationEmails(booking, tour).catch((error) => {
+      logError("Failed to send booking confirmation emails", error, {
+        bookingId: booking.id,
+        clientEmail: booking.clientEmail,
+      });
+    });
 
     return NextResponse.json(booking, { status: 201 })
   } catch (error) {

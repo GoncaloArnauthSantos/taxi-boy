@@ -15,7 +15,7 @@ import type { Tour } from "@/cms/types";
 import FormSelect from "./FormSelect";
 import FormDatePicker from "./FormDatePicker";
 import { bookingFormSchema } from "@/app/api/bookings/schema";
-import { createBooking, BookingApiError } from "@/api/bookings";
+import { createBooking, BookingApiError } from "@/client/api/bookings";
 import { logError } from "@/cms/shared/logger";
 
 type Props = {
