@@ -67,7 +67,7 @@ A modern, type-safe web application for personalized tour booking in Portugal. B
    DRIVER_EMAIL=driver@yourdomain.com
    
    # Cron Reminders (optional but recommended)
-   REMINDER_CRON_SECRET=your-secure-random-string
+   CRON_SECRET=your-secure-random-string
    ```
 
 4. Start the development server:
