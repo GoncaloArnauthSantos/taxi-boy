@@ -60,6 +60,14 @@ A modern, type-safe web application for personalized tour booking in Portugal. B
    # Supabase Database
    SUPABASE_URL=your-supabase-project-url
    SUPABASE_ANON_KEY=your-supabase-anon-key
+   
+   # Email (Resend)
+   RESEND_API_KEY=your-resend-api-key
+   EMAIL_FROM=noreply@yourdomain.com
+   DRIVER_EMAIL=driver@yourdomain.com
+   
+   # Cron Reminders (optional but recommended)
+   REMINDER_CRON_SECRET=your-secure-random-string
    ```
 
 4. Start the development server:

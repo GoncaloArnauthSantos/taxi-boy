@@ -89,6 +89,10 @@ export interface GetAllBookingsFilters {
   paymentStatus?: BookingPaymentStatus;
   future?: boolean;
   past?: boolean;
+  dateRange?: {
+    start: string; // YYYY-MM-DD
+    end: string; // YYYY-MM-DD (exclusive)
+  };
 }
 
 /**
@@ -130,6 +134,13 @@ export const getAllBookings = async (filters: GetAllBookingsFilters = {}): Promi
       } else {
         query = query.gte("client_selected_date", now);
       }
+    }
+
+    // Apply date range filter (more precise than future/past)
+    if (filters?.dateRange) {
+      query = query
+        .gte("client_selected_date", filters.dateRange.start)
+        .lt("client_selected_date", filters.dateRange.end);
     }
 
     // Order by creation date (most recent first) for consistent results

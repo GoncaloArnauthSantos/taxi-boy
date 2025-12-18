@@ -10,7 +10,7 @@ import {
   deleteBooking,
   updateBooking,
   BookingApiError,
-} from "@/api/bookings";
+} from "@/client/api/bookings";
 import DeleteBookingDialog from "./DeleteBookingDialog";
 import type { Booking, BookingStatus } from "@/domain/booking";
 import type { Tour } from "@/cms/types";
@@ -90,8 +90,8 @@ const AdminPageClient = ({ tours }: Props) => {
       );
 
       const mockFormData: BookingFormValues = {
-        name: `Mock User Ç`,
-        email: `mock${Math.floor(Math.random() * 1000)}@example.com`,
+        name: `Mock User Gonçalo`,
+        email: `goncaloarnauth@outlook.com`,
         phonePhoneCountryCode: "+351",
         phoneNumber: `912345${Math.floor(Math.random() * 1000)}`,
         country: "Portugal",
