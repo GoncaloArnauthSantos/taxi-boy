@@ -41,7 +41,7 @@ const getTomorrowRange = () => {
 export const GET = async (request: NextRequest): Promise<NextResponse> => {
   try {
     // Simple protection using a shared secret in the Authorization header
-    const secret = process.env.REMINDER_CRON_SECRET;
+    const secret = process.env.CRON_SECRET;
     const authHeader = request.headers.get("Authorization");
 
     if (secret) {
