@@ -89,8 +89,7 @@ export const sendClientConfirmation = async (
 
     await resend.emails.send({
       from: fromEmail,
-      // to: booking.clientEmail, //TODO-GS: Remove this for production
-      to: "goncaloarnauth@outlook.com",
+      to: booking.clientEmail,
       subject: `Booking Confirmation - ${tour.title}`,
       html,
     });
@@ -187,8 +186,7 @@ export const sendBookingReminderEmail = async (
 
     await resend.emails.send({
       from: fromEmail,
-      // to: booking.clientEmail, //TODO-GS: Remove this for production
-      to: "goncaloarnauth@outlook.com",
+      to: booking.clientEmail,
       subject: `Reminder - Your tour is tomorrow: ${tour.title}`,
       html,
     });

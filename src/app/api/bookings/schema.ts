@@ -62,6 +62,16 @@ export const bookingPatchSchema = z
     paymentMethod: z.enum(["bank_transfer", "card", "cash"]).optional(),
     price: z.number().positive().optional(),
     clientMessage: z.string().max(1000).optional(),
+    clientSelectedDate: z
+      .string()
+      .refine(
+        (date) => {
+          const dateObj = new Date(date);
+          return dateObj >= new Date(new Date().setHours(0, 0, 0, 0));
+        },
+        "Date must be today or in the future"
+      )
+      .optional(),
   })
   .strict();
 

@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from "next/server"
 import { bookingFormSchema, transformFormToBooking } from "./schema"
-import { createBooking, getAllBookings, GetAllBookingsFilters } from "./store"
+import { createBooking, getAllBookings, GetAllBookingsFilters, isDateAvailable } from "./store"
 import { getTourByID } from "@/cms/tours"
 import { logError, logInfo } from "@/cms/shared/logger"
 import { BookingPaymentStatus, BookingStatus } from "@/domain/booking"
@@ -147,6 +147,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
  *   - 201: Booking created successfully
  *   - 400: Validation failed or invalid JSON
  *   - 404: Tour not found
+ *   - 409: Selected date is not available (already has a booking)
  *   - 500: Server error
  * @returns {Booking} booking - Created booking object (on success)
  * @returns {Object} error - Error message (on failure)
@@ -181,6 +182,20 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
       return NextResponse.json(
         { error: "Tour not found" },
         { status: 404 }
+      )
+    }
+
+    // Validate that the selected date is available
+    const selectedDate = formData.date.toISOString().split("T")[0]; // YYYY-MM-DD format
+    const dateAvailable = await isDateAvailable(selectedDate);
+
+    if (!dateAvailable) {
+      return NextResponse.json(
+        { 
+          error: "Selected date is not available",
+          details: "This date already has a booking. Please select another date."
+        },
+        { status: 409 } // 409 Conflict - resource already exists
       )
     }
 

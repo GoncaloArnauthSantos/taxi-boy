@@ -12,6 +12,7 @@ type Props = {
   languages: string[];
   confirmationContent: PageSection | null;
   bookingPageContent: PageSection | null;
+  unavailableDates: Date[];
 };
 
 const BookingPageContent = ({
@@ -19,6 +20,7 @@ const BookingPageContent = ({
   languages,
   confirmationContent,
   bookingPageContent,
+  unavailableDates,
 }: Props) => {
   const [submitted, setSubmitted] = useState<boolean>(false);
 
@@ -74,6 +76,7 @@ const BookingPageContent = ({
             setSubmitted={setSubmitted}
             tours={tours}
             languages={languages}
+            unavailableDates={unavailableDates}
           />
         </div>
       </div>
