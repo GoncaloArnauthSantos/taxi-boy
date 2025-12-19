@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from "next/server"
 import { bookingPatchSchema } from "../schema"
-import { getBookingById, updateBooking, deleteBooking } from "../store"
+import { getBookingById, updateBooking, deleteBooking, isDateAvailable } from "../store"
 import { logError } from "@/cms/shared/logger"
 
 type BookingRouteContext = {
@@ -94,6 +94,7 @@ export const GET = async (
  * @param {string} [request.body.paymentMethod] - Payment method: "bank_transfer" | "card" | "cash"
  * @param {number} [request.body.price] - Booking price (must be positive)
  * @param {string} [request.body.clientMessage] - Client message (max 1000 chars)
+ * @param {string} [request.body.clientSelectedDate] - Booking date (ISO string, must be today or future)
  * @param params - Route parameters
  * @param {Promise<{id: string}>} params.params - Promise containing route params
  * @param {string} params.params.id - Booking ID (UUID)
@@ -103,6 +104,7 @@ export const GET = async (
  *   - 200: Booking updated successfully
  *   - 400: Validation failed or invalid JSON
  *   - 404: Booking not found
+ *   - 409: Selected date is not available (already has another booking)
  *   - 500: Server error
  * @returns {Booking} booking - Updated booking object (on success)
  * @returns {Object} error - Error message (on failure)
@@ -145,6 +147,27 @@ export const PATCH = async (
         { error: "Booking not found" },
         { status: 404 }
       )
+    }
+
+    // Validate date availability if clientSelectedDate is being updated to a different date
+    if (patch.clientSelectedDate) {
+      // Normalize dates to YYYY-MM-DD format for comparison
+      const newDateStr = patch.clientSelectedDate.split("T")[0];
+      const existingDateStr = existingBooking.clientSelectedDate.split("T")[0];
+
+      if (newDateStr !== existingDateStr) {
+        const dateAvailable = await isDateAvailable(newDateStr);
+
+        if (!dateAvailable) {
+          return NextResponse.json(
+            { 
+              error: "Selected date is not available",
+              details: "This date already has another booking. Please select another date."
+            },
+            { status: 409 } // 409 Conflict - resource already exists
+          )
+        }
+      }
     }
 
     // Update booking

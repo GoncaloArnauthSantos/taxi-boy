@@ -11,6 +11,10 @@ import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker"
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/Button"
 
+type Props = React.ComponentProps<typeof DayPicker> & {
+  buttonVariant?: React.ComponentProps<typeof Button>["variant"]
+}
+
 const Calendar = ({
   className,
   classNames,
@@ -20,9 +24,7 @@ const Calendar = ({
   formatters,
   components,
   ...props
-}: React.ComponentProps<typeof DayPicker> & {
-  buttonVariant?: React.ComponentProps<typeof Button>["variant"]
-}) => {
+}: Props) => {
   const defaultClassNames = getDefaultClassNames()
 
   return (
@@ -90,7 +92,7 @@ const Calendar = ({
           "text-muted-foreground flex-1 select-none rounded-md text-xs font-medium uppercase tracking-wider pb-2",
           defaultClassNames.weekday
         ),
-        week: cn("mt-2 flex w-full gap-1.5", defaultClassNames.week),
+        week: cn(" flex w-full", defaultClassNames.week),
         week_number_header: cn(
           "w-[--cell-size] select-none",
           defaultClassNames.week_number_header
@@ -109,10 +111,6 @@ const Calendar = ({
         ),
         range_middle: cn("rounded-none", defaultClassNames.range_middle),
         range_end: cn("bg-accent rounded-r-md", defaultClassNames.range_end),
-        today: cn(
-          "font-semibold text-primary relative data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground",
-          defaultClassNames.today
-        ),
         outside: cn(
           "text-muted-foreground aria-selected:text-muted-foreground",
           defaultClassNames.outside
@@ -185,10 +183,6 @@ const CalendarDayButton = ({
     if (modifiers.focused) ref.current?.focus()
   }, [modifiers.focused])
 
-  const isToday = modifiers.today
-  const isSelected = modifiers.selected
-  const isTodayNotSelected = isToday && !isSelected
-
   return (
     <Button
       ref={ref}
@@ -206,21 +200,15 @@ const CalendarDayButton = ({
       data-range-middle={modifiers.range_middle}
       className={cn(
         // Base styles
-        "relative flex aspect-square h-auto w-full min-w-[--cell-size] flex-col items-center justify-center font-normal leading-none cursor-pointer",
+        "relative flex aspect-square h-auto w-full min-w-[--cell-size] flex-col items-center justify-center font-normal leading-none cursor-pointer p-1",
         // Hover state - smooth and refined
         "hover:bg-accent hover:text-accent-foreground transition-all duration-200 hover:scale-105 active:scale-95",
-        // Selected state - prominent with ring
-        "data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground data-[selected-single=true]:font-semibold data-[selected-single=true]:shadow-md data-[selected-single=true]:ring-2 data-[selected-single=true]:ring-primary/20",
+        // Selected state - clean and prominent without ring
+        "data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground data-[selected-single=true]:font-semibold data-[selected-single=true]:shadow-sm",
         // Range states
         "data-[range-middle=true]:bg-accent data-[range-middle=true]:text-accent-foreground data-[range-start=true]:bg-primary data-[range-start=true]:text-primary-foreground data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground",
-        // Rounded corners
-        "data-[range-end=true]:rounded-md data-[range-middle=true]:rounded-none data-[range-start=true]:rounded-md rounded-md",
         // Focus state - visible ring
         "group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-ring/50 group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-2 group-data-[focused=true]/day:ring-offset-2",
-        // Today indicator - ring around today (when not selected)
-        "data-[today=true]:font-semibold data-[today=true]:text-primary",
-        // Add ring to today when not selected
-        isTodayNotSelected && "ring-1 ring-primary ring-offset-0",
         // Disabled state
         "data-[disabled=true]:opacity-30 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:hover:bg-transparent data-[disabled=true]:hover:scale-100 data-[disabled=true]:hover:text-muted-foreground",
         // Text styling

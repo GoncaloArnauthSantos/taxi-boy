@@ -165,6 +165,84 @@ export const getAllBookings = async (filters: GetAllBookingsFilters = {}): Promi
 };
 
 /**
+ * Check if a specific date is available for booking.
+ * Returns false if there's already a booking on that date.
+ * 
+ * @param date - Date to check (ISO string format YYYY-MM-DD)
+ * @returns true if date is available, false if already booked
+ */
+export const isDateAvailable = async (date: string): Promise<boolean> => {
+  try {
+    const supabase = createClient();
+    const dateStr = date.split("T")[0]; // Ensure YYYY-MM-DD format
+
+    // Check if there are any active bookings on this date
+    const { data, error } = await supabase
+      .from("bookings")
+      .select("id")
+      .eq("client_selected_date", dateStr)
+      .is("deleted_at", null) // Exclude soft deleted
+      .in("status", ["pending", "confirmed"]) // Only active bookings
+      .limit(1);
+
+    if (error) {
+      logError("Failed to check date availability", error, { date });
+      throw error;
+    }
+
+    // Date is available if no bookings found
+    return !data || data.length === 0;
+  } catch (error) {
+    logError("Error checking date availability", error, { date });
+    throw error;
+  }
+};
+
+/**
+ * Get unavailable dates (dates with existing bookings).
+ * Returns only the dates, not the full booking objects.
+ * More efficient than fetching all bookings when you only need the dates.
+ */
+export const getUnavailableDates = async (): Promise<Date[]> => {
+  try {
+    const supabase = createClient();
+    const now = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
+
+    // Fetch only client_selected_date for future bookings (exclude soft deleted)
+    const { data, error } = await supabase
+      .from("bookings")
+      .select("client_selected_date")
+      .gte("client_selected_date", now) // Only future dates
+      .is("deleted_at", null) // Exclude soft deleted
+      .in("status", ["pending", "confirmed"]); // Only active bookings (exclude cancelled)
+
+    if (error) {
+      logError("Failed to fetch unavailable dates", error);
+      throw error;
+    }
+
+    if (!data || data.length === 0) {
+      return [];
+    }
+
+    // Extract unique dates and convert to Date objects
+    const uniqueDates = new Set<string>();
+    data.forEach((row) => {
+      if (row.client_selected_date) {
+        uniqueDates.add(row.client_selected_date);
+      }
+    });
+
+    return Array.from(uniqueDates)
+      .map((dateStr) => new Date(dateStr))
+      .filter((date) => !isNaN(date.getTime())); // Filter out invalid dates
+  } catch (error) {
+    logError("Error fetching unavailable dates", error);
+    throw error;
+  }
+};
+
+/**
  * Update a booking by ID
  * Only updates active bookings (excludes soft deleted bookings)
  */

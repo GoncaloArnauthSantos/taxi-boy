@@ -22,11 +22,12 @@ type Props = {
   setSubmitted: (submitted: boolean) => void;
   tours: Tour[];
   languages: string[];
+  unavailableDates: Date[];
 };
 
 type BookingFormValues = z.infer<typeof bookingFormSchema>;
 
-const BookingForm = ({ setSubmitted, tours, languages }: Props) => {
+const BookingForm = ({ setSubmitted, tours, languages, unavailableDates }: Props) => {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
@@ -214,6 +215,7 @@ const BookingForm = ({ setSubmitted, tours, languages }: Props) => {
             label="Preferred Date"
             error={errors.date?.message}
             required
+            unavailableDates={unavailableDates}
           />
 
           {/* Additional Message */}

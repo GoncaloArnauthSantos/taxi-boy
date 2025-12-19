@@ -1,27 +1,28 @@
-"use client"
+"use client";
 
-import { useState, useCallback } from "react"
-import { Button } from "@/components/ui/Button"
-import { Calendar } from "@/components/ui/Calendar"
+import { useState, useCallback } from "react";
+import { Button } from "@/components/ui/Button";
+import { Calendar } from "@/components/ui/Calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/Popover"
-import { Label } from "@/components/ui/label"
-import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
-import { cn } from "@/lib/utils"
-import { Control, Controller, FieldPath, FieldValues } from "react-hook-form"
+} from "@/components/ui/Popover";
+import { Label } from "@/components/ui/label";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { Control, Controller, FieldPath, FieldValues } from "react-hook-form";
 
 type Props<T extends FieldValues> = {
-  name: FieldPath<T>
-  control: Control<T>
-  label: string
-  error?: string
-  required?: boolean
-  className?: string
-}
+  name: FieldPath<T>;
+  control: Control<T>;
+  label: string;
+  error?: string;
+  required?: boolean;
+  className?: string;
+  unavailableDates?: Date[];
+};
 
 const FormDatePicker = <T extends FieldValues>({
   name,
@@ -30,29 +31,52 @@ const FormDatePicker = <T extends FieldValues>({
   error,
   required = false,
   className,
+  unavailableDates,
 }: Props<T>) => {
-  const [calendarOpen, setCalendarOpen] = useState(false)
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const formatDate = useCallback((date: Date) => {
-    return format(date, "EEEE, MMMM d, yyyy")
-  }, [])
+    return format(date, "EEEE, MMMM d, yyyy");
+  }, []);
 
   const createDateSelectHandler = useCallback(
     (onChange: (value: Date | undefined) => void) => {
       return (date: Date | undefined) => {
-        onChange(date || undefined)
+        onChange(date); // Pass date directly (can be Date or undefined)
         // Close popover when date is selected
         if (date) {
-          setCalendarOpen(false)
+          setCalendarOpen(false);
         }
-      }
+      };
     },
     []
-  )
+  );
 
-  const isDateDisabled = useCallback((date: Date) => {
-    return date < new Date(new Date().setHours(0, 0, 0, 0))
-  }, [])
+  // Combine all disabled logic: past dates + unavailable dates
+  const isDateDisabled = useCallback(
+    (date: Date) => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // Disable if date is in the past
+      if (date < today) return true;
+
+      if (unavailableDates && unavailableDates.length > 0) {
+        const dateStr = date.toISOString().split("T")[0];
+
+        const isUnavailable = unavailableDates.some(
+          (unavailableDate) =>
+            unavailableDate.toISOString().split("T")[0] === dateStr
+        );
+
+        // Disable if date is in unavailableDates
+        if (isUnavailable) return true;
+      }
+
+      return false;
+    },
+    [unavailableDates]
+  );
 
   return (
     <div className={cn("space-y-2", className)}>
@@ -63,7 +87,7 @@ const FormDatePicker = <T extends FieldValues>({
         name={name}
         control={control}
         render={({ field }) => {
-          const handleDateSelect = createDateSelectHandler(field.onChange)
+          const handleDateSelect = createDateSelectHandler(field.onChange);
 
           return (
             <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
@@ -93,10 +117,11 @@ const FormDatePicker = <T extends FieldValues>({
                   selected={field.value || undefined}
                   onSelect={handleDateSelect}
                   disabled={isDateDisabled}
+                  {...(field.value ? { defaultMonth: field.value } : {})}
                 />
               </PopoverContent>
             </Popover>
-          )
+          );
         }}
       />
       {error && (
@@ -105,8 +130,7 @@ const FormDatePicker = <T extends FieldValues>({
         </p>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default FormDatePicker
-
+export default FormDatePicker;
