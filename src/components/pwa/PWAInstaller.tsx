@@ -19,7 +19,17 @@ const PWAInstaller = () => {
   useEffect(() => {
     // Register service worker (required for PWA)
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js");
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then((registration) => {
+          // Service worker registered successfully
+          // Optional: Check for updates
+          registration.update();
+        })
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error("Service Worker registration failed:", error);
+        });
     }
 
     // Listen for browser's install prompt event
