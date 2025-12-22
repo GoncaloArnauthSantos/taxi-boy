@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { bookingPatchSchema } from "../schema"
 import { getBookingById, updateBooking, deleteBooking, isDateAvailable } from "../store"
 import { logError } from "@/cms/shared/logger"
+import { requireAuth } from "@/app/api/auth/helpers"
 
 type BookingRouteContext = {
   params: Promise<{
@@ -115,6 +116,12 @@ export const PATCH = async (
   request: NextRequest,
   { params }: BookingRouteContext
 ) => {
+  // Require authentication for PATCH operations
+  const authError = await requireAuth(request);
+  if (authError) {
+    return authError;
+  }
+
   try {
     const { id } = await params
 
@@ -162,7 +169,7 @@ export const PATCH = async (
           return NextResponse.json(
             { 
               error: "Selected date is not available",
-              details: "This date already has another booking. Please select another date."
+              details: "This date already has another booking. Please select another date.",
             },
             { status: 409 } // 409 Conflict - resource already exists
           )
@@ -222,6 +229,12 @@ export const DELETE = async (
   request: NextRequest,
   { params }: BookingRouteContext
 ) => {
+  // Require authentication for DELETE operations
+  const authError = await requireAuth(request);
+  if (authError) {
+    return authError;
+  }
+
   try {
     const { id } = await params
 
