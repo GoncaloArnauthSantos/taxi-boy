@@ -1,5 +1,6 @@
 /**
  * Service Worker for TaxiBoy PWA
+ * Version: 1.0.0
  * 
  * Minimal service worker for PWA installation and future push notifications.
  * No caching/offline mode - we want always fresh data from the API.
@@ -15,6 +16,8 @@
  * - When a new version is detected (sw.js file changed), it updates automatically
  * - No need to reinstall the app - updates are seamless
  * - Uses skipWaiting() to activate new version immediately
+ * 
+ * To force update: Change this version number and the comment above
  */
 
 // Install event - activate new version immediately
