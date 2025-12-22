@@ -4,10 +4,12 @@
   "description": "Manage bookings and tours for Lisbon Taxi Tours",
   "start_url": "/admin",
   "display": "standalone",
+  "display_override": ["standalone", "fullscreen"],
   "background_color": "#ffffff",
   "theme_color": "#1e293b",
   "orientation": "portrait-primary",
   "scope": "/",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/icon-light-32x32.png",
@@ -33,6 +35,8 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "screenshots": [],
+  "categories": ["business", "productivity"]
 }
 

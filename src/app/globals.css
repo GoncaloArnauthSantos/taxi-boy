@@ -129,3 +129,39 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* PWA Native App Experience - iOS & Android */
+
+/* Support for iPhone notch and safe areas */
+/* Prevents content from being hidden by notch/home indicator */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  
+  /* Apply safe area padding to main container */
+  .min-h-screen {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Prevent pull-to-refresh on mobile browsers (improves native feel) */
+body {
+  overscroll-behavior-y: none;
+}
+
+/* Optimize for standalone mode */
+@media (display-mode: standalone) {
+  /* Additional optimizations for standalone PWA */
+  html {
+    height: 100%;
+    height: -webkit-fill-available; /* iOS Safari fix */
+  }
+  
+  body {
+    min-height: 100%;
+    min-height: -webkit-fill-available; /* iOS Safari fix */
+  }
+}

@@ -8,19 +8,39 @@
  * - Registers the app as installable (PWA requirement)
  * - Prepares for future push notifications
  * - Does NOT cache any data (we want live data always)
+ * - Automatically updates when new version is deployed
+ * 
+ * UPDATE BEHAVIOR:
+ * - Browser automatically checks for updates every time the app is opened
+ * - When a new version is detected (sw.js file changed), it updates automatically
+ * - No need to reinstall the app - updates are seamless
+ * - Uses skipWaiting() to activate new version immediately
  */
 
-// Install event - just activate immediately
-// No caching needed since we want always fresh data
-self.addEventListener('install', (_event) => {
-  // Force the waiting service worker to become the active service worker
+// Install event - activate new version immediately
+// This ensures users always get the latest version without manual intervention
+self.addEventListener('install', () => {
+  // Skip waiting phase - activate new service worker immediately
+  // This means updates are applied as soon as they're detected
   self.skipWaiting();
 });
 
-// Activate event - take control immediately
+// Activate event - take control of all pages immediately
+// This ensures the new service worker controls all open tabs/pages
 self.addEventListener('activate', (event) => {
-  // Take control of all pages immediately
-  event.waitUntil(self.clients.claim());
+  // Claim all clients (tabs/pages) immediately
+  // This ensures the new version is active across all open instances
+  event.waitUntil(
+    Promise.all([
+      self.clients.claim(), // Take control of all pages
+      // Optional: Clear old caches if you add caching in the future
+      // caches.keys().then(cacheNames => {
+      //   return Promise.all(
+      //     cacheNames.map(cacheName => caches.delete(cacheName))
+      //   );
+      // })
+    ])
+  );
 });
 
 // Push event - handle push notifications (future implementation)
