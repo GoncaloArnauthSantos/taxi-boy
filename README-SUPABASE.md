@@ -5,12 +5,16 @@ This document explains how Supabase is integrated into the project for booking d
 ## Architecture
 
 ```
-src/db/
-├── client.ts                    # Supabase client configuration
+src/supabase/
+├── database.ts                  # Supabase database client (for data operations)
 ├── bookings/
 │   └── mapper.ts                 # Maps between DB (snake_case) and app (camelCase)
-└── migrations/                  # SQL migration files
-    └── create_bookings_table.sql
+├── migrations/                  # SQL migration files
+│   └── create_bookings_table.sql
+└── auth/                        # Authentication clients (see README-AUTH.md)
+    ├── server.ts                 # Server-side auth client
+    ├── client.ts                 # Client-side auth client
+    └── middleware.ts             # Middleware auth client
 ```
 
 ## Core Concepts
@@ -25,7 +29,7 @@ Mappers convert between database format (`snake_case`) and application format (`
 - `mapBookingPatchToUpdate()` - Partial Booking → DB update format
 
 ### Database Client
-The Supabase client (`src/db/client.ts`) validates environment variables and creates the client instance.
+The Supabase database client (`src/supabase/database.ts`) validates environment variables and creates the client instance for data operations. For authentication, see `src/supabase/auth/`.
 
 ## Database Schema
 
@@ -35,7 +39,7 @@ The `bookings` table stores all booking information with the following key field
 - Status and payment information
 - Timestamps (`created_at`, `updated_at`, `deleted_at`)
 
-See `src/db/migrations/create_bookings_table.sql` for the complete schema.
+See `src/supabase/migrations/create_bookings_table.sql` for the complete schema.
 
 ## Soft Delete
 
@@ -71,7 +75,7 @@ All database operations are in `src/app/api/bookings/store.ts`:
    SUPABASE_ANON_KEY=your-supabase-anon-key
    ```
 3. Run the migration in Supabase Dashboard SQL Editor:
-   - Copy and execute `src/db/migrations/create_bookings_table.sql`
+   - Copy and execute `src/supabase/migrations/create_bookings_table.sql`
 
 ## Best Practices
 

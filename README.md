@@ -57,9 +57,11 @@ A modern, type-safe web application for personalized tour booking in Portugal. B
    CMS_ENDPOINT=your-prismic-repository-endpoint
    CMS_REVALIDATE_SECRET=your-webhook-secret
    
-   # Supabase Database
+   # Supabase Database & Auth
    SUPABASE_URL=your-supabase-project-url
    SUPABASE_ANON_KEY=your-supabase-anon-key
+   NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
    
    # Email (Resend)
    RESEND_API_KEY=your-resend-api-key
@@ -89,30 +91,36 @@ This project uses Prismic CMS for content management. See [README-PRISMIC.md](./
 
 ### Supabase Setup
 
-This project uses Supabase for database persistence. See [README-SUPABASE.md](./README-SUPABASE.md) for detailed setup instructions and architecture documentation.
+This project uses Supabase for database persistence and authentication. See [README-SUPABASE.md](./README-SUPABASE.md) for database setup and [README-AUTH.md](./README-AUTH.md) for authentication setup.
 
 **Quick setup:**
 1. Create a Supabase project
-2. Run the migrations in `src/db/migrations/` (see SQL files)
-3. Add your Supabase URL and anon key to `.env.local`
-4. The booking system will automatically use the database
+2. Run the migrations in `src/supabase/migrations/` (see SQL files)
+3. Add your Supabase URL and anon key to `.env.local` (both with and without `NEXT_PUBLIC_` prefix)
+4. Create an admin user in Supabase Dashboard (Authentication → Users)
+5. The booking system and admin authentication will automatically work
 
 ## **Project Structure**
 
 ```
 src/
 ├── app/                    # Next.js App Router pages
-│   ├── api/               # API routes (bookings, webhooks)
+│   ├── api/               # API routes (bookings, auth, webhooks)
+│   ├── admin/             # Admin pages (protected)
 │   ├── tours/             # Tours pages
 │   └── page.tsx           # Home page
 ├── cms/                    # Prismic CMS integration
 │   ├── shared/            # Shared utilities
 │   ├── [type]/            # CMS modules (drivers, tours, etc.)
 │   └── types.ts           # Type definitions
-├── db/                     # Supabase database integration
+├── supabase/               # Supabase integration
+│   ├── database.ts        # Database client (for data operations)
 │   ├── bookings/          # Booking mappers
 │   ├── migrations/        # SQL migration files
-│   └── client.ts          # Supabase client
+│   └── auth/              # Authentication clients
+│       ├── server.ts      # Server-side auth
+│       ├── client.ts      # Client-side auth
+│       └── middleware.ts  # Middleware auth
 ├── components/             # React components
 │   ├── ui/                # shadcn/ui components
 │   └── [feature]/         # Feature-specific components

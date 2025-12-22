@@ -9,13 +9,13 @@ import type {
   BookingPaymentStatus,
   BookingStatus,
 } from "@/domain/booking";
-import { createClient } from "@/db/client";
+import { createSupabaseServerPublicClient, createSupabaseServerClient } from "@/supabase/server";
 import { logError } from "@/cms/shared/logger";
 import {
   mapBookingToInsert,
   mapBookingPatchToUpdate,
   mapRowToBooking,
-} from "@/db/bookings/mapper";
+} from "@/supabase/bookings/mapper";
 
 
 /**
@@ -25,7 +25,7 @@ export const createBooking = async (
   input: Omit<Booking, "id" | "createdAt" | "updatedAt" | "deletedAt">
 ): Promise<Booking> => {
   try {
-    const supabase = createClient();
+    const supabase = await createSupabaseServerClient();
     const insertData = mapBookingToInsert(input);
 
     const { data, error } = await supabase
@@ -55,7 +55,7 @@ export const createBooking = async (
  */
 export const getBookingById = async (id: string): Promise<Booking | null> => {
   try {
-    const supabase = createClient();
+    const supabase = await createSupabaseServerClient();
 
     const { data, error } = await supabase
       .from("bookings")
@@ -100,7 +100,7 @@ export interface GetAllBookingsFilters {
  */
 export const getAllBookings = async (filters: GetAllBookingsFilters = {}): Promise<Booking[]> => {
   try {
-    const supabase = createClient();
+    const supabase = await createSupabaseServerClient();
     // Only fetch active bookings (exclude soft deleted)
     let query = supabase
       .from("bookings")
@@ -173,7 +173,7 @@ export const getAllBookings = async (filters: GetAllBookingsFilters = {}): Promi
  */
 export const isDateAvailable = async (date: string): Promise<boolean> => {
   try {
-    const supabase = createClient();
+    const supabase = await createSupabaseServerClient();
     const dateStr = date.split("T")[0]; // Ensure YYYY-MM-DD format
 
     // Check if there are any active bookings on this date
@@ -205,7 +205,9 @@ export const isDateAvailable = async (date: string): Promise<boolean> => {
  */
 export const getUnavailableDates = async (): Promise<Date[]> => {
   try {
-    const supabase = createClient();
+    // Use public client (no cookies) since this doesn't require authentication
+    // This allows the booking page to be statically generated during build
+    const supabase = createSupabaseServerPublicClient();
     const now = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
 
     // Fetch only client_selected_date for future bookings (exclude soft deleted)
@@ -251,7 +253,7 @@ export const updateBooking = async (
   patch: Partial<Omit<Booking, "id" | "createdAt" | "updatedAt" | "deletedAt">>
 ): Promise<Booking | null> => {
   try {
-    const supabase = createClient();
+    const supabase = await createSupabaseServerClient();
     const updateData = mapBookingPatchToUpdate(patch);
 
     // Only update active bookings (exclude soft deleted)
@@ -286,7 +288,7 @@ export const updateBooking = async (
  */
 export const deleteBooking = async (id: string): Promise<boolean> => {
   try {
-    const supabase = createClient();
+    const supabase = await createSupabaseServerClient();
 
     // Soft delete: update deleted_at instead of deleting the record
     // Only update if deleted_at is NULL (not already deleted)

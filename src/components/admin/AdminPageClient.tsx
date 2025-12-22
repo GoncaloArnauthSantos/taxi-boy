@@ -179,9 +179,12 @@ const AdminPageClient = ({ tours }: Props) => {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <h1 className="text-3xl font-bold mb-8">
-        Admin Panel - Bookings Testing
-      </h1>
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold">Bookings Management</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Manage all tour bookings from this panel
+        </p>
+      </div>
 
       {message && (
         <div
