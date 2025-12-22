@@ -10,6 +10,20 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Lisbon Taxi Tours - Premium Custom Tours",
   description: "Experience Lisbon with a multilingual driver offering personalized taxi tours around the city and surrounding areas",
+  manifest: "/manifest.json",
+  themeColor: "#1e293b",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    viewportFit: "cover", // iOS notch support
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent", // Full screen, hides Safari UI
+    title: "TaxiBoy Admin",
+  },
   icons: {
     icon: [
       {
@@ -26,6 +40,15 @@ export const metadata: Metadata = {
       },
     ],
     apple: "/apple-icon.png",
+  },
+  other: {
+    // iOS - Full screen native experience
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "black-translucent",
+    "apple-mobile-web-app-title": "TaxiBoy Admin",
+    // Android - Full screen native experience
+    "mobile-web-app-capable": "yes",
+    "theme-color": "#1e293b",
   },
 }
 
