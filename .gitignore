@@ -45,8 +45,7 @@ next-env.d.ts
 *.swp
 *.swo
 
-# PWA files
-**/public/sw.js
+# PWA files (generated workbox files, but keep our sw.js)
 **/public/workbox-*.js
 **/public/worker-*.js
 **/public/sw.js.map
