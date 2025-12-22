@@ -10,6 +10,13 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Lisbon Taxi Tours - Premium Custom Tours",
   description: "Experience Lisbon with a multilingual driver offering personalized taxi tours around the city and surrounding areas",
+  manifest: "/manifest.json",
+  themeColor: "#1e293b",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "TaxiBoy Admin",
+  },
   icons: {
     icon: [
       {
