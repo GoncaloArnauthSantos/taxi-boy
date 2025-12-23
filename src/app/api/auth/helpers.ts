@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/supabase/server";
-import { logError } from "@/cms/shared/logger";
+import { logError, LogModule } from "@/lib/logger";
 
 /**
  * Check if the current request has a valid admin session
@@ -30,7 +30,7 @@ export const getAdminSession = async () => {
       user: session.user,
     };
   } catch (error) {
-    logError("Error getting admin session", error);
+    logError("Error getting admin session", error, undefined, LogModule.Auth);
     return null;
   }
 };

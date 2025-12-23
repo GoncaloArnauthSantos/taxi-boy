@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { logError, LogModule } from "./lib/logger";
 
 /**
  * Global middleware to protect /admin routes using Supabase Auth.
@@ -19,10 +20,11 @@ export async function middleware(request: NextRequest) {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    // eslint-disable-next-line no-console
-    console.error(
-      "[MIDDLEWARE] ERROR: Supabase env vars missing:",
-      { hasUrl: !!supabaseUrl, hasKey: !!supabaseAnonKey }
+    logError(
+      "Supabase env vars missing",
+      new Error("Supabase env vars missing"),
+      { hasUrl: !!supabaseUrl, hasKey: !!supabaseAnonKey },
+      LogModule.App
     );
     return response;
   }

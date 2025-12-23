@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { bookingFormSchema, transformFormToBooking } from "./schema"
 import { createBooking, getAllBookings, GetAllBookingsFilters, isDateAvailable } from "./store"
 import { getTourByID } from "@/cms/tours"
-import { logError, logInfo } from "@/cms/shared/logger"
+import { logError, logInfo, LogModule } from "@/lib/logger"
 import { BookingPaymentStatus, BookingStatus } from "@/domain/booking"
 import { sendBookingConfirmationEmails } from "@/email/send"
 
@@ -115,7 +115,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
 
     return NextResponse.json(bookings, { status: 200 })
   } catch (error) {
-    logError("Error fetching bookings", error, { request: request.url, function: "GET" })
+    logError("Error fetching bookings", error, { request: request.url, function: "GET" }, LogModule.API)
 
     return NextResponse.json(
       { error: "Failed to fetch bookings" },
@@ -205,7 +205,7 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
     // Create booking
     const booking = await createBooking(bookingInput)
 
-    logInfo("Booking created successfully", { bookingId: booking.id })
+    logInfo("Booking created successfully", { bookingId: booking.id }, LogModule.API)
 
     // Send confirmation emails asynchronously (fire and forget)
     // Don't block the response if email sending fails
@@ -213,12 +213,12 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
       logError("Failed to send booking confirmation emails", error, {
         bookingId: booking.id,
         clientEmail: booking.clientEmail,
-      });
+      }, LogModule.API);
     });
 
     return NextResponse.json(booking, { status: 201 })
   } catch (error) {
-    logError("Error creating booking", error, { request: request.url })
+    logError("Error creating booking", error, { request: request.url }, LogModule.API)
     
     if (error instanceof SyntaxError) {
       return NextResponse.json(

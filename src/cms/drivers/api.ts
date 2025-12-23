@@ -8,7 +8,7 @@
 import { createClient } from "../client"
 import { mapDriver } from "./mapper"
 import type { Driver } from "../types"
-import { logError } from "../shared/logger"
+import { logError, LogModule } from "@/lib/logger"
 
 /**
  * Fetch a driver
@@ -33,7 +33,12 @@ export const getDriver = async (): Promise<Driver | null> => {
 
     return await mapDriver(response.results[0])
   } catch (error) {
-    logError("Failed to fetch driver", error, { function: "getDriver" })
+    logError(
+      "Failed to fetch driver",
+      error,
+      { function: "getDriver" },
+      LogModule.CMS
+    )
     return null
   }
 }

@@ -7,7 +7,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { bookingPatchSchema } from "../schema"
 import { getBookingById, updateBooking, deleteBooking, isDateAvailable } from "../store"
-import { logError } from "@/cms/shared/logger"
+import { logError, LogModule } from "@/lib/logger"
 import { requireAuth } from "@/app/api/auth/helpers"
 
 type BookingRouteContext = {
@@ -74,7 +74,7 @@ export const GET = async (
 
     return NextResponse.json(booking, { status: 200 })
   } catch (error) {
-    logError("Error fetching booking", error, { request: request.url, function: "GET" })
+    logError("Error fetching booking", error, { request: request.url, function: "GET" }, LogModule.API)
     return NextResponse.json(
       { error: "Failed to fetch booking" },
       { status: 500 }
@@ -189,7 +189,7 @@ export const PATCH = async (
 
     return NextResponse.json(updated, { status: 200 })
   } catch (error) {
-    logError("Error updating booking", error, { request: request.url, function: "PATCH" })
+    logError("Error updating booking", error, { request: request.url, function: "PATCH" }, LogModule.API)
     
     if (error instanceof SyntaxError) {
       return NextResponse.json(
@@ -260,7 +260,7 @@ export const DELETE = async (
       { status: 200 }
     )
   } catch (error) {
-    logError("Error deleting booking", error, { request: request.url, function: "DELETE" })
+    logError("Error deleting booking", error, { request: request.url, function: "DELETE" }, LogModule.API)
 
     return NextResponse.json(
       { error: "Failed to delete booking" },

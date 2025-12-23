@@ -8,7 +8,7 @@
 import { createClient } from "../client"
 import { mapTour, mapTours } from "./mapper"
 import type { Tour } from "../types"
-import { logError } from "../shared/logger"
+import { logError, LogModule } from "@/lib/logger"
 import * as prismic from "@prismicio/client"
 
 /**
@@ -33,7 +33,12 @@ export const getTourByID = async (id: string): Promise<Tour | null> => {
 
     return await mapTour(document)
   } catch (error) {
-    logError("Failed to fetch tour by ID", error, { tourId: id, function: "getTourByID" })
+    logError(
+      "Failed to fetch tour by ID",
+      error,
+      { tourId: id, function: "getTourByID" },
+      LogModule.CMS
+    )
     return null
   }
 }
@@ -60,7 +65,12 @@ export const getTourByUID = async (uid: string): Promise<Tour | null> => {
 
     return await mapTour(document)
   } catch (error) {
-    logError("Failed to fetch tour by UID", error, { tourUID: uid, function: "getTourByUID" })
+    logError(
+      "Failed to fetch tour by UID",
+      error,
+      { tourUID: uid, function: "getTourByUID" },
+      LogModule.CMS
+    )
     return null
   }
 }
@@ -90,11 +100,16 @@ export const getAllTours = async (options?: {
 
     return await mapTours(response.results)
   } catch (error) {
-    logError("Failed to fetch tours", error, {
-      function: "getAllTours",
-      pageSize: options?.pageSize,
-      page: options?.page,
-    })
+    logError(
+      "Failed to fetch tours",
+      error,
+      {
+        function: "getAllTours",
+        pageSize: options?.pageSize,
+        page: options?.page,
+      },
+      LogModule.CMS
+    )
     return []
   }
 }
@@ -119,7 +134,12 @@ export const getPopularTours = async (): Promise<Tour[]> => {
 
     return await mapTours(response.results)
   } catch (error) {
-    logError("Failed to fetch popular tours", error, { function: "getPopularTours" })
+    logError(
+      "Failed to fetch popular tours",
+      error,
+      { function: "getPopularTours" },
+      LogModule.CMS
+    )
     return []
   }
 };

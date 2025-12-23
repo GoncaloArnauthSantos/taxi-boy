@@ -8,7 +8,7 @@
 import { createClient } from "../client"
 import { mapLocation, mapLocations } from "./mapper"
 import type { Location } from "../types"
-import { logError } from "../shared/logger"
+import { logError, LogModule } from "@/lib/logger"
 
 /**
  * Fetch a Location by ID
@@ -27,7 +27,12 @@ export const getLocationByID = async (id: string): Promise<Location | null> => {
 
     return mapLocation(document)
   } catch (error) {
-    logError("Failed to fetch Location by ID", error, { locationId: id, function: "getLocationByID" })
+    logError(
+      "Failed to fetch Location by ID",
+      error,
+      { locationId: id, function: "getLocationByID" },
+      LogModule.CMS
+    )
     return null
   }
 }
@@ -44,7 +49,12 @@ export const getAllLocations = async (): Promise<Location[]> => {
 
     return mapLocations(response.results)
   } catch (error) {
-    logError("Failed to fetch all locations", error, { function: "getAllLocations" })
+    logError(
+      "Failed to fetch all locations",
+      error,
+      { function: "getAllLocations" },
+      LogModule.CMS
+    )
     return []
   }
 }

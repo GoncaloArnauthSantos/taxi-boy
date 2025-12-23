@@ -8,7 +8,7 @@
 import { createClient } from "../client"
 import { mapVehicle } from "./mapper"
 import type { Vehicle } from "../types"
-import { logError } from "../shared/logger"
+import { logError, LogModule } from "@/lib/logger"
 
 /**
  * Fetch a vehicle by ID
@@ -27,7 +27,12 @@ export const getVehicleByID = async (id: string): Promise<Vehicle | null> => {
 
     return mapVehicle(document)
   } catch (error) {
-    logError("Failed to fetch vehicle by ID", error, { vehicleId: id, function: "getVehicleByID" })
+    logError(
+      "Failed to fetch vehicle by ID",
+      error,
+      { vehicleId: id, function: "getVehicleByID" },
+      LogModule.CMS
+    )
     return null
   }
 }
@@ -49,7 +54,12 @@ export const getVehicleByUID = async (uid: string): Promise<Vehicle | null> => {
 
     return mapVehicle(document)
   } catch (error) {
-    logError("Failed to fetch vehicle by UID", error, { vehicleUID: uid, function: "getVehicleByUID" })
+    logError(
+      "Failed to fetch vehicle by UID",
+      error,
+      { vehicleUID: uid, function: "getVehicleByUID" },
+      LogModule.CMS
+    )
     return null
   }
 }
@@ -81,11 +91,16 @@ export const getAllVehicles = async (options?: {
       .map((doc) => mapVehicle(doc))
       .filter((vehicle): vehicle is Vehicle => vehicle !== null)
   } catch (error) {
-    logError("Failed to fetch vehicles", error, {
-      function: "getAllVehicles",
-      pageSize: options?.pageSize,
-      page: options?.page,
-    })
+    logError(
+      "Failed to fetch vehicles",
+      error,
+      {
+        function: "getAllVehicles",
+        pageSize: options?.pageSize,
+        page: options?.page,
+      },
+      LogModule.CMS
+    )
     return []
   }
 };

@@ -7,7 +7,7 @@
 import { createEmailClient } from "./client";
 import type { Booking } from "@/domain/booking";
 import type { Tour } from "@/cms/types";
-import { logError, logInfo } from "@/cms/shared/logger";
+import { logError, logInfo, LogModule } from "@/lib/logger";
 import { BookingNotificationDriverTemplate } from "./templates/booking-notification-driver";
 import { BookingConfirmationClientTemplate } from "./templates/booking-confirmation-client";
 import { BookingReminderClientTemplate } from "./templates/booking-reminder-client";
@@ -97,13 +97,13 @@ export const sendClientConfirmation = async (
     logInfo("Client confirmation email sent", {
       bookingId: booking.id,
       clientEmail: booking.clientEmail,
-    });
+    }, LogModule.Email);
 
   } catch (error) {
     logError("Failed to send client confirmation email", error, {
       bookingId: booking.id,
       clientEmail: booking.clientEmail,
-    });
+    }, LogModule.Email);
     throw error;
   }
 };
@@ -140,12 +140,12 @@ export const sendDriverNotification = async (
     logInfo("Driver notification email sent", {
       bookingId: booking.id,
       driverEmail: driverEmail,
-    });
+    }, LogModule.Email);
 
   } catch (error) {
     logError("Failed to send driver notification email", error, {
       bookingId: booking.id,
-    });
+    }, LogModule.Email);
     throw error;
   }
 };
@@ -194,12 +194,12 @@ export const sendBookingReminderEmail = async (
     logInfo("Client reminder email sent", {
       bookingId: booking.id,
       clientEmail: booking.clientEmail,
-    });
+    }, LogModule.Email);
   } catch (error) {
     logError("Failed to send client reminder email", error, {
       bookingId: booking.id,
       clientEmail: booking.clientEmail,
-    });
+    }, LogModule.Email);
     throw error;
   }
 };

@@ -10,7 +10,7 @@ import type {
   BookingStatus,
 } from "@/domain/booking";
 import { createSupabaseServerPublicClient, createSupabaseServerClient } from "@/supabase/server";
-import { logError } from "@/cms/shared/logger";
+import { logError, LogModule } from "@/lib/logger";
 import {
   mapBookingToInsert,
   mapBookingPatchToUpdate,
@@ -35,7 +35,7 @@ export const createBooking = async (
       .single();
 
     if (error) {
-      logError("Failed to create booking", error, { input });
+      logError("Failed to create booking", error, { input }, LogModule.Database);
       throw error;
     }
 
@@ -45,7 +45,7 @@ export const createBooking = async (
 
     return mapRowToBooking(data);
   } catch (error) {
-    logError("Error creating booking", error, { input });
+    logError("Error creating booking", error, { input }, LogModule.Database);
     throw error;
   }
 };
@@ -65,7 +65,7 @@ export const getBookingById = async (id: string): Promise<Booking | null> => {
       .limit(1);
 
     if (error) {
-      logError("Failed to fetch booking by ID", error, { bookingId: id });
+      logError("Failed to fetch booking by ID", error, { bookingId: id }, LogModule.Database);
       throw error;
     }
 
@@ -76,7 +76,7 @@ export const getBookingById = async (id: string): Promise<Booking | null> => {
     const [booking] = data;
     return mapRowToBooking(booking);
   } catch (error) {
-    logError("Error fetching booking by ID", error, { bookingId: id });
+    logError("Error fetching booking by ID", error, { bookingId: id }, LogModule.Database);
     throw error;
   }
 };
@@ -149,7 +149,7 @@ export const getAllBookings = async (filters: GetAllBookingsFilters = {}): Promi
     const { data, error } = await query;
 
     if (error) {
-      logError("Failed to fetch bookings", error, { filters });
+      logError("Failed to fetch bookings", error, { filters }, LogModule.Database);
       throw error;
     }
 
@@ -159,7 +159,7 @@ export const getAllBookings = async (filters: GetAllBookingsFilters = {}): Promi
 
     return data.map(mapRowToBooking);
   } catch (error) {
-    logError("Error fetching bookings", error, { filters });
+    logError("Error fetching bookings", error, { filters }, LogModule.Database);
     throw error;
   }
 };
@@ -186,14 +186,14 @@ export const isDateAvailable = async (date: string): Promise<boolean> => {
       .limit(1);
 
     if (error) {
-      logError("Failed to check date availability", error, { date });
+      logError("Failed to check date availability", error, { date }, LogModule.Database);
       throw error;
     }
 
     // Date is available if no bookings found
     return !data || data.length === 0;
   } catch (error) {
-    logError("Error checking date availability", error, { date });
+    logError("Error checking date availability", error, { date }, LogModule.Database);
     throw error;
   }
 };
@@ -219,7 +219,7 @@ export const getUnavailableDates = async (): Promise<Date[]> => {
       .in("status", ["pending", "confirmed"]); // Only active bookings (exclude cancelled)
 
     if (error) {
-      logError("Failed to fetch unavailable dates", error);
+      logError("Failed to fetch unavailable dates", error, undefined, LogModule.Database);
       throw error;
     }
 
@@ -239,7 +239,7 @@ export const getUnavailableDates = async (): Promise<Date[]> => {
       .map((dateStr) => new Date(dateStr))
       .filter((date) => !isNaN(date.getTime())); // Filter out invalid dates
   } catch (error) {
-    logError("Error fetching unavailable dates", error);
+    logError("Error fetching unavailable dates", error, undefined, LogModule.Database);
     throw error;
   }
 };
@@ -266,7 +266,7 @@ export const updateBooking = async (
       .limit(1);
 
     if (error) {
-      logError("Failed to update booking", error, { bookingId: id, patch });
+      logError("Failed to update booking", error, { bookingId: id, patch }, LogModule.Database);
       throw error;
     }
 
@@ -277,7 +277,7 @@ export const updateBooking = async (
     const [booking] = data;
     return mapRowToBooking(booking);
   } catch (error) {
-    logError("Error updating booking", error, { bookingId: id, patch });
+    logError("Error updating booking", error, { bookingId: id, patch }, LogModule.Database);
     throw error;
   }
 };
@@ -300,7 +300,7 @@ export const deleteBooking = async (id: string): Promise<boolean> => {
       .select();
 
     if (error) {
-      logError("Failed to soft delete booking", error, { bookingId: id });
+      logError("Failed to soft delete booking", error, { bookingId: id }, LogModule.Database);
       throw error;
     }
 
@@ -311,7 +311,7 @@ export const deleteBooking = async (id: string): Promise<boolean> => {
 
     return true;
   } catch (error) {
-    logError("Error soft deleting booking", error, { bookingId: id });
+    logError("Error soft deleting booking", error, { bookingId: id }, LogModule.Database);
     throw error;
   }
 };

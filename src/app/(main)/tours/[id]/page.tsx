@@ -6,7 +6,7 @@ import BookingCard from "@/components/tourDetails/BookingCard";
 import Gallery from "@/components/tourDetails/Gallery";
 import { Badge } from "@/components/ui/Badge";
 import { MapPin, Check } from "lucide-react";
-import { logError } from "@/cms/shared/logger";
+import { logError, LogModule } from "@/lib/logger";
 import { getDriverLanguages } from "@/cms/drivers/api";
 
 export const generateStaticParams = async () => {
@@ -18,7 +18,7 @@ export const generateStaticParams = async () => {
   } catch (error) {
     logError("Failed to fetch tours for static generation", error, {
       function: "generateStaticParams",
-    });
+    }, LogModule.CMS);
     return [];
   }
 }

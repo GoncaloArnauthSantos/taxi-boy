@@ -8,7 +8,7 @@
 import { createClient } from "../client"
 import { mapPageSection } from "./mapper"
 import type { PageSection } from "../types"
-import { logError } from "../shared/logger"
+import { logError, LogModule } from "@/lib/logger"
 
 /**
  * Fetch a PageSection by UID
@@ -27,7 +27,12 @@ export const getPageSectionByUID = async (uid: string): Promise<PageSection | nu
 
     return mapPageSection(document)
   } catch (error) {
-    logError("Failed to fetch PageSection by UID", error, { pageSectionUID: uid, function: "getPageSectionByUID" })
+    logError(
+      "Failed to fetch PageSection by UID",
+      error,
+      { pageSectionUID: uid, function: "getPageSectionByUID" },
+      LogModule.CMS
+    )
     return null
   }
 }

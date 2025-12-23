@@ -11,7 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAllBookings } from "../store";
 import { getTourByID } from "@/cms/tours";
 import { sendBookingReminderEmail } from "@/email/send";
-import { logError, logInfo } from "@/cms/shared/logger";
+import { logError, logInfo, LogModule } from "@/lib/logger";
 
 /**
  * Calculate the start and end of "tomorrow" in the server timezone.
@@ -63,7 +63,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
     });
 
     if (bookingsForTomorrow.length === 0) {
-      logInfo("No bookings found for tomorrow. Skipping reminders.");
+      logInfo("No bookings found for tomorrow. Skipping reminders.", undefined, LogModule.API);
       return NextResponse.json(
         { total: 0, sent: 0, failed: 0, skipped: 0 },
         { status: 200 }
@@ -78,7 +78,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
           logInfo("Skipping reminder - tour not found", {
             bookingId: booking.id,
             tourId: booking.tourId,
-          });
+          }, LogModule.API);
 
           return { bookingId: booking.id, status: "skipped_no_tour" as const };
         }
@@ -91,7 +91,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
           logError("Failed to send reminder email", error, {
             bookingId: booking.id,
             tourId: booking.tourId,
-          });
+          }, LogModule.API);
           return { bookingId: booking.id, status: "failed" as const };
         }
       })
@@ -101,12 +101,16 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
     const failed = results.filter((r) => r.status === "failed").length;
     const skipped = results.filter((r) => r.status === "skipped_no_tour").length;
 
-    logInfo("Booking reminders job completed", {
-      total: bookingsForTomorrow.length,
-      sent,
-      failed,
-      skipped,
-    });
+    logInfo(
+      "Booking reminders job completed",
+      {
+        total: bookingsForTomorrow.length,
+        sent,
+        failed,
+        skipped,
+      },
+      LogModule.API
+    );
 
     return NextResponse.json(
       {
@@ -118,10 +122,15 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
       { status: 200 }
     );
   } catch (error) {
-    logError("Error running booking reminders job", error, {
-      request: request.url,
-      function: "GET /api/bookings/reminders",
-    });
+    logError(
+      "Error running booking reminders job",
+      error,
+      {
+        request: request.url,
+        function: "GET /api/bookings/reminders",
+      },
+      LogModule.API
+    );
 
     return NextResponse.json(
       { error: "Failed to process reminders" },
