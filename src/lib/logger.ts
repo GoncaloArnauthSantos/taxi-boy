@@ -1,10 +1,16 @@
 /* eslint-disable no-console */
 /**
  * Application Logger
- * 
+ *
  * Centralized logging utility for the entire application.
  * Supports context-based logging to identify the source of logs (CMS, API, Email, etc.)
+ *
+ * This module is used both on the server (API routes, Server Components)
+ * and on the client (Client Components). Sentry is initialized separately
+ * via its Next.js config files; here we only *use* Sentry when available.
  */
+
+import * as Sentry from "@sentry/nextjs";
 
 interface LogContext {
   [key: string]: unknown;
@@ -26,7 +32,7 @@ export enum LogModule {
 
 /**
  * Log an error with context
- * 
+ *
  * @param message - Error message
  * @param error - Error object or additional context
  * @param context - Additional context (function name, document ID, etc.)
@@ -38,31 +44,41 @@ export const logError = (
   context?: LogContext,
   module?: LogModule
 ): void => {
-  const isDevelopment = process.env.NODE_ENV === "development";
+  const nodeEnv = process.env.NODE_ENV;
+  const isProduction = nodeEnv === "production";
   const modulePrefix = module ? `[${module}]` : "";
 
-  if (isDevelopment) {
-    // In development, log to console with full details
-    console.error(`${modulePrefix} Error: ${message}`, {
-      error,
-      ...context,
-      timestamp: new Date().toISOString(),
-    });
-  } else {
-    // In production, you could send to a logging service
-    // For now, we'll still log to console (Vercel/Next.js will capture these)
-    // TODO: Integrate with logging service (Sentry, LogRocket, etc.)
-    console.error(`${modulePrefix} Error: ${message}`, {
-      error: error instanceof Error ? error.message : String(error),
-      ...context,
-      timestamp: new Date().toISOString(),
-    });
+  // First, log to console (dev, staging, prod)
+  const payload = {
+    error,
+    ...context,
+    timestamp: new Date().toISOString(),
+  };
+
+  console.error(`${modulePrefix} Error: ${message}`, payload);
+
+  // Only send to Sentry in production
+  if (isProduction) {
+    try {
+      Sentry.captureException(error, {
+        tags: {
+          module: module ?? LogModule.App,
+          nodeEnv,
+        },
+        extra: {
+          message,
+          ...context,
+        },
+      });
+    } catch {
+      // Don't let Sentry errors bubble up to the app
+    }
   }
 };
 
 /**
  * Log a warning with context
- * 
+ *
  * @param message - Warning message
  * @param context - Additional context
  * @param module - Optional module name to identify the source
@@ -85,7 +101,7 @@ export const logWarning = (
 
 /**
  * Log info (for debugging)
- * 
+ *
  * @param message - Info message
  * @param context - Additional context
  * @param module - Optional module name to identify the source
@@ -105,4 +121,3 @@ export const logInfo = (
     });
   }
 };
-
