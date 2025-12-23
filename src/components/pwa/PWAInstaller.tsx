@@ -28,7 +28,12 @@ const PWAInstaller = () => {
           registration.update();
         })
         .catch((error) => {
-          logError("Service Worker registration failed", error, { function: "PWAInstaller" }, LogModule.App);
+          logError({
+            message: "Service Worker registration failed",
+            error,
+            context: { function: "PWAInstaller" },
+            module: LogModule.App,
+          });
         });
     }
 

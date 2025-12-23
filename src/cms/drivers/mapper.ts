@@ -53,15 +53,14 @@ export const mapDriver = async (
 
   const mappedPhoto = mapImage(data.photo)
   if (!mappedPhoto) {
-    logError(
-      "Driver photo is missing",
-      undefined,
-      {
+    logError({
+      message: "Driver photo is missing",
+      context: {
         driverId: document.id,
         function: "mapDriver",
       },
-      LogModule.CMS
-    )
+      module: LogModule.CMS,
+    })
 
     throw new Error(`Driver photo is required for driver ${document.id}`)
   }

@@ -27,12 +27,12 @@ export const getPageSectionByUID = async (uid: string): Promise<PageSection | nu
 
     return mapPageSection(document)
   } catch (error) {
-    logError(
-      "Failed to fetch PageSection by UID",
+    logError({
+      message: "Failed to fetch PageSection by UID",
       error,
-      { pageSectionUID: uid, function: "getPageSectionByUID" },
-      LogModule.CMS
-    )
+      context: { pageSectionUID: uid, function: "getPageSectionByUID" },
+      module: LogModule.CMS,
+    })
     return null
   }
 }

@@ -20,12 +20,12 @@ export async function middleware(request: NextRequest) {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    logError(
-      "Supabase env vars missing",
-      new Error("Supabase env vars missing"),
-      { hasUrl: !!supabaseUrl, hasKey: !!supabaseAnonKey },
-      LogModule.App
-    );
+    logError({
+      message: "Supabase env vars missing",
+      error: new Error("Supabase env vars missing"),
+      context: { hasUrl: !!supabaseUrl, hasKey: !!supabaseAnonKey },
+      module: LogModule.App,
+    });
     return response;
   }
 

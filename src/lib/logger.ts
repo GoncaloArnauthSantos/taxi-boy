@@ -16,6 +16,16 @@ interface LogContext {
   [key: string]: unknown;
 }
 
+type BaseLogParams = {
+  message: string;
+  context?: LogContext;
+  module?: LogModule;
+};
+
+type ErrorLogParams = BaseLogParams & {
+  error?: unknown;
+};
+
 /**
  * Log module identifiers
  * Used to categorize and identify the source of log messages
@@ -33,19 +43,19 @@ export enum LogModule {
 /**
  * Log an error with context
  *
- * @param message - Error message
- * @param error - Error object or additional context
- * @param context - Additional context (function name, document ID, etc.)
- * @param module - Optional module name to identify the source (CMS, API, Email, etc.)
+ * @param params.message - Error message
+ * @param params.error - Error object or additional context
+ * @param params.context - Additional context (function name, document ID, etc.)
+ * @param params.module - Optional module name to identify the source (CMS, API, Email, etc.)
  */
-export const logError = (
-  message: string,
-  error?: unknown,
-  context?: LogContext,
-  module?: LogModule
-): void => {
+export const logError = ({
+  message,
+  error,
+  context,
+  module,
+}: ErrorLogParams): void => {
   const nodeEnv = process.env.NODE_ENV;
-  const isProduction = nodeEnv === "production";
+  const shouldSendToSentry = nodeEnv === "production";
   const modulePrefix = module ? `[${module}]` : "";
 
   // First, log to console (dev, staging, prod)
@@ -58,36 +68,38 @@ export const logError = (
   console.error(`${modulePrefix} Error: ${message}`, payload);
 
   // Only send to Sentry in production
-  if (isProduction) {
-    try {
-      Sentry.captureException(error, {
-        tags: {
-          module: module ?? LogModule.App,
-          nodeEnv,
-        },
-        extra: {
-          message,
-          ...context,
-        },
-      });
-    } catch {
-      // Don't let Sentry errors bubble up to the app
-    }
+  if (!shouldSendToSentry) {
+    return;
+  }
+
+  try {
+    Sentry.captureException(error, {
+      tags: {
+        module: module ?? LogModule.App,
+        nodeEnv,
+      },
+      extra: {
+        message,
+        ...context,
+      },
+    });
+  } catch {
+    // Don't let Sentry errors bubble up to the app
   }
 };
 
 /**
  * Log a warning with context
  *
- * @param message - Warning message
- * @param context - Additional context
- * @param module - Optional module name to identify the source
+ * @param params.message - Warning message
+ * @param params.context - Additional context
+ * @param params.module - Optional module name to identify the source
  */
-export const logWarning = (
-  message: string,
-  context?: LogContext,
-  module?: LogModule
-): void => {
+export const logWarning = ({
+  message,
+  context,
+  module,
+}: BaseLogParams): void => {
   const isDevelopment = process.env.NODE_ENV === "development";
   const modulePrefix = module ? `[${module}]` : "";
 
@@ -102,15 +114,15 @@ export const logWarning = (
 /**
  * Log info (for debugging)
  *
- * @param message - Info message
- * @param context - Additional context
- * @param module - Optional module name to identify the source
+ * @param params.message - Info message
+ * @param params.context - Additional context
+ * @param params.module - Optional module name to identify the source
  */
-export const logInfo = (
-  message: string,
-  context?: LogContext,
-  module?: LogModule
-): void => {
+export const logInfo = ({
+  message,
+  context,
+  module,
+}: BaseLogParams): void => {
   const isDevelopment = process.env.NODE_ENV === "development";
   const modulePrefix = module ? `[${module}]` : "";
 

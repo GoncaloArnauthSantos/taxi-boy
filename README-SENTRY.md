@@ -18,17 +18,27 @@ Esta app está integrada com o [Sentry](https://sentry.io/) para monitorizar err
 
 Define estas variáveis em `.env.local` (dev) e em Vercel (prod/preview):
 
+**Server-side (API routes, Server Components, Edge Runtime):**
 ```env
 SENTRY_DSN=PASTE_AQUI_O_DSN_DO_SENTRY
 SENTRY_ENVIRONMENT=development        # ex.: development, preview, production
 SENTRY_TRACES_SAMPLE_RATE=1          # dev: 1, prod: algo como 0.1
 ```
 
+**Client-side (browser):**
+```env
+NEXT_PUBLIC_SENTRY_DSN=PASTE_AQUI_O_DSN_DO_SENTRY
+NEXT_PUBLIC_SENTRY_ENVIRONMENT=development
+NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE=1
+```
+
 Notas:
 
-- A app usa apenas `SENTRY_DSN` (o `NEXT_PUBLIC_SENTRY_DSN` não é necessário).
-- `SENTRY_ENVIRONMENT` é o nome que vais ver no dashboard do Sentry.
-- `SENTRY_TRACES_SAMPLE_RATE` controla a amostragem de performance/traces.
+- **Server-side**: Usa `SENTRY_DSN` (sem `NEXT_PUBLIC_`) porque estas variáveis não são expostas ao browser.
+- **Client-side**: Usa `NEXT_PUBLIC_SENTRY_DSN` porque o Next.js só expõe variáveis com este prefixo ao browser.
+- `SENTRY_ENVIRONMENT` / `NEXT_PUBLIC_SENTRY_ENVIRONMENT` é o nome que vais ver no dashboard do Sentry.
+- `SENTRY_TRACES_SAMPLE_RATE` / `NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE` controla a amostragem de performance/traces.
+- **Importante**: O DSN do Sentry é público e seguro de expor no client-side. Não contém informações sensíveis.
 
 ### 3. Como funcionam os logs
 

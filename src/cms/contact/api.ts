@@ -26,12 +26,12 @@ export const getContacts = async (): Promise<Contact | null> => {
 
     return mapContacts(response.results[0])
   } catch (error) {
-    logError(
-      "Failed to fetch Contacts",
+    logError({
+      message: "Failed to fetch Contacts",
       error,
-      { function: "getContacts" },
-      LogModule.CMS
-    )
+      context: { function: "getContacts" },
+      module: LogModule.CMS,
+    })
     return null
   }
 }

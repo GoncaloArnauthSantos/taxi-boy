@@ -5,21 +5,24 @@
 
 import * as Sentry from "@sentry/nextjs";
 
-const SENTRY_DSN = process.env.SENTRY_DSN 
+const SENTRY_DSN = process.env.SENTRY_DSN;
 
 const TRACES_SAMPLE_RATE =
   process.env.SENTRY_TRACES_SAMPLE_RATE !== undefined
     ? Number(process.env.SENTRY_TRACES_SAMPLE_RATE)
     : 1;
 
-Sentry.init({
-  dsn: SENTRY_DSN,
+// Only initialize Sentry if DSN is provided
+if (SENTRY_DSN) {
+  Sentry.init({
+    dsn: SENTRY_DSN,
 
-  environment: process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV,
+    environment: process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV,
 
-  // For edge features we reuse the same sampling strategy.
-  tracesSampleRate: TRACES_SAMPLE_RATE,
+    // For edge features we reuse the same sampling strategy.
+    tracesSampleRate: TRACES_SAMPLE_RATE,
 
-  // Keep PII behaviour aligned with server config.
-  sendDefaultPii: true,
-});
+    // Keep PII behaviour aligned with server config.
+    sendDefaultPii: true,
+  });
+}

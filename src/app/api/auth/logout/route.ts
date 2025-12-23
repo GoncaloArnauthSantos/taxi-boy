@@ -23,7 +23,11 @@ export const POST = async (_request: NextRequest): Promise<NextResponse> => {
     await supabase.auth.signOut();
 
     if (user) {
-      logInfo("Admin logout successful", { userId: user.id }, LogModule.Auth);
+      logInfo({
+        message: "Admin logout successful",
+        context: { userId: user.id },
+        module: LogModule.Auth,
+      });
     }
 
     return NextResponse.json({ message: "Logout successful" }, { status: 200 });

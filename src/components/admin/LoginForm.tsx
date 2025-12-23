@@ -8,7 +8,13 @@ import * as z from "zod";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/Card";
 import { createSupabaseClient } from "@/supabase/client";
 
 // Login form schema
@@ -123,4 +129,3 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
-

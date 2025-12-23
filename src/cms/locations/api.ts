@@ -27,12 +27,12 @@ export const getLocationByID = async (id: string): Promise<Location | null> => {
 
     return mapLocation(document)
   } catch (error) {
-    logError(
-      "Failed to fetch Location by ID",
+    logError({
+      message: "Failed to fetch Location by ID",
       error,
-      { locationId: id, function: "getLocationByID" },
-      LogModule.CMS
-    )
+      context: { locationId: id, function: "getLocationByID" },
+      module: LogModule.CMS,
+    })
     return null
   }
 }
@@ -49,12 +49,12 @@ export const getAllLocations = async (): Promise<Location[]> => {
 
     return mapLocations(response.results)
   } catch (error) {
-    logError(
-      "Failed to fetch all locations",
+    logError({
+      message: "Failed to fetch all locations",
       error,
-      { function: "getAllLocations" },
-      LogModule.CMS
-    )
+      context: { function: "getAllLocations" },
+      module: LogModule.CMS,
+    })
     return []
   }
 }
