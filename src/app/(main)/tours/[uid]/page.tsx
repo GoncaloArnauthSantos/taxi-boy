@@ -1,5 +1,5 @@
-import { getAllTours } from "@/cms/tours";
-import { getTourByID } from "@/cms/tours";
+import { Metadata } from "next";
+import { getAllTours, getTourByUID } from "@/cms/tours";
 import { notFound } from "next/navigation";
 import Hero from "@/components/tourDetails/Hero";
 import BookingCard from "@/components/tourDetails/BookingCard";
@@ -8,13 +8,17 @@ import { Badge } from "@/components/ui/Badge";
 import { MapPin, Check } from "lucide-react";
 import { logError, LogModule } from "@/lib/logger";
 import { getDriverLanguages } from "@/cms/drivers/api";
+import { getBaseUrl, generateOpenGraphMetadata, generateTwitterMetadata } from "@/lib/seo";
+import StructuredData from "@/components/seo/StructuredData";
 
 export const generateStaticParams = async () => {
   try {
     const tours = await getAllTours();
-    return tours.map((tour) => ({
-      id: tour.id,
-    }));
+    return tours
+      .filter((tour) => tour.uid) // Only include tours with UID
+      .map((tour) => ({
+        uid: tour.uid,
+      }));
   } catch (error) {
     logError({
       message: "Failed to fetch tours for static generation",
@@ -29,13 +33,63 @@ export const generateStaticParams = async () => {
 }
 
 type Props = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ uid: string }>;
 };
 
+/**
+ * Generate metadata for tour detail page
+ */
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { uid } = await params;
+  const tour = await getTourByUID(uid);
+
+  if (!tour) {
+    return {
+      title: "Tour Not Found",
+    };
+  }
+
+  const baseUrl = getBaseUrl();
+  const tourUrl = `${baseUrl}/tours/${tour.uid}`;
+  const imageUrl = tour.bannerImage?.url || `${baseUrl}/og-image.jpg`;
+  const locationsText = tour.locations.map((loc) => loc.value).join(", ");
+
+  return {
+    title: tour.title,
+    description: tour.description || tour.longDescription,
+    keywords: [
+      "Lisbon",
+      "taxi tours",
+      tour.title,
+      ...tour.locations.map((loc) => loc.value),
+    ],
+    openGraph: generateOpenGraphMetadata({
+      title: tour.title,
+      description: tour.description || tour.longDescription,
+      url: tourUrl,
+      image: imageUrl,
+      type: "article",
+    }),
+    twitter: generateTwitterMetadata({
+      title: tour.title,
+      description: tour.description || tour.longDescription,
+      image: imageUrl,
+    }),
+    alternates: {
+      canonical: tourUrl,
+    },
+    other: {
+      "article:published_time": new Date().toISOString(),
+      "article:section": "Tours",
+      "article:tag": locationsText,
+    },
+  };
+}
+
 const TourDetailsPage = async ({ params }: Props) => {
-  const { id } = await params;
+  const { uid } = await params;
   const [tour, languages] = await Promise.all([
-    getTourByID(id),
+    getTourByUID(uid),
     getDriverLanguages(),
   ]);
 
@@ -47,6 +101,7 @@ const TourDetailsPage = async ({ params }: Props) => {
 
   return (
     <>
+      <StructuredData tour={tour} />
       <section className="relative h-[50vh] lg:h-[60vh] overflow-hidden">
         <Hero tour={tour} />
       </section>

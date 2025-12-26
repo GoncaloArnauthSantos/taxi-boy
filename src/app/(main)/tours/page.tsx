@@ -1,9 +1,32 @@
+import { Metadata } from "next"
 import { getAllTours } from "@/cms/tours"
 import { getAllLocations } from "@/cms/locations"
 import { getPageSectionByUID } from "@/cms/page-sections"
 import ToursPageClient from "@/components/tours/ToursPageClient"
 import ToursPageClientSkeleton from "@/components/tours/ToursPageClientSkeleton"
 import { Suspense } from "react"
+import { getBaseUrl, generateOpenGraphMetadata, generateTwitterMetadata } from "@/lib/seo"
+
+export const metadata: Metadata = {
+  title: "Tours",
+  description:
+    "Explore our collection of personalized taxi tours in Lisbon. From city highlights to hidden gems, discover the perfect tour for your visit to Portugal's capital.",
+  keywords: ["Lisbon tours", "taxi tours", "Portugal", "custom tours", "private tours"],
+  openGraph: generateOpenGraphMetadata({
+    title: "Lisbon Taxi Tours - Explore Our Tours",
+    description:
+      "Explore our collection of personalized taxi tours in Lisbon. From city highlights to hidden gems, discover the perfect tour for your visit.",
+    url: `${getBaseUrl()}/tours`,
+  }),
+  twitter: generateTwitterMetadata({
+    title: "Lisbon Taxi Tours - Explore Our Tours",
+    description:
+      "Explore our collection of personalized taxi tours in Lisbon. From city highlights to hidden gems, discover the perfect tour for your visit.",
+  }),
+  alternates: {
+    canonical: `${getBaseUrl()}/tours`,
+  },
+}
 
 /**
  * Server Component that fetches tours and page content from CMS

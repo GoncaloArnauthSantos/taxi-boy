@@ -39,7 +39,7 @@ const POST = async (request: NextRequest) => {
     // Revalidate specific pages that use Prismic data
     revalidatePath("/", "page")           // Home page (uses ContactUsWithDriver)
     revalidatePath("/tours", "page")       // Tours listing page
-    revalidatePath("/tours/[id]", "page")  // Tour detail pages (dynamic route)
+    revalidatePath("/tours/[uid]", "page")  // Tour detail pages (dynamic route)
     
     return NextResponse.json({
       revalidated: true,
