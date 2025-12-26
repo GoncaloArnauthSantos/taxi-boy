@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Download, Smartphone } from "lucide-react";
+import { logError, LogModule } from "@/lib/logger";
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -27,8 +28,12 @@ const PWAInstaller = () => {
           registration.update();
         })
         .catch((error) => {
-          // eslint-disable-next-line no-console
-          console.error("Service Worker registration failed:", error);
+          logError({
+            message: "Service Worker registration failed",
+            error,
+            context: { function: "PWAInstaller" },
+            module: LogModule.App,
+          });
         });
     }
 

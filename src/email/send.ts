@@ -7,7 +7,7 @@
 import { createEmailClient } from "./client";
 import type { Booking } from "@/domain/booking";
 import type { Tour } from "@/cms/types";
-import { logError, logInfo } from "@/cms/shared/logger";
+import { logError, logInfo, LogModule } from "@/lib/logger";
 import { BookingNotificationDriverTemplate } from "./templates/booking-notification-driver";
 import { BookingConfirmationClientTemplate } from "./templates/booking-confirmation-client";
 import { BookingReminderClientTemplate } from "./templates/booking-reminder-client";
@@ -94,15 +94,24 @@ export const sendClientConfirmation = async (
       html,
     });
 
-    logInfo("Client confirmation email sent", {
-      bookingId: booking.id,
-      clientEmail: booking.clientEmail,
+    logInfo({
+      message: "Client confirmation email sent",
+      context: {
+        bookingId: booking.id,
+        clientEmail: booking.clientEmail,
+      },
+      module: LogModule.Email,
     });
 
   } catch (error) {
-    logError("Failed to send client confirmation email", error, {
-      bookingId: booking.id,
-      clientEmail: booking.clientEmail,
+    logError({
+      message: "Failed to send client confirmation email",
+      error,
+      context: {
+        bookingId: booking.id,
+        clientEmail: booking.clientEmail,
+      },
+      module: LogModule.Email,
     });
     throw error;
   }
@@ -137,14 +146,23 @@ export const sendDriverNotification = async (
       html,
     });
 
-    logInfo("Driver notification email sent", {
-      bookingId: booking.id,
-      driverEmail: driverEmail,
+    logInfo({
+      message: "Driver notification email sent",
+      context: {
+        bookingId: booking.id,
+        driverEmail: driverEmail,
+      },
+      module: LogModule.Email,
     });
 
   } catch (error) {
-    logError("Failed to send driver notification email", error, {
-      bookingId: booking.id,
+    logError({
+      message: "Failed to send driver notification email",
+      error,
+      context: {
+        bookingId: booking.id,
+      },
+      module: LogModule.Email,
     });
     throw error;
   }
@@ -191,14 +209,23 @@ export const sendBookingReminderEmail = async (
       html,
     });
 
-    logInfo("Client reminder email sent", {
-      bookingId: booking.id,
-      clientEmail: booking.clientEmail,
+    logInfo({
+      message: "Client reminder email sent",
+      context: {
+        bookingId: booking.id,
+        clientEmail: booking.clientEmail,
+      },
+      module: LogModule.Email,
     });
   } catch (error) {
-    logError("Failed to send client reminder email", error, {
-      bookingId: booking.id,
-      clientEmail: booking.clientEmail,
+    logError({
+      message: "Failed to send client reminder email",
+      error,
+      context: {
+        bookingId: booking.id,
+        clientEmail: booking.clientEmail,
+      },
+      module: LogModule.Email,
     });
     throw error;
   }

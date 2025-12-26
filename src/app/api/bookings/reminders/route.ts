@@ -11,7 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAllBookings } from "../store";
 import { getTourByID } from "@/cms/tours";
 import { sendBookingReminderEmail } from "@/email/send";
-import { logError, logInfo } from "@/cms/shared/logger";
+import { logError, logInfo, LogModule } from "@/lib/logger";
 
 /**
  * Calculate the start and end of "tomorrow" in the server timezone.
@@ -63,7 +63,10 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
     });
 
     if (bookingsForTomorrow.length === 0) {
-      logInfo("No bookings found for tomorrow. Skipping reminders.");
+      logInfo({
+        message: "No bookings found for tomorrow. Skipping reminders.",
+        module: LogModule.API,
+      });
       return NextResponse.json(
         { total: 0, sent: 0, failed: 0, skipped: 0 },
         { status: 200 }
@@ -75,9 +78,13 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
         const tour = await getTourByID(booking.tourId);
 
         if (!tour) {
-          logInfo("Skipping reminder - tour not found", {
-            bookingId: booking.id,
-            tourId: booking.tourId,
+          logInfo({
+            message: "Skipping reminder - tour not found",
+            context: {
+              bookingId: booking.id,
+              tourId: booking.tourId,
+            },
+            module: LogModule.API,
           });
 
           return { bookingId: booking.id, status: "skipped_no_tour" as const };
@@ -88,9 +95,14 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
           await sendBookingReminderEmail(booking, tour);
           return { bookingId: booking.id, status: "sent" as const };
         } catch (error) {
-          logError("Failed to send reminder email", error, {
-            bookingId: booking.id,
-            tourId: booking.tourId,
+          logError({
+            message: "Failed to send reminder email",
+            error,
+            context: {
+              bookingId: booking.id,
+              tourId: booking.tourId,
+            },
+            module: LogModule.API,
           });
           return { bookingId: booking.id, status: "failed" as const };
         }
@@ -101,11 +113,15 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
     const failed = results.filter((r) => r.status === "failed").length;
     const skipped = results.filter((r) => r.status === "skipped_no_tour").length;
 
-    logInfo("Booking reminders job completed", {
-      total: bookingsForTomorrow.length,
-      sent,
-      failed,
-      skipped,
+    logInfo({
+      message: "Booking reminders job completed",
+      context: {
+        total: bookingsForTomorrow.length,
+        sent,
+        failed,
+        skipped,
+      },
+      module: LogModule.API,
     });
 
     return NextResponse.json(
@@ -118,9 +134,14 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
       { status: 200 }
     );
   } catch (error) {
-    logError("Error running booking reminders job", error, {
-      request: request.url,
-      function: "GET /api/bookings/reminders",
+    logError({
+      message: "Error running booking reminders job",
+      error,
+      context: {
+        request: request.url,
+        function: "GET /api/bookings/reminders",
+      },
+      module: LogModule.API,
     });
 
     return NextResponse.json(

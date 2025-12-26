@@ -1,135 +1,151 @@
 /**
  * Bookings API Route
- * 
+ *
  * Handles GET (list with filters) and POST (create) operations for bookings.
  */
 
-import { NextRequest, NextResponse } from "next/server"
-import { bookingFormSchema, transformFormToBooking } from "./schema"
-import { createBooking, getAllBookings, GetAllBookingsFilters, isDateAvailable } from "./store"
-import { getTourByID } from "@/cms/tours"
-import { logError, logInfo } from "@/cms/shared/logger"
-import { BookingPaymentStatus, BookingStatus } from "@/domain/booking"
-import { sendBookingConfirmationEmails } from "@/email/send"
+import { NextRequest, NextResponse } from "next/server";
+import { bookingFormSchema, transformFormToBooking } from "./schema";
+import {
+  createBooking,
+  getAllBookings,
+  GetAllBookingsFilters,
+  isDateAvailable,
+} from "./store";
+import { getTourByID } from "@/cms/tours";
+import { logError, logInfo, LogModule } from "@/lib/logger";
+import { BookingPaymentStatus, BookingStatus } from "@/domain/booking";
+import { sendBookingConfirmationEmails } from "@/email/send";
 
-const VALID_STATUSES: BookingStatus[] = ["pending", "confirmed", "cancelled"]
-const VALID_PAYMENT_STATUSES: BookingPaymentStatus[] = ["pending", "paid", "failed"]
+const VALID_STATUSES: BookingStatus[] = ["pending", "confirmed", "cancelled"];
+const VALID_PAYMENT_STATUSES: BookingPaymentStatus[] = [
+  "pending",
+  "paid",
+  "failed",
+];
 
 /**
  * Parse and validate query parameters for bookings filtering
- * 
+ *
  * @param searchParams - URL search parameters from the request
  * @returns Object with validated filter parameters or throws error for conflicting filters
- * 
+ *
  * @example
  * // Query: ?status=pending&future=true
  * // Returns: { status: "pending", future: true }
- * 
+ *
  * @throws {Error} If conflicting date filters are provided (future=true & past=true)
  */
-const parseBookingsQuery = (searchParams: URLSearchParams): GetAllBookingsFilters => {
-  const filters: GetAllBookingsFilters = {}
+const parseBookingsQuery = (
+  searchParams: URLSearchParams
+): GetAllBookingsFilters => {
+  const filters: GetAllBookingsFilters = {};
 
   // Validate and parse status
-  const statusParam = searchParams.get("status")
+  const statusParam = searchParams.get("status");
   if (statusParam && VALID_STATUSES.includes(statusParam as BookingStatus)) {
-    filters.status = statusParam as BookingStatus
+    filters.status = statusParam as BookingStatus;
   }
 
   // Validate and parse paymentStatus
-  const paymentStatusParam = searchParams.get("paymentStatus")
+  const paymentStatusParam = searchParams.get("paymentStatus");
   if (
     paymentStatusParam &&
     VALID_PAYMENT_STATUSES.includes(paymentStatusParam as BookingPaymentStatus)
   ) {
-    filters.paymentStatus = paymentStatusParam as BookingPaymentStatus
+    filters.paymentStatus = paymentStatusParam as BookingPaymentStatus;
   }
 
   // Parse future (boolean from string)
-  const futureParam = searchParams.get("future")
-  let futureValue: boolean | undefined
+  const futureParam = searchParams.get("future");
+  let futureValue: boolean | undefined;
   if (futureParam === "true") {
-    futureValue = true
+    futureValue = true;
   } else if (futureParam === "false") {
-    futureValue = false
+    futureValue = false;
   }
 
   // Parse past (boolean from string)
-  const pastParam = searchParams.get("past")
-  let pastValue: boolean | undefined
+  const pastParam = searchParams.get("past");
+  let pastValue: boolean | undefined;
   if (pastParam === "true") {
-    pastValue = true
+    pastValue = true;
   } else if (pastParam === "false") {
-    pastValue = false
+    pastValue = false;
   }
 
   // Validate: cannot have both future=true and past=true (conflicting filters)
   if (futureValue === true && pastValue === true) {
     throw new Error(
       "Conflicting date filters: cannot filter for both future=true and past=true. " +
-      "Use only one date filter or use future=false with past=true for past bookings."
-    )
+        "Use only one date filter or use future=false with past=true for past bookings."
+    );
   }
 
   // Assign validated values
   if (futureValue !== undefined) {
-    filters.future = futureValue
+    filters.future = futureValue;
   }
   if (pastValue !== undefined) {
-    filters.past = pastValue
+    filters.past = pastValue;
   }
 
-  return filters
-}
+  return filters;
+};
 
 /**
  * GET /api/bookings
  *
  * List all bookings with optional filters.
- * 
+ *
  * @param request - Next.js request object
  * @param request.nextUrl.searchParams - Query parameters for filtering
  * @param {string} [request.nextUrl.searchParams.status] - Filter by status: "pending" | "confirmed" | "cancelled"
  * @param {string} [request.nextUrl.searchParams.paymentStatus] - Filter by payment status: "pending" | "paid" | "failed"
  * @param {string} [request.nextUrl.searchParams.future] - Filter for future bookings: "true" | "false" (date >= today)
  * @param {string} [request.nextUrl.searchParams.past] - Filter for past bookings: "true" | "false" (date < today)
- * 
+ *
  * @returns {Promise<NextResponse>} Response with array of bookings
  * @returns {number} status - HTTP status code (200 on success, 500 on error)
  * @returns {Booking[]} bookings - Array of booking objects matching the filters
  * @returns {Object} error - Error object if request fails
- * 
+ *
  * @example
  * // Get all future paid bookings
  * GET /api/bookings?paymentStatus=paid&future=true
- * 
+ *
  * @example
  * // Get all bookings
  * GET /api/bookings
  */
 export const GET = async (request: NextRequest): Promise<NextResponse> => {
   try {
-    const filters = parseBookingsQuery(request.nextUrl.searchParams)
+    const filters = parseBookingsQuery(request.nextUrl.searchParams);
 
-    const bookings = await getAllBookings(filters)
+    const bookings = await getAllBookings(filters);
 
-    return NextResponse.json(bookings, { status: 200 })
+    return NextResponse.json(bookings, { status: 200 });
   } catch (error) {
-    logError("Error fetching bookings", error, { request: request.url, function: "GET" })
+    logError({
+      message: "Error fetching bookings",
+      error,
+      context: { request: request.url, function: "GET" },
+      module: LogModule.API,
+    });
 
     return NextResponse.json(
       { error: "Failed to fetch bookings" },
       { status: 500 }
-    )
+    );
   }
-}
+};
 
 /**
  * POST /api/bookings
  *
  * Create a new booking from form data.
  * Validates the input, fetches tour information, and creates a booking.
- * 
+ *
  * @param request - Next.js request object
  * @param request.body - JSON body containing booking form data
  * @param {string} request.body.name - Client name (2-100 chars, letters, spaces, hyphens, apostrophes, periods)
@@ -141,7 +157,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
  * @param {string} request.body.tourId - Tour ID (must exist in CMS)
  * @param {string|Date} request.body.date - Booking date (ISO string or Date, must be today or future)
  * @param {string} [request.body.message] - Optional message (max 1000 chars)
- * 
+ *
  * @returns {Promise<NextResponse>} Response with created booking or error
  * @returns {number} status - HTTP status code
  *   - 201: Booking created successfully
@@ -152,37 +168,34 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
  * @returns {Booking} booking - Created booking object (on success)
  * @returns {Object} error - Error message (on failure)
  * @returns {Array} [error.details] - Validation error details (on validation failure)
- * 
+ *
  */
 export const POST = async (request: NextRequest): Promise<NextResponse> => {
   try {
-    const body = await request.json()
-    
+    const body = await request.json();
+
     // Convert date string back to Date object for validation
     if (body.date && typeof body.date === "string") {
-      body.date = new Date(body.date)
+      body.date = new Date(body.date);
     }
 
     // Validate form data
-    const validationResult = bookingFormSchema.safeParse(body)
+    const validationResult = bookingFormSchema.safeParse(body);
 
     if (!validationResult.success) {
       return NextResponse.json(
         { error: "Validation failed", details: validationResult.error.issues },
         { status: 400 }
-      )
+      );
     }
 
-    const formData = validationResult.data
+    const formData = validationResult.data;
 
     // Get tour to extract price
-    const tour = await getTourByID(formData.tourId)
-    
+    const tour = await getTourByID(formData.tourId);
+
     if (!tour) {
-      return NextResponse.json(
-        { error: "Tour not found" },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: "Tour not found" }, { status: 404 });
     }
 
     // Validate that the selected date is available
@@ -191,46 +204,60 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
     if (!dateAvailable) {
       return NextResponse.json(
-        { 
+        {
           error: "Selected date is not available",
-          details: "This date already has a booking. Please select another date."
+          details:
+            "This date already has a booking. Please select another date.",
         },
         { status: 409 } // 409 Conflict - resource already exists
-      )
+      );
     }
 
     // Transform form data to booking
-    const bookingInput = transformFormToBooking(formData, tour.price)
+    const bookingInput = transformFormToBooking(formData, tour.price);
 
     // Create booking
-    const booking = await createBooking(bookingInput)
+    const booking = await createBooking(bookingInput);
 
-    logInfo("Booking created successfully", { bookingId: booking.id })
+    logInfo({
+      message: "Booking created successfully",
+      context: { bookingId: booking.id },
+      module: LogModule.API,
+    });
 
     // Send confirmation emails asynchronously (fire and forget)
     // Don't block the response if email sending fails
     sendBookingConfirmationEmails(booking, tour).catch((error) => {
-      logError("Failed to send booking confirmation emails", error, {
-        bookingId: booking.id,
-        clientEmail: booking.clientEmail,
+      logError({
+        message: "Failed to send booking confirmation emails",
+        error,
+        context: {
+          bookingId: booking.id,
+          clientEmail: booking.clientEmail,
+        },
+        module: LogModule.API,
       });
     });
 
-    return NextResponse.json(booking, { status: 201 })
+    return NextResponse.json(booking, { status: 201 });
   } catch (error) {
-    logError("Error creating booking", error, { request: request.url })
-    
+    logError({
+      message: "Error creating booking",
+      error,
+      context: { request: request.url },
+      module: LogModule.API,
+    });
+
     if (error instanceof SyntaxError) {
       return NextResponse.json(
         { error: "Invalid JSON in request body" },
         { status: 400 }
-      )
+      );
     }
 
     return NextResponse.json(
       { error: "Failed to create booking" },
       { status: 500 }
-    )
+    );
   }
-}
-
+};

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { LogOut, Shield } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
-import { logError } from "@/cms/shared/logger";
+import { logError, LogModule } from "@/lib/logger";
 import { createSupabaseClient } from "@/supabase/client";
 
 type Props = {
@@ -21,7 +21,11 @@ const AdminLayoutHeader = ({ user }: Props) => {
       router.push("/admin/login");
       router.refresh();
     } catch (error) {
-      logError("Logout error:", error);
+      logError({
+        message: "Logout error",
+        error,
+        module: LogModule.Auth,
+      });
     }
   };
 

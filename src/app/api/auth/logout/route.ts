@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/supabase/server";
-import { logInfo } from "@/cms/shared/logger";
+import { logInfo, LogModule } from "@/lib/logger";
 
 /**
  * POST /api/auth/logout
@@ -23,7 +23,11 @@ export const POST = async (_request: NextRequest): Promise<NextResponse> => {
     await supabase.auth.signOut();
 
     if (user) {
-      logInfo("Admin logout successful", { userId: user.id });
+      logInfo({
+        message: "Admin logout successful",
+        context: { userId: user.id },
+        module: LogModule.Auth,
+      });
     }
 
     return NextResponse.json({ message: "Logout successful" }, { status: 200 });

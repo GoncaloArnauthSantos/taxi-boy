@@ -16,7 +16,7 @@ import FormSelect from "./FormSelect";
 import FormDatePicker from "./FormDatePicker";
 import { bookingFormSchema } from "@/app/api/bookings/schema";
 import { createBooking, BookingApiError } from "@/client/api/bookings";
-import { logError } from "@/cms/shared/logger";
+import { logError, LogModule } from "@/lib/logger";
 
 type Props = {
   setSubmitted: (submitted: boolean) => void;
@@ -54,7 +54,12 @@ const BookingForm = ({ setSubmitted, tours, languages, unavailableDates }: Props
       setSubmitted(true);
       reset();
     } catch (error) {
-      logError("Error submitting booking", error, { formData: formData, function: "onSubmit" });
+      logError({
+        message: "Error submitting booking",
+        error,
+        context: { formData: formData, function: "onSubmit" },
+        module: LogModule.Booking,
+      });
       
       const errorMessage =
         error instanceof BookingApiError

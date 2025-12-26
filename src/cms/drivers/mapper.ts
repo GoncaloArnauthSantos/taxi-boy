@@ -8,7 +8,7 @@ import * as prismic from "@prismicio/client"
 import type { Driver, Vehicle } from "../types"
 import { asText, mapImage } from "../shared"
 import { getVehicleByID, mapVehicle } from "../vehicles"
-import { logError } from "../shared/logger"
+import { logError, LogModule } from "@/lib/logger"
 
 /**
  * Map a Prismic Driver document to our Driver type
@@ -53,9 +53,13 @@ export const mapDriver = async (
 
   const mappedPhoto = mapImage(data.photo)
   if (!mappedPhoto) {
-    logError("Driver photo is missing", undefined, {
-      driverId: document.id,
-      function: "mapDriver",
+    logError({
+      message: "Driver photo is missing",
+      context: {
+        driverId: document.id,
+        function: "mapDriver",
+      },
+      module: LogModule.CMS,
     })
 
     throw new Error(`Driver photo is required for driver ${document.id}`)

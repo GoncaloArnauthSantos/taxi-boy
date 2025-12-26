@@ -8,7 +8,7 @@
 import { createClient } from "../client"
 import { mapWhyChooseUs } from "./mapper"
 import type { WhyChooseUs } from "../types"
-import { logError } from "../shared/logger"
+import { logError, LogModule } from "@/lib/logger"
 
 /**
  * Fetch the first WhyChooseUs (useful for single-instance scenarios)
@@ -33,7 +33,12 @@ export const getWhyChooseUs = async (): Promise<WhyChooseUs | null> => {
 
     return await mapWhyChooseUs(response.results[0])
   } catch (error) {
-    logError("Failed to fetch WhyChooseUs", error, { function: "getWhyChooseUs" })
+    logError({
+      message: "Failed to fetch WhyChooseUs",
+      error,
+      context: { function: "getWhyChooseUs" },
+      module: LogModule.CMS,
+    })
     return null
   }
 }

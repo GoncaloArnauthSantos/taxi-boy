@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { logError, logInfo } from "@/cms/shared/logger";
+import { logError, logInfo, LogModule } from "@/lib/logger";
 import { createSupabaseServerClient } from "@/supabase/server";
 
 /**
@@ -39,21 +39,34 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
     });
 
     if (error) {
-      logError("Login failed", error, { email });
+      logError({
+        message: "Login failed",
+        error,
+        context: { email },
+        module: LogModule.Auth,
+      });
       return NextResponse.json(
         { error: "Invalid email or password" },
         { status: 401 }
       );
     }
 
-    logInfo("Admin login successful", { userId: data.user.id, email });
+    logInfo({
+      message: "Admin login successful",
+      context: { userId: data.user.id, email },
+      module: LogModule.Auth,
+    });
 
     return NextResponse.json(
       { message: "Login successful", user: data.user },
       { status: 200 }
     );
   } catch (error) {
-    logError("Error during login", error);
+    logError({
+      message: "Error during login",
+      error,
+      module: LogModule.Auth,
+    });
 
     if (error instanceof SyntaxError) {
       return NextResponse.json(

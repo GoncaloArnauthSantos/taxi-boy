@@ -5,5 +5,7 @@
  */
 
 export { asText, asHTML, mapImage } from "./mappers"
-export { logError, logWarning, logInfo } from "./logger"
+// Re-export logger from lib for backward compatibility
+// All imports should now use @/lib/logger directly with appropriate module context
+export { logError, logWarning, logInfo } from "@/lib/logger"
 

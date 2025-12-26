@@ -7,7 +7,7 @@
 
 import { createClient } from "../client"
 import mapContacts from "./mapper"
-import { logError } from "../shared/logger"
+import { logError, LogModule } from "@/lib/logger"
 import type { Contact } from "../types"
 
 /**
@@ -26,7 +26,12 @@ export const getContacts = async (): Promise<Contact | null> => {
 
     return mapContacts(response.results[0])
   } catch (error) {
-    logError("Failed to fetch Contacts", error, { function: "getContacts" })
+    logError({
+      message: "Failed to fetch Contacts",
+      error,
+      context: { function: "getContacts" },
+      module: LogModule.CMS,
+    })
     return null
   }
 }

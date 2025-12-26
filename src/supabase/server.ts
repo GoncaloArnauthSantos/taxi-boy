@@ -13,7 +13,7 @@
  * (useful for Row-Level Security policies).
  */
 
-import { logError } from "@/cms/shared/logger";
+import { logError, LogModule } from "@/lib/logger";
 import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
@@ -70,7 +70,12 @@ export const createSupabaseServerClient = async () => {
             cookieStore.set(name, value, options)
           );
         } catch (error) {
-          logError("Error setting cookies", error, { cookiesToSet });
+          logError({
+            message: "Error setting cookies",
+            error,
+            context: { cookiesToSet },
+            module: LogModule.Database,
+          });
         }
       },
     },
