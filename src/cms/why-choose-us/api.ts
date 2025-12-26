@@ -33,12 +33,12 @@ export const getWhyChooseUs = async (): Promise<WhyChooseUs | null> => {
 
     return await mapWhyChooseUs(response.results[0])
   } catch (error) {
-    logError(
-      "Failed to fetch WhyChooseUs",
+    logError({
+      message: "Failed to fetch WhyChooseUs",
       error,
-      { function: "getWhyChooseUs" },
-      LogModule.CMS
-    )
+      context: { function: "getWhyChooseUs" },
+      module: LogModule.CMS,
+    })
     return null
   }
 }

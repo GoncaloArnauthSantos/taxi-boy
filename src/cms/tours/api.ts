@@ -33,12 +33,12 @@ export const getTourByID = async (id: string): Promise<Tour | null> => {
 
     return await mapTour(document)
   } catch (error) {
-    logError(
-      "Failed to fetch tour by ID",
+    logError({
+      message: "Failed to fetch tour by ID",
       error,
-      { tourId: id, function: "getTourByID" },
-      LogModule.CMS
-    )
+      context: { tourId: id, function: "getTourByID" },
+      module: LogModule.CMS,
+    })
     return null
   }
 }
@@ -65,12 +65,12 @@ export const getTourByUID = async (uid: string): Promise<Tour | null> => {
 
     return await mapTour(document)
   } catch (error) {
-    logError(
-      "Failed to fetch tour by UID",
+    logError({
+      message: "Failed to fetch tour by UID",
       error,
-      { tourUID: uid, function: "getTourByUID" },
-      LogModule.CMS
-    )
+      context: { tourUID: uid, function: "getTourByUID" },
+      module: LogModule.CMS,
+    })
     return null
   }
 }
@@ -100,16 +100,16 @@ export const getAllTours = async (options?: {
 
     return await mapTours(response.results)
   } catch (error) {
-    logError(
-      "Failed to fetch tours",
+    logError({
+      message: "Failed to fetch tours",
       error,
-      {
+      context: {
         function: "getAllTours",
         pageSize: options?.pageSize,
         page: options?.page,
       },
-      LogModule.CMS
-    )
+      module: LogModule.CMS,
+    })
     return []
   }
 }
@@ -134,12 +134,12 @@ export const getPopularTours = async (): Promise<Tour[]> => {
 
     return await mapTours(response.results)
   } catch (error) {
-    logError(
-      "Failed to fetch popular tours",
+    logError({
+      message: "Failed to fetch popular tours",
       error,
-      { function: "getPopularTours" },
-      LogModule.CMS
-    )
+      context: { function: "getPopularTours" },
+      module: LogModule.CMS,
+    })
     return []
   }
 };

@@ -74,7 +74,12 @@ export const GET = async (
 
     return NextResponse.json(booking, { status: 200 })
   } catch (error) {
-    logError("Error fetching booking", error, { request: request.url, function: "GET" }, LogModule.API)
+    logError({
+      message: "Error fetching booking",
+      error,
+      context: { request: request.url, function: "GET" },
+      module: LogModule.API,
+    })
     return NextResponse.json(
       { error: "Failed to fetch booking" },
       { status: 500 }
@@ -189,7 +194,12 @@ export const PATCH = async (
 
     return NextResponse.json(updated, { status: 200 })
   } catch (error) {
-    logError("Error updating booking", error, { request: request.url, function: "PATCH" }, LogModule.API)
+    logError({
+      message: "Error updating booking",
+      error,
+      context: { request: request.url, function: "PATCH" },
+      module: LogModule.API,
+    })
     
     if (error instanceof SyntaxError) {
       return NextResponse.json(
@@ -260,7 +270,12 @@ export const DELETE = async (
       { status: 200 }
     )
   } catch (error) {
-    logError("Error deleting booking", error, { request: request.url, function: "DELETE" }, LogModule.API)
+    logError({
+      message: "Error deleting booking",
+      error,
+      context: { request: request.url, function: "DELETE" },
+      module: LogModule.API,
+    })
 
     return NextResponse.json(
       { error: "Failed to delete booking" },

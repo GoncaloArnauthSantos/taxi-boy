@@ -21,7 +21,11 @@ const AdminLayoutHeader = ({ user }: Props) => {
       router.push("/admin/login");
       router.refresh();
     } catch (error) {
-      logError("Logout error", error, undefined, LogModule.Auth);
+      logError({
+        message: "Logout error",
+        error,
+        module: LogModule.Auth,
+      });
     }
   };
 

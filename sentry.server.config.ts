@@ -13,17 +13,20 @@ const TRACES_SAMPLE_RATE =
     ? Number(process.env.SENTRY_TRACES_SAMPLE_RATE)
     : 1;
 
-Sentry.init({
-  dsn: SENTRY_DSN,
+// Only initialize Sentry if DSN is provided
+if (SENTRY_DSN) {
+  Sentry.init({
+    dsn: SENTRY_DSN,
 
-  // Environment label visible in Sentry (e.g. production, staging, preview)
-  environment: process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV,
+    // Environment label visible in Sentry (e.g. production, staging, preview)
+    environment: process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV,
 
-  // Control how much performance data is sent.
-  // You can override with SENTRY_TRACES_SAMPLE_RATE env var.
-  tracesSampleRate: TRACES_SAMPLE_RATE,
+    // Control how much performance data is sent.
+    // You can override with SENTRY_TRACES_SAMPLE_RATE env var.
+    tracesSampleRate: TRACES_SAMPLE_RATE,
 
-  // Enable sending user PII (Personally Identifiable Information).
-  // Keep as-is for now; you can later gate this with an env var if needed.
-  sendDefaultPii: true,
-});
+    // Enable sending user PII (Personally Identifiable Information).
+    // Keep as-is for now; you can later gate this with an env var if needed.
+    sendDefaultPii: true,
+  });
+}

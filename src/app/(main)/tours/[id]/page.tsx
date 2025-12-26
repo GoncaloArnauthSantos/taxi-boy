@@ -16,9 +16,14 @@ export const generateStaticParams = async () => {
       id: tour.id,
     }));
   } catch (error) {
-    logError("Failed to fetch tours for static generation", error, {
-      function: "generateStaticParams",
-    }, LogModule.CMS);
+    logError({
+      message: "Failed to fetch tours for static generation",
+      error,
+      context: {
+        function: "generateStaticParams",
+      },
+      module: LogModule.CMS,
+    });
     return [];
   }
 }

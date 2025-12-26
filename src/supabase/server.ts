@@ -70,7 +70,12 @@ export const createSupabaseServerClient = async () => {
             cookieStore.set(name, value, options)
           );
         } catch (error) {
-          logError("Error setting cookies", error, { cookiesToSet }, LogModule.Database);
+          logError({
+            message: "Error setting cookies",
+            error,
+            context: { cookiesToSet },
+            module: LogModule.Database,
+          });
         }
       },
     },

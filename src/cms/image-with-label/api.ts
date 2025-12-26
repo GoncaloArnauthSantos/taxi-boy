@@ -27,12 +27,12 @@ export const getImageWithLabelByID = async (id: string): Promise<ImageWithLabel 
 
     return mapImageWithLabel(document)
   } catch (error) {
-    logError(
-      "Failed to fetch ImageWithLabel by ID",
+    logError({
+      message: "Failed to fetch ImageWithLabel by ID",
       error,
-      { imageWithLabelId: id, function: "getImageWithLabelByID" },
-      LogModule.CMS
-    )
+      context: { imageWithLabelId: id, function: "getImageWithLabelByID" },
+      module: LogModule.CMS,
+    })
     return null
   }
 }
@@ -54,12 +54,12 @@ export const getImageWithLabelByUID = async (uid: string): Promise<ImageWithLabe
 
     return mapImageWithLabel(document)
   } catch (error) {
-    logError(
-      "Failed to fetch ImageWithLabel by UID",
+    logError({
+      message: "Failed to fetch ImageWithLabel by UID",
       error,
-      { imageWithLabelUid: uid, function: "getImageWithLabelByUID" },
-      LogModule.CMS
-    )
+      context: { imageWithLabelUid: uid, function: "getImageWithLabelByUID" },
+      module: LogModule.CMS,
+    })
     return null
   }
 }

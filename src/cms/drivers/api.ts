@@ -33,12 +33,12 @@ export const getDriver = async (): Promise<Driver | null> => {
 
     return await mapDriver(response.results[0])
   } catch (error) {
-    logError(
-      "Failed to fetch driver",
+    logError({
+      message: "Failed to fetch driver",
       error,
-      { function: "getDriver" },
-      LogModule.CMS
-    )
+      context: { function: "getDriver" },
+      module: LogModule.CMS,
+    })
     return null
   }
 }

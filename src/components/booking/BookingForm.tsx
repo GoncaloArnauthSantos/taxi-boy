@@ -54,7 +54,12 @@ const BookingForm = ({ setSubmitted, tours, languages, unavailableDates }: Props
       setSubmitted(true);
       reset();
     } catch (error) {
-      logError("Error submitting booking", error, { formData: formData, function: "onSubmit" }, LogModule.Booking);
+      logError({
+        message: "Error submitting booking",
+        error,
+        context: { formData: formData, function: "onSubmit" },
+        module: LogModule.Booking,
+      });
       
       const errorMessage =
         error instanceof BookingApiError

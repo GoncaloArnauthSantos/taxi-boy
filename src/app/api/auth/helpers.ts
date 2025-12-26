@@ -30,7 +30,11 @@ export const getAdminSession = async () => {
       user: session.user,
     };
   } catch (error) {
-    logError("Error getting admin session", error, undefined, LogModule.Auth);
+    logError({
+      message: "Error getting admin session",
+      error,
+      module: LogModule.Auth,
+    });
     return null;
   }
 };
