@@ -89,3 +89,14 @@ export type Tour = {
   price: number
   includedItems: string[]
 }
+
+export type BannerEventStatus = "draft" | "live" | "archived"
+
+export type BannerEvent = {
+  id: string
+  title: string
+  description: string
+  shortDescription: string
+  image: CMSImage | null
+  status: BannerEventStatus
+}
