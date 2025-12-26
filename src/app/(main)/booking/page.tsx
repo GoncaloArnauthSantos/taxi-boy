@@ -31,14 +31,31 @@ export const metadata: Metadata = {
  * Server Component that fetches tours, languages, and unavailable dates
  * Passes data to client component for form interaction
  */
-const BookingPage = async () => {
-  const [tours, languages, confirmationContent, bookingPageContent, unavailableDates] = await Promise.all([
+type Props = {
+  searchParams: Promise<{ tour?: string }>;
+};
+
+const BookingPage = async ({ searchParams }: Props) => {
+  const [tours, languages, confirmationContent, bookingPageContent, unavailableDates, params] = await Promise.all([
     getAllTours(),
     getDriverLanguages(),
     getPageSectionByUID("booking-page-confirmation"),
     getPageSectionByUID("booking-page"),
     getUnavailableDates(),
-  ])
+    searchParams,
+  ]);
+
+  // Calculate initial tourId from query string
+  const getInitialTourId = (): string => {
+    const tourUid = params.tour;
+    if (tourUid && tours.length > 0) {
+      const selectedTour = tours.find((tour) => tour.uid === tourUid);
+      return selectedTour?.id || "";
+    }
+    return "";
+  };
+
+  const initialTourId = getInitialTourId();
 
   return (
     <BookingPageContent
@@ -47,8 +64,9 @@ const BookingPage = async () => {
       confirmationContent={confirmationContent}
       bookingPageContent={bookingPageContent}
       unavailableDates={unavailableDates}
+      initialTourId={initialTourId}
     />
-  )
-}
+  );
+};
 
 export default BookingPage

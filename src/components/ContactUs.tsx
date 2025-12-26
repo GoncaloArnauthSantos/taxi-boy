@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "./ui/Button"
 import DriverInfoDialog from "./DriverInfoDialog"
 import type { Contact, Driver, PageSection } from "@/cms/types"
-import { buildMailtoLink } from "@/lib/utils"
+import { buildMailtoLink, buildWhatsAppLink } from "@/lib/utils"
 
 type Props = {
   content: PageSection | null
@@ -37,7 +37,7 @@ const { email = "", phone = "" } = contactInfo || {};
             
             <Button asChild size="lg" variant="outline">
               <a
-                href={`https://wa.me/${phone}`}
+                href={buildWhatsAppLink(phone)}
                 target="_blank"
                 rel="noopener noreferrer"
               >

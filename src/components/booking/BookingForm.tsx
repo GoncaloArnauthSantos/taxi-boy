@@ -23,11 +23,12 @@ type Props = {
   tours: Tour[];
   languages: string[];
   unavailableDates: Date[];
+  initialTourId?: string;
 };
 
 type BookingFormValues = z.infer<typeof bookingFormSchema>;
 
-const BookingForm = ({ setSubmitted, tours, languages, unavailableDates }: Props) => {
+const BookingForm = ({ setSubmitted, tours, languages, unavailableDates, initialTourId }: Props) => {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
@@ -42,7 +43,7 @@ const BookingForm = ({ setSubmitted, tours, languages, unavailableDates }: Props
     defaultValues: {
       phonePhoneCountryCode: "+351",
       message: "",
-      tourId: "",
+      tourId: initialTourId,
       language: "",
     },
   });

@@ -58,6 +58,31 @@ export const buildMailtoLink = (email: string): string => {
   return `mailto:${email}?${params.toString()}`;
 };
 
+/**
+ * Build a WhatsApp link with a pre-filled message.
+ * 
+ * @param phone - Phone number in international format (e.g., "351912345678" without +)
+ * @param message - Optional custom message. If not provided, uses default message.
+ * @returns WhatsApp deep link URL
+ */
+export const buildWhatsAppLink = (
+  phone: string,
+  message?: string
+): string => {
+  // Remove any non-digit characters from phone number
+  const cleanPhone = phone.replace(/\D/g, "");
+
+  // Default message if none provided
+  const defaultMessage =
+    "Hello! I'm interested in booking a personalized taxi tour in Lisbon. Could you please provide more information?";
+
+  const finalMessage = message || defaultMessage;
+
+  // Encode the message for URL
+  const encodedMessage = encodeURIComponent(finalMessage);
+
+  return `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
+};
 
 export const phonePreview = (phone: string): string => {
   return `(${phone.slice(0, 4)}) ${phone.slice(4)}`;

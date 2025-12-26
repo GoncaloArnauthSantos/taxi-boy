@@ -1,7 +1,7 @@
 import { Button } from "../ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
 import type { Contact } from "@/cms/types";
-import { buildMailtoLink } from "@/lib/utils";
+import { buildMailtoLink, buildWhatsAppLink } from "@/lib/utils";
 
 type Props = {
   contactInfo: Contact | null;
@@ -32,7 +32,7 @@ const QuickContact = ({ contactInfo }: Props) => {
               className="w-full lg:w-1/3 bg-[#25D366] hover:bg-[#1ebe5a] text-white border-transparent"
             >
               <a
-                href={`https://wa.me/${phone}`}
+                href={buildWhatsAppLink(phone)}
                 target="_blank"
                 rel="noopener noreferrer"
               >
