@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import QuickContact from "@/components/contact/QuickContact";
 import ContactInfo from "@/components/contact/ContactInfo";
 import DriverInfo from "@/components/contact/DriverInfo";
@@ -5,6 +6,28 @@ import FleetInfo from "@/components/contact/FleetInfo";
 import { getDriver } from "@/cms/drivers";
 import { getPageSectionByUID } from "@/cms/page-sections";
 import { getContacts } from "@/cms/contact";
+import { getBaseUrl, generateOpenGraphMetadata, generateTwitterMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  title: "Contact Us",
+  description:
+    "Get in touch with Lisbon Taxi Tours. Contact us via email, WhatsApp, or phone to book your personalized tour or ask any questions about our services.",
+  keywords: ["contact", "Lisbon taxi tours", "get in touch", "book tour"],
+  openGraph: generateOpenGraphMetadata({
+    title: "Contact Lisbon Taxi Tours",
+    description:
+      "Get in touch with Lisbon Taxi Tours. Contact us via email, WhatsApp, or phone to book your personalized tour or ask any questions.",
+    url: `${getBaseUrl()}/contact`,
+  }),
+  twitter: generateTwitterMetadata({
+    title: "Contact Lisbon Taxi Tours",
+    description:
+      "Get in touch with Lisbon Taxi Tours. Contact us via email, WhatsApp, or phone to book your personalized tour or ask any questions.",
+  }),
+  alternates: {
+    canonical: `${getBaseUrl()}/contact`,
+  },
+};
 
 const ContactPage = async () => {
   const [

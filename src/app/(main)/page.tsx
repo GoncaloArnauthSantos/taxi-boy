@@ -1,3 +1,4 @@
+import { Metadata } from "next"
 import WhyChooseUs from "@/components/WhyChooseUs"
 import Banner from "@/components/Banner"
 import PopularTours from "@/components/PopularTours"
@@ -9,6 +10,27 @@ import { getPageSectionByUID } from "@/cms/page-sections"
 import { getPopularTours } from "@/cms/tours"
 import { getContacts } from "@/cms/contact"
 import { getLiveBannerEvents } from "@/cms/banner-events"
+import { getBaseUrl, generateOpenGraphMetadata, generateTwitterMetadata } from "@/lib/seo"
+
+export const metadata: Metadata = {
+  title: "Home",
+  description:
+    "Discover Lisbon with personalized taxi tours led by a multilingual local driver. Custom itineraries, hidden gems, and unforgettable memories in Portugal's capital.",
+  openGraph: generateOpenGraphMetadata({
+    title: "Lisbon Taxi Tours - Premium Custom Tours",
+    description:
+      "Discover Lisbon with personalized taxi tours led by a multilingual local driver. Custom itineraries, hidden gems, and unforgettable memories.",
+    url: getBaseUrl(),
+  }),
+  twitter: generateTwitterMetadata({
+    title: "Lisbon Taxi Tours - Premium Custom Tours",
+    description:
+      "Discover Lisbon with personalized taxi tours led by a multilingual local driver. Custom itineraries, hidden gems, and unforgettable memories.",
+  }),
+  alternates: {
+    canonical: getBaseUrl(),
+  },
+}
 
 const HomePage = async () => {
   const [driver, whyChooseUsContent, popularToursSection, popularTours, readyToExploreContent, contactUsContent, contactInfo, bannerEvents] = await Promise.all([

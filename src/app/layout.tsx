@@ -3,15 +3,38 @@ import { Metadata } from "next"
 import "./globals.css"
 import { Analytics } from "@vercel/analytics/next"
 import { Inter } from "next/font/google"
+import { getBaseUrl, generateOpenGraphMetadata, generateTwitterMetadata, defaultSiteMetadata } from "@/lib/seo"
 
 //  Using Inter font for modern, clean typography
 const inter = Inter({ subsets: ["latin"] })
 
+const baseUrl = getBaseUrl();
+const ogMetadata = generateOpenGraphMetadata({});
+const twitterMetadata = generateTwitterMetadata({});
+
 export const metadata: Metadata = {
-  title: "Lisbon Taxi Tours - Premium Custom Tours",
-  description: "Experience Lisbon with a multilingual driver offering personalized taxi tours around the city and surrounding areas",
+  metadataBase: new URL(baseUrl),
+  title: {
+    default: defaultSiteMetadata.title,
+    template: `%s | ${defaultSiteMetadata.siteName}`,
+  },
+  description: defaultSiteMetadata.description,
+  keywords: ["Lisbon", "taxi tours", "Portugal", "custom tours", "private tours", "multilingual driver"],
+  authors: [{ name: "Lisbon Taxi Tours" }],
+  creator: "Lisbon Taxi Tours",
+  publisher: "Lisbon Taxi Tours",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   manifest: "/manifest.json",
   themeColor: "#1e293b",
+  openGraph: ogMetadata,
+  twitter: twitterMetadata,
+  alternates: {
+    canonical: baseUrl,
+  },
   viewport: {
     width: "device-width",
     initialScale: 1,
