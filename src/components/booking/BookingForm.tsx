@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -29,6 +30,18 @@ type BookingFormValues = z.infer<typeof bookingFormSchema>;
 
 const BookingForm = ({ setSubmitted, tours, languages, unavailableDates }: Props) => {
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+
+  // Calculate initial tourId from query string
+  const getInitialTourId = (): string => {
+    const tourUid = searchParams.get("tour");
+    
+    if (tourUid && tours.length > 0) {
+      const selectedTour = tours.find((tour) => tour.uid === tourUid);
+      return selectedTour?.id || "";
+    }
+    return "";
+  };
 
   const {
     register,
@@ -42,7 +55,7 @@ const BookingForm = ({ setSubmitted, tours, languages, unavailableDates }: Props
     defaultValues: {
       phonePhoneCountryCode: "+351",
       message: "",
-      tourId: "",
+      tourId: getInitialTourId(),
       language: "",
     },
   });
