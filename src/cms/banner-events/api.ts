@@ -29,15 +29,12 @@ export const getAllBannerEvents = async (options?: {
     const filters: PrismicFilter[] = [];
 
     if (options?.status) {
-      filters.push(
-        prismic.filter.at("my.bannerevent.status", options.status)
-      );
+      filters.push(prismic.filter.at("my.bannerevent.status", options.status));
     }
 
     const response = await client.getByType("bannerevent", {
-      filters
+      filters,
     });
-    // const response = await client.getByType("bannerevent");
 
     return mapBannerEvents(response.results);
   } catch (error) {
@@ -105,4 +102,3 @@ export const getBannerEventByID = async (
     return null;
   }
 };
-

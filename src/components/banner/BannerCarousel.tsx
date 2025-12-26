@@ -82,7 +82,7 @@ const BannerCarousel = ({ events }: Props) => {
   }
 
   return (
-    <div className="relative w-full h-[500px] md:h-[500px] overflow-hidden">
+    <div className="relative w-full h-[500px] overflow-hidden">
       {/* Slides Container */}
       <div className="relative w-full h-full">
         {events.map((event, index) => {
