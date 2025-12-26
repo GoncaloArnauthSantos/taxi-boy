@@ -8,9 +8,10 @@ import { getWhyChooseUs } from "@/cms/why-choose-us"
 import { getPageSectionByUID } from "@/cms/page-sections"
 import { getPopularTours } from "@/cms/tours"
 import { getContacts } from "@/cms/contact"
+import { getLiveBannerEvents } from "@/cms/banner-events"
 
 const HomePage = async () => {
-  const [driver, whyChooseUsContent, popularToursSection, popularTours, readyToExploreContent, contactUsContent, contactInfo] = await Promise.all([
+  const [driver, whyChooseUsContent, popularToursSection, popularTours, readyToExploreContent, contactUsContent, contactInfo, bannerEvents] = await Promise.all([
     getDriver(),
     getWhyChooseUs(),
     getPageSectionByUID("tours-section"),
@@ -18,12 +19,13 @@ const HomePage = async () => {
     getPageSectionByUID("ready-to-explore"),
     getPageSectionByUID("get-in-touch"),
     getContacts(),
+    getLiveBannerEvents(),
   ]);
 
   return (
     <>
       <section className="relative bg-primary text-primary-foreground overflow-hidden">
-        <Banner />
+        <Banner events={bannerEvents} />
       </section>
 
       <section className="py-16 lg:py-24 bg-muted/30">
