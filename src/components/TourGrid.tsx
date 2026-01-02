@@ -18,7 +18,7 @@ const TourGrid = ({ tours }: Props) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {tours.slice(0, toursToShow).map((tour) => (
+      {tours.slice(0, toursToShow).map((tour, index) => (
         <TourCard
           key={tour.uid}
           id={tour.uid}
@@ -27,6 +27,7 @@ const TourGrid = ({ tours }: Props) => {
           duration={tour.duration}
           price={tour.price}
           bannerImage={tour.bannerImage}
+          isPriority={index === 0}
         />
       ))}
     </div>
