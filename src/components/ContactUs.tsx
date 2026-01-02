@@ -1,25 +1,28 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "./ui/Button"
-import DriverInfoDialog from "./DriverInfoDialog"
-import type { Contact, Driver, PageSection } from "@/cms/types"
-import { buildMailtoLink, buildWhatsAppLink } from "@/lib/utils"
+import { useState, lazy, Suspense } from "react";
+import { Button } from "./ui/Button";
+import type { Contact, Driver, PageSection } from "@/cms/types";
+import { buildMailtoLink, buildWhatsAppLink } from "@/lib/utils";
+
+// Lazy load DriverInfoDialog - only loads when dialog is opened
+const DriverInfoDialog = lazy(() => import("./DriverInfoDialog"));
 
 type Props = {
-  content: PageSection | null
-  driver: Driver | null
-  contactInfo: Contact | null
-}
+  content: PageSection | null;
+  driver: Driver | null;
+  contactInfo: Contact | null;
+};
 
 const ContactUs = ({ content, driver, contactInfo }: Props) => {
-  const [driverDialogOpen, setDriverDialogOpen] = useState<boolean>(false)
+  const [driverDialogOpen, setDriverDialogOpen] = useState<boolean>(false);
 
-  if(!content) {
+  if (!content) {
     return null;
   }
-const {title, label} = content;
-const { email = "", phone = "" } = contactInfo || {};
+  const { title, label } = content;
+  const { email = "", phone = "" } = contactInfo || {};
+
   return (
     <>
       <div className="container mx-auto px-4 lg:px-8">
@@ -27,14 +30,12 @@ const { email = "", phone = "" } = contactInfo || {};
           <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-foreground">
             {title}
           </h2>
-          <p className="text-muted-foreground mb-8 leading-relaxed">
-            {label}
-          </p>
+          <p className="text-muted-foreground mb-8 leading-relaxed">{label}</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" variant="outline">
               <a href={buildMailtoLink(email)}>Email Us</a>
             </Button>
-            
+
             <Button asChild size="lg" variant="outline">
               <a
                 href={buildWhatsAppLink(phone)}
@@ -44,7 +45,7 @@ const { email = "", phone = "" } = contactInfo || {};
                 WhatsApp
               </a>
             </Button>
-            
+
             <Button
               size="lg"
               variant="outline"
@@ -56,15 +57,17 @@ const { email = "", phone = "" } = contactInfo || {};
         </div>
       </div>
 
-      { driver && (
-        <DriverInfoDialog
-          open={driverDialogOpen}
-          onOpenChange={setDriverDialogOpen}
-          driver={driver}
-        />
+      {driver && driverDialogOpen && (
+        <Suspense>
+          <DriverInfoDialog
+            open={driverDialogOpen}
+            onOpenChange={setDriverDialogOpen}
+            driver={driver}
+          />
+        </Suspense>
       )}
     </>
-  )
-}
+  );
+};
 
-export default ContactUs
+export default ContactUs;

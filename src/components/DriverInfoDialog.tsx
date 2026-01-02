@@ -34,7 +34,8 @@ const DriverInfoDialog = ({ open, onOpenChange, driver }: Props) => {
         <DialogHeader>
           <DialogTitle className="text-2xl">Meet Your Driver</DialogTitle>
           <DialogDescription className="sr-only">
-            Information about {name}, including languages spoken and available vehicles.
+            Information about {name}, including languages spoken and available
+            vehicles.
           </DialogDescription>
         </DialogHeader>
 
@@ -48,6 +49,8 @@ const DriverInfoDialog = ({ open, onOpenChange, driver }: Props) => {
                   className="w-full h-full object-cover"
                   width={128}
                   height={128}
+                  sizes="128px"
+                  loading="eager"
                 />
               ) : (
                 <div className="w-full h-full bg-muted flex items-center justify-center">
@@ -77,7 +80,7 @@ const DriverInfoDialog = ({ open, onOpenChange, driver }: Props) => {
                 >
                   <span className="text-2xl">{getLanguageFlag(language)}</span>
                   <span className="text-sm font-medium">{language}</span>
-              </div>
+                </div>
               ))}
             </div>
           </div>
@@ -88,27 +91,29 @@ const DriverInfoDialog = ({ open, onOpenChange, driver }: Props) => {
               {vehicles.map((vehicle: Vehicle, index: number) => {
                 return (
                   <div key={index} className="border rounded-lg p-4 space-y-3">
-                <div className="aspect-video bg-muted rounded-md overflow-hidden">
+                    <div className="aspect-video bg-muted rounded-md overflow-hidden">
                       <Image
                         src={vehicle.image.url}
                         alt={vehicle.image.alt || vehicle.name}
                         className="w-full h-full object-cover"
                         width={400}
                         height={225}
+                        loading="lazy"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
-              </div>
+                    </div>
 
-                <div className="flex items-center gap-2 justify-center">
-                  <Users className="w-4 h-4 text-muted-foreground" />
+                    <div className="flex items-center gap-2 justify-center">
+                      <Users className="w-4 h-4 text-muted-foreground" />
                       <span className="font-semibold">
                         {vehicle.seats} Seats
                       </span>
-              </div>
+                    </div>
 
-                <p className="text-sm text-muted-foreground text-center">
+                    <p className="text-sm text-muted-foreground text-center">
                       {vehicle.description}
-                </p>
-              </div>
+                    </p>
+                  </div>
                 );
               })}
             </div>

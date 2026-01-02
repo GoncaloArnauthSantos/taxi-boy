@@ -1,6 +1,6 @@
 import { Metadata } from "next"
-import WhyChooseUs from "@/components/WhyChooseUs"
 import Banner from "@/components/Banner"
+import WhyChooseUs from "@/components/WhyChooseUs"
 import PopularTours from "@/components/PopularTours"
 import ReadyToExplore from "@/components/ReadyToExplore"
 import ContactUs from "@/components/ContactUs"

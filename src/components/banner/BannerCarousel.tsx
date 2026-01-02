@@ -105,6 +105,7 @@ const BannerCarousel = ({ events }: Props) => {
                   className="w-full h-full object-cover"
                   fill
                   priority={index === 0}
+                  loading={index === 0 ? undefined : "lazy"}
                   sizes="100vw"
                 />
               </div>

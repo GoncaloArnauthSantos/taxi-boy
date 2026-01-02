@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, lazy, Suspense } from "react";
 import { Button } from "@/components/ui/Button";
-import { Calendar } from "@/components/ui/Calendar";
 import {
   Popover,
   PopoverContent,
@@ -13,6 +12,9 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Control, Controller, FieldPath, FieldValues } from "react-hook-form";
+
+// Lazy load Calendar component - only loads when date picker is opened
+const Calendar = lazy(() => import("@/components/ui/Calendar").then((mod) => ({ default: mod.Calendar })));
 
 type Props<T extends FieldValues> = {
   name: FieldPath<T>;
@@ -112,13 +114,15 @@ const FormDatePicker = <T extends FieldValues>({
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={field.value || undefined}
-                  onSelect={handleDateSelect}
-                  disabled={isDateDisabled}
-                  {...(field.value ? { defaultMonth: field.value } : {})}
-                />
+                <Suspense fallback={<CalendarFallback />}>
+                  <Calendar
+                    mode="single"
+                    selected={field.value || undefined}
+                    onSelect={handleDateSelect}
+                    disabled={isDateDisabled}
+                    {...(field.value ? { defaultMonth: field.value } : {})}
+                  />
+                </Suspense>
               </PopoverContent>
             </Popover>
           );
@@ -134,3 +138,11 @@ const FormDatePicker = <T extends FieldValues>({
 };
 
 export default FormDatePicker;
+
+const CalendarFallback = () => {
+  return (
+    <div className="w-[300px] h-[300px] flex items-center justify-center text-muted-foreground">
+      Loading calendar...
+    </div>
+  );
+};
