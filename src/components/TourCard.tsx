@@ -12,9 +12,10 @@ type Props = {
   duration: number
   price: number
   bannerImage: Tour["bannerImage"]
+  isPriority?: boolean
 }
 
-const TourCard = ({ id, title, description, duration, price, bannerImage }: Props) => {
+const TourCard = ({ id, title, description, duration, price, bannerImage, isPriority = false }: Props) => {
   const bannerImageUrl = bannerImage?.url || "/placeholder.svg"
   const bannerImageAlt = bannerImage?.alt || title
 
@@ -28,7 +29,9 @@ const TourCard = ({ id, title, description, duration, price, bannerImage }: Prop
           width={500}
           height={300}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          loading="lazy"
+          priority={isPriority}
+          fetchPriority={isPriority ? "high" : "auto"}
+          loading={isPriority ? "eager" : "lazy"}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
