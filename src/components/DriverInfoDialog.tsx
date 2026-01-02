@@ -30,92 +30,96 @@ const DriverInfoDialog = ({ open, onOpenChange, driver }: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl">Meet Your Driver</DialogTitle>
-          <DialogDescription className="sr-only">
-            Information about {name}, including languages spoken and available
-            vehicles.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="max-w-2xl max-h-[90vh] p-0 overflow-hidden flex flex-col">
+        <div className="sticky top-0 z-10 bg-background border-b px-6 pt-4 pb-2">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">Meet Your Driver</DialogTitle>
+            <DialogDescription className="sr-only">
+              Information about {name}, including languages spoken and available
+              vehicles.
+            </DialogDescription>
+          </DialogHeader>
+        </div>
 
-        <div className="space-y-6">
-          <div className="flex flex-col items-center text-center space-y-4">
-            <div className="w-32 h-32 rounded-full overflow-hidden bg-muted">
-              {url ? (
-                <Image
-                  src={url}
-                  alt={alt || name}
-                  className="w-full h-full object-cover"
-                  width={128}
-                  height={128}
-                  sizes="128px"
-                  loading="eager"
-                />
-              ) : (
-                <div className="w-full h-full bg-muted flex items-center justify-center">
-                  <Users className="w-12 h-12 text-muted-foreground" />
-                </div>
-              )}
-            </div>
-            <div>
-              <h3 className="text-xl font-bold">{name}</h3>
-              <p className="text-muted-foreground text-sm mt-1">{label}</p>
-            </div>
-          </div>
-
-          <div>
-            <p className="text-muted-foreground leading-relaxed prose prose-sm max-w-none">
-              {description}
-            </p>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-3">Languages Spoken</h4>
-            <div className="flex flex-wrap gap-3 justify-center">
-              {languages.map((language, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-2 bg-muted px-4 py-2 rounded-lg"
-                >
-                  <span className="text-2xl">{getLanguageFlag(language)}</span>
-                  <span className="text-sm font-medium">{language}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-4">Available Vehicles</h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {vehicles.map((vehicle: Vehicle, index: number) => {
-                return (
-                  <div key={index} className="border rounded-lg p-4 space-y-3">
-                    <div className="aspect-video bg-muted rounded-md overflow-hidden">
-                      <Image
-                        src={vehicle.image.url}
-                        alt={vehicle.image.alt || vehicle.name}
-                        className="w-full h-full object-cover"
-                        width={400}
-                        height={225}
-                        loading="lazy"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      />
-                    </div>
-
-                    <div className="flex items-center gap-2 justify-center">
-                      <Users className="w-4 h-4 text-muted-foreground" />
-                      <span className="font-semibold">
-                        {vehicle.seats} Seats
-                      </span>
-                    </div>
-
-                    <p className="text-sm text-muted-foreground text-center">
-                      {vehicle.description}
-                    </p>
+        <div className="overflow-y-auto px-6 pb-6 flex-1">
+          <div className="space-y-6 pt-4">
+            <div className="flex flex-col items-center text-center space-y-4">
+              <div className="w-32 h-32 rounded-full overflow-hidden bg-muted">
+                {url ? (
+                  <Image
+                    src={url}
+                    alt={alt || name}
+                    className="w-full h-full object-cover"
+                    width={128}
+                    height={128}
+                    sizes="128px"
+                    loading="eager"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-muted flex items-center justify-center">
+                    <Users className="w-12 h-12 text-muted-foreground" />
                   </div>
-                );
-              })}
+                )}
+              </div>
+              <div>
+                <h3 className="text-xl font-bold">{name}</h3>
+                <p className="text-muted-foreground text-sm mt-1">{label}</p>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-muted-foreground leading-relaxed prose prose-sm max-w-none">
+                {description}
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-3">Languages Spoken</h4>
+              <div className="flex flex-wrap gap-3 justify-center">
+                {languages.map((language, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 bg-muted px-4 py-2 rounded-lg"
+                  >
+                    <span className="text-2xl">{getLanguageFlag(language)}</span>
+                    <span className="text-sm font-medium">{language}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-4">Available Vehicles</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {vehicles.map((vehicle: Vehicle, index: number) => {
+                  return (
+                    <div key={index} className="border rounded-lg p-4 space-y-3">
+                      <div className="aspect-video bg-muted rounded-md overflow-hidden">
+                        <Image
+                          src={vehicle.image.url}
+                          alt={vehicle.image.alt || vehicle.name}
+                          className="w-full h-full object-cover"
+                          width={400}
+                          height={225}
+                          loading="lazy"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        />
+                      </div>
+
+                      <div className="flex items-center gap-2 justify-center">
+                        <Users className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-semibold">
+                          {vehicle.seats} Seats
+                        </span>
+                      </div>
+
+                      <p className="text-sm text-muted-foreground text-center">
+                        {vehicle.description}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
