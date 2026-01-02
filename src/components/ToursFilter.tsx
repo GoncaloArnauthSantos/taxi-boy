@@ -168,9 +168,13 @@ const ToursFilter = ({
 
         {/* Mobile Filters */}
         {showFilters && (
-          <div className="lg:hidden mt-4 space-y-4 pb-2">
+          <div className="lg:hidden mt-4 space-y-4">
             <div>
-              <Label className="text-sm font-medium mb-2 block">Location</Label>
+              <div className="inline-block mb-1">
+                <Label className="text-sm font-medium mb-2 bg-background/80 backdrop-blur-sm px-2 py-1 rounded-md">
+                  Location
+                </Label>
+              </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -200,7 +204,11 @@ const ToursFilter = ({
             </div>
 
             <div>
-              <Label className="text-sm font-medium mb-2 block">Duration</Label>
+              <div className="inline-block mb-1">
+                <Label className="text-sm font-medium mb-2 bg-background/80 backdrop-blur-sm px-2 py-1 rounded-md">
+                  Duration
+                </Label>
+              </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button

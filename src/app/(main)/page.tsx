@@ -50,19 +50,21 @@ const HomePage = async () => {
         <Banner events={bannerEvents} />
       </section>
 
-      <section className="py-16 lg:py-24 bg-muted/30">
-        <WhyChooseUs content={whyChooseUsContent} />
-      </section>
+      <div className="flex flex-col md:contents">
+        <section className="py-10 lg:py-24 bg-muted/30 order-2 md:order-none">
+          <WhyChooseUs content={whyChooseUsContent} />
+        </section>
 
-      <section id="tours" className="py-16 lg:py-24 bg-background">
-        <PopularTours content={popularToursSection} tours={popularTours} />
-      </section>
+        <section id="tours" className="py-16 lg:py-24 bg-background order-1 md:order-none">
+          <PopularTours content={popularToursSection} tours={popularTours} />
+        </section>
+      </div>
 
-      <section className="py-16 lg:py-24 bg-primary text-primary-foreground">
+      <section className="py-10 lg:py-24 bg-primary text-primary-foreground">
         <ReadyToExplore content={readyToExploreContent}/>
       </section>
 
-      <section id="contact" className="py-16 lg:py-24 bg-muted/30">
+      <section id="contact" className="py-10 lg:py-24 bg-muted/30">
         <ContactUs content={contactUsContent} driver={driver} contactInfo={contactInfo} />
       </section>
     </>

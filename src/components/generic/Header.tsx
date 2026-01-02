@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/Button"
 import { Menu, X } from "lucide-react"
@@ -13,9 +13,39 @@ type Props = {
 const Header = ({ logo }: Props) => {
   const { title = "", label = "" } = logo || {};
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const headerRef = useRef<HTMLElement>(null)
+
+  // Handle link click with delay for visual feedback
+  const handleLinkClick = () => {
+    // 250ms delay to show active state feedback before navigation
+    setTimeout(() => {
+      setMobileMenuOpen(false)
+    }, 250)
+  }
+
+  // Close menu when clicking outside the header
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        mobileMenuOpen &&
+        headerRef.current &&
+        !headerRef.current.contains(event.target as Node)
+      ) {
+        setMobileMenuOpen(false)
+      }
+    }
+
+    if (mobileMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [mobileMenuOpen])
 
   return (
-    <header className="sticky top-0 z-50 bg-card/95 backdrop-blur border-b border-border">
+    <header ref={headerRef} className="sticky top-0 z-50 bg-card/95 backdrop-blur border-b border-border">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
@@ -65,32 +95,32 @@ const Header = ({ logo }: Props) => {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-border">
-            <nav className="flex flex-col gap-4">
+            <nav className="flex flex-col gap-2">
               <Link
                 href="/"
-                className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
+                className="text-sm font-medium px-4 py-2 rounded-md transition-colors text-foreground hover:text-primary hover:bg-muted active:bg-primary active:text-primary-foreground"
+                onClick={handleLinkClick}
               >
                 Home
               </Link>
               <Link
                 href="/tours"
-                className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
+                className="text-sm font-medium px-4 py-2 rounded-md transition-colors text-foreground hover:text-primary hover:bg-muted active:bg-primary active:text-primary-foreground"
+                onClick={handleLinkClick}
               >
                 Tours
               </Link>
               <Link
                 href="/booking"
-                className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
+                className="text-sm font-medium px-4 py-2 rounded-md transition-colors text-foreground hover:text-primary hover:bg-muted active:bg-primary active:text-primary-foreground"
+                onClick={handleLinkClick}
               >
                 Book Now
               </Link>
               <Link
                 href="/contact"
-                className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
+                className="text-sm font-medium px-4 py-2 rounded-md transition-colors text-foreground hover:text-primary hover:bg-muted active:bg-primary active:text-primary-foreground"
+                onClick={handleLinkClick}
               >
                 Contact
               </Link>

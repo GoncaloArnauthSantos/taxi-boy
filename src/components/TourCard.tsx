@@ -47,7 +47,7 @@ const TourCard = ({ id, title, description, duration, price, bannerImage }: Prop
         </div>
       </CardContent>
       <CardFooter className="p-6 pt-0">
-        <Button asChild className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+        <Button asChild className="w-full bg-primary hover:bg-primary/90 active:bg-primary/80 text-primary-foreground">
           <Link href={`/tours/${id}`}>View Tour</Link>
         </Button>
       </CardFooter>
