@@ -29,7 +29,7 @@ const QuickContact = ({ contactInfo }: Props) => {
           {phone && (
             <Button
               asChild
-              className="w-full lg:w-1/3 bg-[#25D366] hover:bg-[#1ebe5a] text-white border-transparent"
+              className="w-full lg:w-1/3 bg-[#25D366] hover:bg-[#1ebe5a] active:bg-[#1a9d4a] text-white border-transparent"
             >
               <a
                 href={buildWhatsAppLink(phone)}

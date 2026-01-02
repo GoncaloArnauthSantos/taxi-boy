@@ -18,7 +18,7 @@ const Gallery = ({ tour }: Props) => {
         Gallery
       </h2>
       <div className="grid grid-cols-2 gap-4">
-        {images.map((image) => (
+        {images.map((image, index) => (
           <div
             key={image.id}
             className="relative aspect-video rounded-xl overflow-hidden"
@@ -29,6 +29,8 @@ const Gallery = ({ tour }: Props) => {
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
               width={500}
               height={300}
+              loading={index < 2 ? "eager" : "lazy"}
+              sizes="(max-width: 768px) 50vw, 25vw"
             />
           </div>
         ))}

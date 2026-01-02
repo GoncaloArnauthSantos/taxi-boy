@@ -44,7 +44,7 @@ const ToursFilter = ({
 
   return (
     <>
-      <div className="container mx-auto px-4 lg:px-8 py-6">
+      <div className="container mx-auto px-4 lg:px-8 pt-4 pb-2 md:py-6">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Search Input */}
           <div className="flex-1">
@@ -168,105 +168,124 @@ const ToursFilter = ({
 
         {/* Mobile Filters */}
         {showFilters && (
-          <div className="lg:hidden mt-4 space-y-4 pb-2">
-            <div>
-              <Label className="text-sm font-medium mb-2 block">Location</Label>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-between bg-background"
-                  >
-                    <span>
-                      {selectedLocations.length === 0
-                        ? "All Locations"
-                        : `${selectedLocations.length} selected`}
-                    </span>
-                    <SlidersHorizontal className="w-4 h-4 ml-2" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-full">
-                  {availableLocations.map((location) => (
-                    <DropdownMenuCheckboxItem
-                      key={location}
-                      checked={selectedLocations.includes(location)}
-                      onCheckedChange={() => toggleLocation(location)}
+          <>
+            <div className="lg:hidden flex my-4 gap-6">
+              <div>
+                <div className="inline-block mb-1">
+                  <Label className="text-sm font-medium mb-2 bg-background/50 backdrop-blur-sm px-2 py-1 rounded-md">
+                    Location
+                  </Label>
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-between bg-background"
                     >
-                      {location}
-                    </DropdownMenuCheckboxItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+                      <span>
+                        {selectedLocations.length === 0
+                          ? "All Locations"
+                          : `${selectedLocations.length} selected`}
+                      </span>
+                      <SlidersHorizontal className="w-4 h-4 ml-2" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-full">
+                    {availableLocations.map((location) => (
+                      <DropdownMenuCheckboxItem
+                        key={location}
+                        checked={selectedLocations.includes(location)}
+                        onCheckedChange={() => toggleLocation(location)}
+                      >
+                        {location}
+                      </DropdownMenuCheckboxItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
 
-            <div>
-              <Label className="text-sm font-medium mb-2 block">Duration</Label>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-between bg-background"
-                  >
-                    <span>
-                      {selectedDuration === "all"
-                        ? "All Durations"
-                        : getDurationLabel(selectedDuration)}
-                    </span>
-                    <SlidersHorizontal className="w-4 h-4 ml-2" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-full">
-                  <DropdownMenuCheckboxItem
-                    checked={selectedDuration === "all"}
-                    onCheckedChange={() => setSelectedDuration("all")}
-                  >
-                    All Durations
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
-                    checked={selectedDuration === "short"}
-                    onCheckedChange={() =>
-                      setSelectedDuration(
-                        selectedDuration === "short" ? "all" : "short"
-                      )
-                    }
-                  >
-                    Short (≤4 hours)
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
-                    checked={selectedDuration === "medium"}
-                    onCheckedChange={() =>
-                      setSelectedDuration(
-                        selectedDuration === "medium" ? "all" : "medium"
-                      )
-                    }
-                  >
-                    Medium (5-7 hours)
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
-                    checked={selectedDuration === "long"}
-                    onCheckedChange={() =>
-                      setSelectedDuration(
-                        selectedDuration === "long" ? "all" : "long"
-                      )
-                    }
-                  >
-                    Long (8+ hours)
-                  </DropdownMenuCheckboxItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div>
+                <div className="inline-block mb-1">
+                  <Label className="text-sm font-medium mb-2 bg-background/50 backdrop-blur-sm px-2 py-1 rounded-md">
+                    Duration
+                  </Label>
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-between bg-background"
+                    >
+                      <span>
+                        {selectedDuration === "all"
+                          ? "All Durations"
+                          : getDurationLabel(selectedDuration)}
+                      </span>
+                      <SlidersHorizontal className="w-4 h-4 ml-2" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-full">
+                    <DropdownMenuCheckboxItem
+                      checked={selectedDuration === "all"}
+                      onCheckedChange={() => setSelectedDuration("all")}
+                    >
+                      All Durations
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem
+                      checked={selectedDuration === "short"}
+                      onCheckedChange={() =>
+                        setSelectedDuration(
+                          selectedDuration === "short" ? "all" : "short"
+                        )
+                      }
+                    >
+                      Short (≤4 hours)
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem
+                      checked={selectedDuration === "medium"}
+                      onCheckedChange={() =>
+                        setSelectedDuration(
+                          selectedDuration === "medium" ? "all" : "medium"
+                        )
+                      }
+                    >
+                      Medium (5-7 hours)
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuCheckboxItem
+                      checked={selectedDuration === "long"}
+                      onCheckedChange={() =>
+                        setSelectedDuration(
+                          selectedDuration === "long" ? "all" : "long"
+                        )
+                      }
+                    >
+                      Long (8+ hours)
+                    </DropdownMenuCheckboxItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              {/* {hasActiveFilters && (
+              <Button
+                variant="outline"
+                onClick={clearFilters}
+                className="w-full bg-background/50 backdrop-blur-sm lg:bg-transparent"
+              >
+                Clear Filters
+              </Button>
+            )} */}
             </div>
 
             {hasActiveFilters && (
               <Button
                 variant="outline"
                 onClick={clearFilters}
-                className="w-full bg-transparent"
+                className="w-full bg-background/50 backdrop-blur-sm lg:bg-transparent"
               >
-                <X className="w-4 h-4 mr-2" />
                 Clear Filters
               </Button>
             )}
-          </div>
+          </>
         )}
 
         {hasActiveFilters && (
@@ -275,7 +294,7 @@ const ToursFilter = ({
               <Badge
                 key={location}
                 variant="outline"
-                className="gap-1 pr-1 cursor-pointer text-xs px-2 py-1"
+                className="gap-1 pr-1 cursor-pointer text-xs px-2 py-1 bg-background/50 backdrop-blur-sm lg:bg-transparent"
                 onClick={() => removeLocation(location)}
               >
                 {location}
@@ -285,7 +304,7 @@ const ToursFilter = ({
             {selectedDuration !== "all" && (
               <Badge
                 variant="outline"
-                className="gap-1 pr-1 cursor-pointer text-xs px-2 py-1"
+                className="gap-1 pr-1 cursor-pointer text-xs px-2 py-1 bg-background/50 backdrop-blur-sm lg:bg-transparent"
                 onClick={() => setSelectedDuration("all")}
               >
                 {getDurationLabel(selectedDuration)}

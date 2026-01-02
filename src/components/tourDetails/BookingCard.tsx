@@ -48,7 +48,7 @@ const BookingCard = ({ tour, languages }: Props) => {
 
         <Button
           asChild
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground mb-3"
+          className="w-full bg-primary hover:bg-primary/90 active:bg-primary/80 text-primary-foreground mb-3"
           size="lg"
         >
           <Link href={`/booking?tour=${tour.uid}`}>Book This Tour</Link>

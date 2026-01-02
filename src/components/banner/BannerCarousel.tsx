@@ -16,8 +16,8 @@ const BannerCarousel = ({ events }: Props) => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const autoPlayTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-   // Cleanup timeout on unmount
-   useEffect(() => {
+  // Cleanup timeout on unmount
+  useEffect(() => {
     return () => {
       if (autoPlayTimeoutRef.current) {
         clearTimeout(autoPlayTimeoutRef.current);
@@ -76,13 +76,12 @@ const BannerCarousel = ({ events }: Props) => {
     return () => clearInterval(interval);
   }, [isAutoPlaying, events.length, goToNext]);
 
-
   if (events.length === 0) {
     return null;
   }
 
   return (
-    <div className="relative w-full h-[500px] overflow-hidden">
+    <div className="relative w-full h-[400px] md:h-[500px] overflow-hidden">
       {/* Slides Container */}
       <div className="relative w-full h-full">
         {events.map((event, index) => {
@@ -105,31 +104,32 @@ const BannerCarousel = ({ events }: Props) => {
                   className="w-full h-full object-cover"
                   fill
                   priority={index === 0}
+                  loading={index === 0 ? undefined : "lazy"}
                   sizes="100vw"
                 />
               </div>
 
               {/* Content */}
-              <div className="container mx-auto px-4 lg:px-8 py-20 lg:py-32 relative z-10 h-full flex items-center">
+              <div className="container mx-auto px-4 lg:px-8 py-12 md:py-20 lg:py-32 relative z-10 h-full flex items-center">
                 <div className="max-w-3xl">
-                  <h1 className="text-4xl lg:text-6xl font-bold mb-6 text-balance leading-tight">
+                  <h1 className="text-2xl md:text-4xl lg:text-6xl font-bold mb-4 md:mb-6 text-balance leading-tight">
                     {event.title}
                   </h1>
-                  <p className="text-lg lg:text-xl text-primary-foreground/90 mb-8 leading-relaxed">
+                  <p className="text-base md:text-lg lg:text-xl text-primary-foreground/90 mb-6 md:mb-8 leading-relaxed">
                     {event.shortDescription || event.description}
                   </p>
-                  <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
                     <Button
                       asChild
                       size="lg"
-                      className="bg-accent/90 hover:bg-accent/70 text-accent-foreground"
+                      className="bg-accent/90 hover:bg-accent/70 active:bg-accent/80 text-accent-foreground"
                     >
                       <Link href="/contact">Contact Driver</Link>
                     </Button>
                     <Button
                       asChild
                       size="lg"
-                      className="bg-primary/90 hover:bg-primary/70 text-primary-foreground"
+                      className="bg-primary/90 hover:bg-primary/70 active:bg-primary/80 text-primary-foreground"
                     >
                       <Link href="/tours">Explore Tours</Link>
                     </Button>
@@ -141,9 +141,9 @@ const BannerCarousel = ({ events }: Props) => {
         })}
       </div>
 
-      {/* Indicators */}
+      {/* Indicators - Outside the slides loop for proper centering */}
       {events.length > 1 && (
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+        <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
           {events.map((_, index) => (
             <button
               key={index}

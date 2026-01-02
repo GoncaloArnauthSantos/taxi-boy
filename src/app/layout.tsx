@@ -6,7 +6,12 @@ import { Inter } from "next/font/google"
 import { getBaseUrl, generateOpenGraphMetadata, generateTwitterMetadata, defaultSiteMetadata } from "@/lib/seo"
 
 //  Using Inter font for modern, clean typography
-const inter = Inter({ subsets: ["latin"] })
+// font-display: swap ensures text is visible immediately with fallback font
+const inter = Inter({ 
+  subsets: ["latin"],
+  display: "swap",
+  preload: true,
+})
 
 const baseUrl = getBaseUrl();
 const ogMetadata = generateOpenGraphMetadata({});
