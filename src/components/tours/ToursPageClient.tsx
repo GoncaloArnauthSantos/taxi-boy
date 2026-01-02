@@ -32,7 +32,7 @@ const ToursPageClient = ({ tours, locations }: Props) => {
   return (
     <>
       {/* Filters Section */}
-      <section className="bg-muted/30 border-b border-border sticky top-0 z-40">
+      <section className="bg-muted/30 border-b border-border sticky top-16 lg:top-20 z-40">
         <ToursFilter
           searchQuery={searchQuery}
           selectedLocations={selectedLocations}
