@@ -150,7 +150,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
  * @param request.body - JSON body containing booking form data
  * @param {string} request.body.name - Client name (2-100 chars, letters, spaces, hyphens, apostrophes, periods)
  * @param {string} request.body.email - Client email (valid email format)
- * @param {string} request.body.phonePhoneCountryCode - Phone country code (e.g., "+351")
+ * @param {string} request.body.phoneCountryCode - Phone country code (e.g., "+351")
  * @param {string} request.body.phoneNumber - Phone number (6-15 digits, may include spaces, hyphens, parentheses)
  * @param {string} request.body.country - Country name (2-100 chars)
  * @param {string} request.body.language - Preferred language

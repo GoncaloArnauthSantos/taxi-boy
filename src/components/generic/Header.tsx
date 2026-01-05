@@ -60,7 +60,7 @@ const Header = ({ logo }: Props) => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-8" role="navigation">
             <Link href="/" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
               Home
             </Link>
@@ -95,7 +95,7 @@ const Header = ({ logo }: Props) => {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-border">
-            <nav className="flex flex-col gap-2">
+            <nav className="flex flex-col gap-2" role="navigation">
               <Link
                 href="/"
                 className="text-sm font-medium px-4 py-2 rounded-md transition-colors text-foreground hover:text-primary hover:bg-muted active:bg-primary active:text-primary-foreground"

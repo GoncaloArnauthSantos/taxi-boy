@@ -37,12 +37,12 @@ const BookingPageContent = ({
   if (submitted) {
     return (
       <div className="flex items-center justify-center py-16 px-4">
-        <Card className="max-w-md w-full border-border">
+        <Card className="max-w-md w-full border-border" data-testid="booking-confirmation-card">
           <CardContent className="p-8 text-center">
             <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 className="w-10 h-10 text-accent-foreground" />
             </div>
-            <h2 className="text-2xl font-bold mb-4 text-foreground">
+            <h2 className="text-2xl font-bold mb-4 text-foreground" data-testid="booking-confirmation-title">
               {confirmationTitle}
             </h2>
             <p className="text-muted-foreground leading-relaxed mb-6">
@@ -62,7 +62,7 @@ const BookingPageContent = ({
   }
 
   return (
-    <div className="py-16 lg:py-24 bg-muted/30">
+    <div className="py-16 lg:py-24 bg-muted/30" data-testid="booking-page-content">
       <div className="container mx-auto px-4 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">

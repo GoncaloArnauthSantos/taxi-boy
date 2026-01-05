@@ -19,7 +19,14 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:booking": "playwright test e2e/booking.spec.ts",
+    "test:e2e:admin": "playwright test e2e/admin-login.spec.ts",
+    "test:e2e:nav": "playwright test e2e/navigation.spec.ts"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.1",
@@ -50,6 +57,8 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@playwright/experimental-ct-react": "^1.57.0",
+    "@playwright/test": "^1.57.0",
     "@prismicio/client": "^7.21.0",
     "@prismicio/react": "^3.2.2",
     "@prismicio/types": "^0.2.9",

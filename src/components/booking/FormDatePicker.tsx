@@ -95,6 +95,7 @@ const FormDatePicker = <T extends FieldValues>({
             <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
               <PopoverTrigger asChild>
                 <Button
+                  id={name}
                   type="button"
                   variant="outline"
                   className={cn(

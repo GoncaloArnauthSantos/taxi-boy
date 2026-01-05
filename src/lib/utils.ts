@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import * as z from "zod";
 import {
   Globe,
   Clock,
@@ -87,3 +88,24 @@ export const buildWhatsAppLink = (
 export const phonePreview = (phone: string): string => {
   return `(${phone.slice(0, 4)}) ${phone.slice(4)}`;
 };
+
+/**
+ * Email validation regex pattern
+ * Matches standard email format: local@domain.tld
+ */
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+/**
+ * Email schema with custom validation
+ * Uses regex instead of deprecated .email() method
+ */
+export const emailSchema = z
+  .string()
+  .min(1, "Email is required")
+  .trim()
+  .refine(
+    (value) => EMAIL_REGEX.test(value),
+    {
+      message: "Please enter a valid email address",
+    }
+  );

@@ -7,6 +7,7 @@
 
 import * as z from "zod";
 import type { Booking } from "@/domain/booking";
+import { emailSchema } from "@/lib/utils";
 
 /**
  * Schema for booking form submission (matches BookingForm)
@@ -20,8 +21,8 @@ export const bookingFormSchema = z.object({
       /^[\p{L}\s'.-]+$/u,
       "Name can only contain letters (including accented characters), spaces, hyphens, apostrophes, and periods"
     ),
-  email: z.string().email("Please enter a valid email address"),
-  phonePhoneCountryCode: z.string().min(1, "Country code is required"),
+  email: emailSchema,
+  phoneCountryCode: z.string().min(1, "Country code is required"),
   phoneNumber: z
     .string()
     .min(6, "Phone number must be at least 6 digits")
@@ -88,7 +89,7 @@ export const transformFormToBooking = (
     name,
     email,
     phoneNumber,
-    phonePhoneCountryCode,
+    phoneCountryCode,
     country,
     language,
     date,
@@ -100,7 +101,7 @@ export const transformFormToBooking = (
     clientName: name,
     clientEmail: email,
     clientPhone: phoneNumber,
-    clientPhoneCountryCode: phonePhoneCountryCode,
+    clientPhoneCountryCode: phoneCountryCode,
     clientCountry: country,
     clientLanguage: language,
     clientSelectedDate: date.toISOString(),
