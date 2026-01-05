@@ -9,7 +9,7 @@ describe("bookingFormSchema", () => {
   const validFormData = {
     name: "John Doe",
     email: "john@example.com",
-    phonePhoneCountryCode: "+351",
+    phoneCountryCode: "+351",
     phoneNumber: "912345678",
     country: "Portugal",
     language: "English",
@@ -119,7 +119,7 @@ describe("bookingFormSchema", () => {
     });
   });
 
-  describe("phonePhoneCountryCode validation", () => {
+  describe("phoneCountryCode validation", () => {
     it("should accept valid country code", () => {
       const result = bookingFormSchema.safeParse(validFormData);
 
@@ -129,7 +129,7 @@ describe("bookingFormSchema", () => {
     it("should reject empty country code", () => {
       const result = bookingFormSchema.safeParse({
         ...validFormData,
-        phonePhoneCountryCode: "",
+        phoneCountryCode: "",
       });
 
       expect(result.success).toBe(false);
@@ -383,7 +383,7 @@ describe("bookingFormSchema", () => {
       const result = bookingFormSchema.safeParse({
         name: "A",
         email: "invalid",
-        phonePhoneCountryCode: "",
+        phoneCountryCode: "",
         phoneNumber: "123",
         country: "A",
         language: "",
@@ -609,7 +609,7 @@ describe("transformFormToBooking", () => {
   const validFormData = {
     name: "John Doe",
     email: "john@example.com",
-    phonePhoneCountryCode: "+351",
+    phoneCountryCode: "+351",
     phoneNumber: "912345678",
     country: "Portugal",
     language: "English",

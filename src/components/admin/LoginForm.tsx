@@ -8,6 +8,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -16,11 +17,15 @@ import {
   CardDescription,
 } from "@/components/ui/Card";
 import { createSupabaseClient } from "@/supabase/client";
+import { emailSchema } from "@/lib/utils";
 
-// Login form schema
+// Login form schema with improved validation
 const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(1, "Password is required"),
+  email: emailSchema,
+  password: z
+    .string()
+    .min(1, "Password is required")
+    .trim(),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -76,15 +81,18 @@ const LoginForm = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">
+              Email <span className="text-destructive">*</span>
+            </Label>
             <Input
               id="email"
               type="email"
               placeholder="admin@example.com"
               {...register("email")}
               disabled={isSubmitting}
+              className={cn(errors.email && "border-destructive")}
               aria-invalid={errors.email ? "true" : "false"}
             />
             {errors.email && (
@@ -95,13 +103,16 @@ const LoginForm = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">
+              Password <span className="text-destructive">*</span>
+            </Label>
             <Input
               id="password"
               type="password"
               placeholder="Enter your password"
               {...register("password")}
               disabled={isSubmitting}
+              className={cn(errors.password && "border-destructive")}
               aria-invalid={errors.password ? "true" : "false"}
             />
             {errors.password && (

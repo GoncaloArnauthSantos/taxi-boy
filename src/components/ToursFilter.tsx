@@ -79,6 +79,7 @@ const ToursFilter = ({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
+                  name="locations-filter"
                   variant="outline"
                   className="w-[200px] justify-between bg-background"
                 >
@@ -107,6 +108,7 @@ const ToursFilter = ({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
+                  name="duration-filter"
                   variant="outline"
                   className="w-[200px] justify-between bg-background"
                 >
@@ -159,7 +161,7 @@ const ToursFilter = ({
             </DropdownMenu>
 
             {hasActiveFilters && (
-              <Button variant="ghost" onClick={clearFilters} size="icon">
+              <Button name="clear-filters" variant="ghost" onClick={clearFilters} size="icon">
                 <X className="w-4 h-4" />
               </Button>
             )}
@@ -264,20 +266,11 @@ const ToursFilter = ({
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-
-              {/* {hasActiveFilters && (
-              <Button
-                variant="outline"
-                onClick={clearFilters}
-                className="w-full bg-background/50 backdrop-blur-sm lg:bg-transparent"
-              >
-                Clear Filters
-              </Button>
-            )} */}
             </div>
 
             {hasActiveFilters && (
               <Button
+                name="clear-filters"
                 variant="outline"
                 onClick={clearFilters}
                 className="w-full bg-background/50 backdrop-blur-sm lg:bg-transparent"

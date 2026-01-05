@@ -41,7 +41,7 @@ const BookingForm = ({ setSubmitted, tours, languages, unavailableDates, initial
     resolver: zodResolver(bookingFormSchema),
     mode: "onSubmit", // Only validate on submit, not on change/blur
     defaultValues: {
-      phonePhoneCountryCode: "+351",
+      phoneCountryCode: "+351",
       message: "",
       tourId: initialTourId,
       language: "",
@@ -84,7 +84,7 @@ const BookingForm = ({ setSubmitted, tours, languages, unavailableDates, initial
     label: `${tour.title} - €${tour.price}`,
   }));
 
-  const phonePhoneCountryCodeOptions = COUNTRY_CODES.map((item) => ({
+  const phoneCountryCodeOptions = COUNTRY_CODES.map((item) => ({
     value: item.code,
     label: `${item.code} ${item.country}`,
   }));
@@ -95,7 +95,7 @@ const BookingForm = ({ setSubmitted, tours, languages, unavailableDates, initial
         <CardTitle className="text-2xl">Booking Information</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
           {/* Name */}
           <div className="space-y-2">
             <Label htmlFor="name">
@@ -141,10 +141,10 @@ const BookingForm = ({ setSubmitted, tours, languages, unavailableDates, initial
               </Label>
               <div className="flex gap-2">
                 <FormSelect
-                  name="phonePhoneCountryCode"
+                  name="phoneCountryCode"
                   control={control}
-                  options={phonePhoneCountryCodeOptions}
-                  error={errors.phonePhoneCountryCode?.message}
+                  options={phoneCountryCodeOptions}
+                  error={errors.phoneCountryCode?.message}
                   hideLabel
                   defaultValue="+351"
                   className="w-[140px]"

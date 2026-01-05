@@ -181,7 +181,7 @@ describe("POST /api/bookings", () => {
   const validFormData = {
     name: "John Doe",
     email: "john@example.com",
-    phonePhoneCountryCode: "+351",
+    phoneCountryCode: "+351",
     phoneNumber: "912345678",
     country: "Portugal",
     language: "English",

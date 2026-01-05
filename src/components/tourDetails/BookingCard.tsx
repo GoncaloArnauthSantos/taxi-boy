@@ -13,7 +13,7 @@ const BookingCard = ({ tour, languages }: Props) => {
   const { price, duration } = tour;
   
   return (
-    <Card className="sticky top-24 border-border">
+    <Card className="sticky top-24 border-border" role="booking-card">
       <CardContent className="p-6">
         <div className="mb-6">
           <div className="text-sm text-muted-foreground mb-2">
@@ -27,7 +27,7 @@ const BookingCard = ({ tour, languages }: Props) => {
           </div>
         </div>
 
-        <div className="mb-6 pb-6 border-b border-border">
+        <div className="mb-6 pb-6 border-b border-border" role="languages-section">
           <div className="flex items-center gap-2 mb-2">
             <Globe className="w-5 h-5 text-muted-foreground" />
             <span className="font-semibold text-foreground">
@@ -37,6 +37,7 @@ const BookingCard = ({ tour, languages }: Props) => {
           <div className="flex flex-wrap gap-2 mt-3">
             {languages.map((lang, index) => (
               <span
+                role="language-badge"
                 key={index}
                 className="px-3 py-1 bg-muted text-muted-foreground text-sm rounded-full"
               >
