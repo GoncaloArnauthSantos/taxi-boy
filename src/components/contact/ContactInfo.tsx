@@ -8,11 +8,7 @@ type Props = {
 };
 
 const ContactInfo = ({ content }: Props) => {
-  const {
-    email = "",
-     phone = "",
-      address = ""
-    } = content || {};
+  const { email = "", phone = "", address = "" } = content || {};
 
   return (
     <Card className="border-border">

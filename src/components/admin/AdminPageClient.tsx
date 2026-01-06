@@ -90,15 +90,15 @@ const AdminPageClient = ({ tours }: Props) => {
       );
 
       const mockFormData: BookingFormValues = {
-        name: `Mock User Gonçalo`,
-        email: `goncaloarnauth@outlook.com`,
+        name: "Mock User Gonçalo",
+        email: "goncaloarnauth@outlook.com",
         phoneCountryCode: "+351",
-        phoneNumber: `912345${Math.floor(Math.random() * 1000)}`,
+        phoneNumber: "912345" + Math.floor(Math.random() * 1000),
         country: "Portugal",
         language: "English",
         tourId: randomTour.id,
         date: randomDate,
-        message: "This is a mock booking created for testing purposes.",
+        message: "This is a mock booking created for testing purposes",
       };
 
       await createBooking(mockFormData);
