@@ -31,6 +31,9 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     /* Record video for all tests */
     video: 'on',
+    /* Increase timeout for actions in CI */
+    actionTimeout: process.env.CI ? 30000 : 10000,
+    navigationTimeout: process.env.CI ? 60000 : 30000,
   },
 
   /* Configure projects for major browsers */
@@ -64,7 +67,9 @@ export default defineConfig({
     command: 'npm run dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
+    timeout: process.env.CI ? 300 * 1000 : 120 * 1000, // Much longer timeout in CI (5 min)
+    stdout: process.env.CI ? 'pipe' : 'ignore', // Show output in CI for debugging
+    stderr: 'pipe',
   },
 });
 

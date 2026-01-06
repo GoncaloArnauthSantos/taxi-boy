@@ -25,31 +25,51 @@ export class HomePage extends BasePage {
    * Optimized to find and click quickly
    */
   async clickBookingLink() {
-    await this.page
-      .getByRole("link", { name: /Book Now$/i })
-      .first()
-      .click();
+    const bookingLink = this.page
+      .getByRole("link", { name: /^Book Now$/i })
+      .first();
+    
+    // Wait for link to be visible and enabled
+    await bookingLink.waitFor({ state: "visible", timeout: 10000 });
+    
+    // Click and wait for navigation
+    await Promise.all([
+      this.page.waitForURL("/booking", { timeout: 15000 }),
+      bookingLink.click(),
+    ]);
   }
 
   /**
    * Verify booking page is loaded
    */
   async verifyBookingPageLoaded() {
-    await expect(this.page).toHaveURL("/booking", { timeout: 5000 });
+    await expect(this.page).toHaveURL("/booking", { timeout: 15000 });
+    // Wait for page to be fully loaded
+    await this.page.waitForLoadState("domcontentloaded", { timeout: 10000 });
   }
 
   /**
    * Click on tours link
    */
   async clickToursLink() {
-    await this.page
-      .getByRole("link", { name: /Tours$/i })
-      .first()
-      .click();
+    const toursLink = this.page
+      .getByRole("link", { name: /^Tours$/i })
+      .first();
+    
+    // Wait for link to be visible and enabled
+    await toursLink.waitFor({ state: "visible", timeout: 10000 });
+    
+    // Click and wait for navigation
+    await Promise.all([
+      this.page.waitForURL("/tours", { timeout: 15000 }),
+      toursLink.click(),
+    ]);
   }
 
   async verifyToursPageLoaded() {
-    await expect(this.page).toHaveURL("/tours", { timeout: 5000 });
+    await expect(this.page).toHaveURL("/tours", { timeout: 15000 });
+    // Wait for page to be fully loaded
+    await this.page.waitForLoadState("domcontentloaded", { timeout: 10000 });
   }
 
   /**
@@ -57,17 +77,27 @@ export class HomePage extends BasePage {
    * Optimized to find and click quickly
    */
   async clickContactLink() {
-    await this.page
-      .getByRole("link", { name: /Contact$/i })
-      .first()
-      .click();
+    const contactLink = this.page
+      .getByRole("link", { name: /^Contact$/i })
+      .first();
+    
+    // Wait for link to be visible and enabled
+    await contactLink.waitFor({ state: "visible", timeout: 10000 });
+    
+    // Click and wait for navigation
+    await Promise.all([
+      this.page.waitForURL("/contact", { timeout: 15000 }),
+      contactLink.click(),
+    ]);
   }
 
   /**
    * Verify contact page is loaded
    */
   async verifyContactPageLoaded() {
-    await expect(this.page).toHaveURL("/contact", { timeout: 5000 });
+    await expect(this.page).toHaveURL("/contact", { timeout: 15000 });
+    // Wait for page to be fully loaded
+    await this.page.waitForLoadState("domcontentloaded", { timeout: 10000 });
   }
 
   /**
