@@ -138,6 +138,10 @@ src/
 - `npm run lint` - Run ESLint
 - `npm run type-check` - Run TypeScript type checking
 - `npm run prebuild` - Run type-check and lint before build
+- `npm run test` - Run unit tests (once)
+- `npm run test:watch` - Run unit tests in watch mode
+- `npm run test:e2e` - Run E2E tests with Playwright
+- `npm run test:e2e:ui` - Run E2E tests with Playwright UI
 
 ## **CMS Integration**
 
@@ -162,6 +166,17 @@ The project uses Supabase (PostgreSQL) for booking data persistence:
 - **Performance**: Optimized with indexes and efficient queries
 
 For detailed information, see [README-SUPABASE.md](./README-SUPABASE.md).
+
+## **CI/CD Pipeline**
+
+The project uses GitHub Actions for continuous integration and deployment:
+
+- ✅ **Automated Testing**: Runs lint, type-check, and unit tests on every push/PR
+- ✅ **Automated Build**: Verifies the build works before deployment
+- ✅ **E2E Tests**: Runs end-to-end tests automatically (blocks deploy if they fail)
+- ✅ **Automated Deployment**: Deploys to Vercel production on `main` branch
+
+For detailed setup instructions, see [README-CI-CD.md](./README-CI-CD.md).
 
 ## **Performance Metrics**
 
