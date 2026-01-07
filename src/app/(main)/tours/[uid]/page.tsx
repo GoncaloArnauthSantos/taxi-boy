@@ -55,11 +55,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const locationsText = tour.locations.map((loc) => loc.value).join(", ");
 
   return {
-    title: tour.title,
-    description: tour.description || tour.longDescription,
+    title: `${tour.title} | Lisbon Tours - Go Lisbon Tours`,
+    description: tour.description || tour.longDescription
+      ? `${tour.description || tour.longDescription} Book this Lisbon tour with Go Lisbon Tours. Personalized tours in Portugal.`
+      : `Book ${tour.title} with Go Lisbon Tours. Personalized tours with multilingual driver.`,
     keywords: [
-      "Lisbon",
-      "taxi tours",
+      "lisbon tours",
+      "go lisbon tours",
+      "lisbon taxi tours",
+      "lisbon custom tours",
+      "portugal tours",
+      "lisbon sightseeing",
+      "lisbon day tours",
+      "lisbon city tours",
+      "sintra tours",
+      "belem tours",
+      "cascais tours",  
       tour.title,
       ...tour.locations.map((loc) => loc.value),
     ],
