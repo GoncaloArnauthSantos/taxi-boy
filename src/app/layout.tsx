@@ -85,6 +85,9 @@ const RootLayout = async ({children}: {
 }) => {
   return (
     <html lang="en">
+      <head>
+        <meta name="google-site-verification" content="eSLaJC2wnK3WjXFdeYfO6CdiplgdbzYNjIEYmcoDF1c" />
+      </head>
       <body className={`${inter.className} antialiased`}>
         <div className="min-h-screen flex flex-col">
           {children}
