@@ -10,7 +10,6 @@
 
 import { MetadataRoute } from "next";
 import { createClient } from "@/cms/client";
-import type { Tour } from "@/cms/types";
 import { logError, LogModule } from "@/lib/logger";
 import { getBaseUrl } from "@/lib/seo";
 import * as prismic from "@prismicio/client";
