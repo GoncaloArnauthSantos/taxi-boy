@@ -13,19 +13,34 @@ import { getLiveBannerEvents } from "@/cms/banner-events"
 import { getBaseUrl, generateOpenGraphMetadata, generateTwitterMetadata } from "@/lib/seo"
 
 export const metadata: Metadata = {
-  title: "Home",
+  title: "Lisbon Tours - Go Lisbon Tours",
   description:
-    "Discover Lisbon with personalized taxi tours led by a multilingual local driver. Custom itineraries, hidden gems, and unforgettable memories in Portugal's capital.",
+    "Discover the best Lisbon tours with Go Lisbon Tours. Personalized tours led by a multilingual local driver. Book your custom Lisbon tour today and explore Portugal's capital.",
+  keywords: [
+    "lisbon tours",
+    "go lisbon tours",
+    "lisbon taxi tours",
+    "lisbon private tours",
+    "lisbon custom tours",
+    "portugal tours",
+    "lisbon sightseeing",
+    "lisbon day tours",
+    "cascais tours",
+    "belem tours",
+    "lisbon city tours",
+    "sintra tours",
+    "belem tours",
+  ],
   openGraph: generateOpenGraphMetadata({
-    title: "Lisbon Taxi Tours - Premium Custom Tours",
+    title: "Lisbon Tours - Go Lisbon Tours",
     description:
-      "Discover Lisbon with personalized taxi tours led by a multilingual local driver. Custom itineraries, hidden gems, and unforgettable memories.",
+      "Discover the best Lisbon tours with Go Lisbon Tours. Personalized tours led by a multilingual local driver. Book your custom Lisbon tour today.",
     url: getBaseUrl(),
   }),
   twitter: generateTwitterMetadata({
-    title: "Lisbon Taxi Tours - Premium Custom Tours",
+    title: "Lisbon Tours - Go Lisbon Tours",
     description:
-      "Discover Lisbon with personalized taxi tours led by a multilingual local driver. Custom itineraries, hidden gems, and unforgettable memories.",
+      "Discover the best Lisbon tours with Go Lisbon Tours. Personalized tours led by a multilingual local driver. Book your custom Lisbon tour today.",
   }),
   alternates: {
     canonical: getBaseUrl(),

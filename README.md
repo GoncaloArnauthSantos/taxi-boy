@@ -1,17 +1,23 @@
-# 🚖 **TaxiBoy - Personalized Tour Booking Website**
+# 🚖 **Go Lisbon Tours - Personalized Tour Booking Website**
 
-A modern, type-safe web application for personalized tour booking in Portugal. Built with Next.js 15, TypeScript, and Prismic CMS for seamless content management.
+A modern, type-safe web application for personalized tour booking in Lisbon, Portugal. Built with Next.js 15, TypeScript, and Prismic CMS for seamless content management.
+
+🌐 **Live at**: [golisbontours.pt](https://www.golisbontours.pt)
 
 ## **Features**
 
 - 🌍 **Interactive Tour Listings**: Browse and filter tours with beautiful layouts and engaging descriptions
-- 📅 **Booking System**: Submit tour bookings with essential details (dates, number of people, contact information)
+- 📅 **Booking System**: Complete booking flow with email confirmations (client and driver notifications)
 - 🎨 **Modern UI**: Built with shadcn/ui components and Tailwind CSS v4
 - 📱 **Responsive Design**: Fully responsive design optimized for all devices
-- ⚡ **SEO Optimized**: Server-side rendering and static generation for optimal SEO
-- 🔄 **CMS Integration**: Content managed through Prismic CMS with automatic revalidation
+- ⚡ **SEO Optimized**: Dynamic sitemap, robots.txt, structured data (JSON-LD), Google Search Console integration
+- 🔄 **CMS Integration**: Content managed through Prismic CMS with automatic revalidation via webhooks
 - 🚀 **Performance**: Optimized with Next.js App Router, Suspense, and static generation
 - 🎯 **Mobile-First UX**: Optimized mobile experience with carousels, sticky navigation, and touch-friendly interactions
+- 📧 **Email System**: Automated email sending via Resend (booking confirmations, reminders)
+- 🔐 **Admin Panel**: Protected admin dashboard for managing bookings
+- 🧪 **Testing**: Comprehensive test suite (unit, integration, E2E) with CI/CD pipeline
+- 🔒 **Code Quality**: Pre-commit hooks, TypeScript strict mode, automated linting
 
 ## **Tech Stack**
 
@@ -22,7 +28,10 @@ A modern, type-safe web application for personalized tour booking in Portugal. B
 - **UI Components**: [shadcn/ui](https://ui.shadcn.com/) built on Radix UI
 - **Forms**: [React Hook Form](https://react-hook-form.com/) with [Zod](https://zod.dev/) validation
 - **Icons**: [Lucide React](https://lucide.dev/)
+- **Email**: [Resend](https://resend.com/) for transactional emails
+- **Testing**: [Vitest](https://vitest.dev/) for unit/integration tests, [Playwright](https://playwright.dev/) for E2E tests
 - **Deployment**: [Vercel](https://vercel.com/) for fast and scalable hosting
+- **Analytics**: [Vercel Analytics](https://vercel.com/analytics) for traffic monitoring
 
 ## **Goals**
 
@@ -68,6 +77,9 @@ A modern, type-safe web application for personalized tour booking in Portugal. B
    RESEND_API_KEY=your-resend-api-key
    EMAIL_FROM=noreply@yourdomain.com
    DRIVER_EMAIL=driver@yourdomain.com
+   
+   # Site URL (for SEO - sitemap, Open Graph, etc.)
+   NEXT_PUBLIC_SITE_URL=https://www.yourdomain.com
    
    # Cron Reminders (optional but recommended)
    CRON_SECRET=your-secure-random-string
@@ -171,12 +183,32 @@ For detailed information, see [README-SUPABASE.md](./README-SUPABASE.md).
 
 The project uses GitHub Actions for continuous integration and deployment:
 
-- ✅ **Automated Testing**: Runs lint, type-check, and unit tests on every push/PR
+- ✅ **Automated Linting & Type Checking**: Runs on every push/PR
+- ✅ **Unit Tests**: Runs Vitest tests and uploads coverage
 - ✅ **Automated Build**: Verifies the build works before deployment
-- ✅ **E2E Tests**: Runs end-to-end tests automatically (blocks deploy if they fail)
+- ✅ **E2E Tests**: Runs Playwright tests automatically (blocks deploy if they fail)
 - ✅ **Automated Deployment**: Deploys to Vercel production on `main` branch
+- ✅ **Pre-commit Hooks**: Validates code quality before commits (Husky)
 
 For detailed setup instructions, see [README-CI-CD.md](./README-CI-CD.md).
+
+## **Testing**
+
+The project has comprehensive test coverage:
+
+- **Unit Tests** (Vitest): Utils, SEO functions, Mappers, React Hooks, Zod schemas
+- **Integration Tests** (Vitest): API routes (bookings, auth) with mocked dependencies
+- **E2E Tests** (Playwright): Full user flows (booking, admin, navigation, tours) using Page Object Model
+
+Run tests:
+```bash
+npm run test          # Unit tests (once)
+npm run test:watch    # Unit tests (watch mode)
+npm run test:e2e      # E2E tests
+npm run test:e2e:ui   # E2E tests with UI
+```
+
+For detailed testing documentation, see [e2e/README.md](./e2e/README.md).
 
 ## **Performance Metrics**
 
@@ -207,11 +239,42 @@ The application is optimized for performance and accessibility, achieving excell
 - ✅ **Mobile UX**: Optimized carousels, sticky navigation, touch-friendly interactions
 - ✅ **SEO**: Dynamic sitemap, robots.txt, Open Graph tags, structured data (JSON-LD)
 
-*Last updated: Performance audit using Google Lighthouse*
-
 ## **Recent Improvements**
 
-### **Mobile UX Enhancements** (Latest)
+### **🌐 Going Live** (Latest)
+- ✅ Custom domain `golisbontours.pt` configured and live
+- ✅ DNS configured and propagated
+- ✅ HTTPS enabled
+- ✅ Google Search Console configured and sitemap submitted
+- ✅ SEO optimized for "lisbon tours" and "go lisbon tours" keywords
+- ✅ Email system configured (Resend) with domain verification in progress
+
+### **🔍 SEO Enhancements**
+- ✅ Dynamic sitemap with real publication dates from Prismic
+- ✅ Optimized robots.txt with explicit allow/disallow rules
+- ✅ Structured data (JSON-LD) for tours
+- ✅ Optimized meta descriptions and keywords
+- ✅ Open Graph and Twitter Cards
+- ✅ Google Search Console integration
+
+### **🧪 Testing & Quality**
+- ✅ Comprehensive unit tests (Vitest) - Utils, SEO, Mappers, Hooks, Schemas
+- ✅ Integration tests for all API routes
+- ✅ E2E tests (Playwright) with Page Object Model
+- ✅ Pre-commit hooks (Husky) - Validates type-check and lint before commits
+- ✅ CI/CD pipeline with automated testing, building, and deployment
+
+### **📧 Email System**
+- ✅ Automated booking confirmation emails (client and driver)
+- ✅ Booking reminder emails (day before tour)
+- ✅ Resend integration with custom domain support
+
+### **📊 Analytics & Monitoring**
+- ✅ Vercel Analytics configured and tracking
+- ✅ Google Search Console for SEO monitoring
+- ✅ Performance metrics tracking
+
+### **Mobile UX Enhancements**
 - 🎨 Responsive banner with optimized font sizes for mobile
 - 🎠 WhyChooseUs carousel for mobile devices
 - 📱 Sticky filters positioned below header
@@ -224,4 +287,6 @@ The application is optimized for performance and accessibility, achieving excell
 - 🖼️ Strategic image lazy loading
 - 📦 Code splitting for heavy components
 - 🎨 CSS optimization and tree-shaking
+
+*Last updated: January 2026 - Project is live and production-ready*
 

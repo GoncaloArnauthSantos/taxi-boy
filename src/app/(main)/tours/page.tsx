@@ -8,20 +8,33 @@ import { Suspense } from "react"
 import { getBaseUrl, generateOpenGraphMetadata, generateTwitterMetadata } from "@/lib/seo"
 
 export const metadata: Metadata = {
-  title: "Tours",
+  title: "Lisbon Tours - Go Lisbon Tours | All Our Tours",
   description:
-    "Explore our collection of personalized taxi tours in Lisbon. From city highlights to hidden gems, discover the perfect tour for your visit to Portugal's capital.",
-  keywords: ["Lisbon tours", "taxi tours", "Portugal", "custom tours", "private tours"],
+    "Explore our complete collection of Lisbon tours. From city highlights to hidden gems, discover the perfect Lisbon tour for your visit. Book your personalized tour today.",
+  keywords: [
+    "lisbon tours",
+    "go lisbon tours",
+    "lisbon taxi tours",
+    "lisbon private tours",
+    "lisbon custom tours",
+    "portugal tours",
+    "lisbon sightseeing",
+    "lisbon day tours",
+    "lisbon city tours",
+    "sintra tours",
+    "belem tours",
+    "cascais tours",
+  ],
   openGraph: generateOpenGraphMetadata({
-    title: "Lisbon Taxi Tours - Explore Our Tours",
+    title: "Lisbon Tours - Go Lisbon Tours | All Our Tours",
     description:
-      "Explore our collection of personalized taxi tours in Lisbon. From city highlights to hidden gems, discover the perfect tour for your visit.",
+      "Explore our complete collection of Lisbon tours. From city highlights to hidden gems, discover the perfect Lisbon tour for your visit.",
     url: `${getBaseUrl()}/tours`,
   }),
   twitter: generateTwitterMetadata({
-    title: "Lisbon Taxi Tours - Explore Our Tours",
+    title: "Lisbon Tours - Go Lisbon Tours | All Our Tours",
     description:
-      "Explore our collection of personalized taxi tours in Lisbon. From city highlights to hidden gems, discover the perfect tour for your visit.",
+      "Explore our complete collection of Lisbon tours. From city highlights to hidden gems, discover the perfect Lisbon tour for your visit.",
   }),
   alternates: {
     canonical: `${getBaseUrl()}/tours`,

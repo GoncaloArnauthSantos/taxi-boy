@@ -52,9 +52,9 @@ describe("getBaseUrl", () => {
 
 describe("defaultSiteMetadata", () => {
   it("should have correct default values", () => {
-    expect(defaultSiteMetadata.title).toBe("Lisbon Taxi Tours - Premium Custom Tours");
-    expect(defaultSiteMetadata.description).toContain("Experience Lisbon");
-    expect(defaultSiteMetadata.siteName).toBe("Lisbon Taxi Tours");
+    expect(defaultSiteMetadata.title).toBe("Lisbon Tours - Go Lisbon Tours | Premium Taxi Tours");
+    expect(defaultSiteMetadata.description).toContain("Discover the best Lisbon tours with Go Lisbon Tours. Personalized taxi tours led by a multilingual local driver. Book your custom Lisbon tour today and explore Portugal's capital.");
+    expect(defaultSiteMetadata.siteName).toBe("Go Lisbon Tours");
     expect(defaultSiteMetadata.locale).toBe("en_US");
     expect(defaultSiteMetadata.type).toBe("website");
   });

@@ -29,9 +29,11 @@ const StructuredData = ({ tour }: Props) => {
     image: imageUrl,
     provider: {
       "@type": "LocalBusiness",
-      name: "Lisbon Taxi Tours",
+      name: "Go Lisbon Tours",
+      alternateName: "Go Lisbon Tours",
       description:
-        "Premium custom taxi tours in Lisbon with multilingual driver",
+        "Premium custom Lisbon tours with multilingual driver. Book your personalized tour in Lisbon, Portugal.",
+      url: baseUrl,
     },
     offers: {
       "@type": "Offer",

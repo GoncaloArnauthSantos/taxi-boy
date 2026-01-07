@@ -24,10 +24,10 @@ export const getBaseUrl = (): string => {
  * Default site metadata
  */
 export const defaultSiteMetadata = {
-  title: "Lisbon Taxi Tours - Premium Custom Tours",
+  title: "Lisbon Tours - Go Lisbon Tours | Premium Taxi Tours",
   description:
-    "Experience Lisbon with a multilingual driver offering personalized taxi tours around the city and surrounding areas",
-  siteName: "Lisbon Taxi Tours",
+    "Discover the best Lisbon tours with Go Lisbon Tours. Personalized taxi tours led by a multilingual local driver. Book your custom Lisbon tour today and explore Portugal's capital.",
+  siteName: "Go Lisbon Tours",
   locale: "en_US",
   type: "website",
 } as const;
