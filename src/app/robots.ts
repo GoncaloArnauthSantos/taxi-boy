@@ -2,7 +2,7 @@
  * Dynamic Robots.txt Generator
  * 
  * Generates robots.txt dynamically.
- * Allows all search engines to crawl the site, except admin pages.
+ * Explicitly allows public pages and blocks private/admin pages.
  * 
  * Next.js will serve this at /robots.txt
  */
@@ -20,10 +20,16 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
+        allow: [
+          "/", // Home page
+          "/tours", // Tours listing page
+          "/tours/", // Tour detail pages (dynamic routes)
+          "/booking", // Booking page
+          "/contact", // Contact page
+        ],
         disallow: [
-          "/admin/", // Block admin pages from being indexed
-          "/api/", // Block API routes from being indexed
+          "/admin/", // Block all admin pages from being indexed
+          "/api/", // Block all API routes from being indexed
         ],
       },
     ],
