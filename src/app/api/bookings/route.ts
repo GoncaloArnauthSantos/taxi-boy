@@ -17,11 +17,15 @@ import { logError, logInfo, LogModule } from "@/lib/logger";
 import { BookingPaymentStatus, BookingStatus } from "@/domain/booking";
 import { sendBookingConfirmationEmails } from "@/email/send";
 
-const VALID_STATUSES: BookingStatus[] = ["pending", "confirmed", "cancelled"];
+const VALID_STATUSES: BookingStatus[] = [
+  BookingStatus.PENDING,
+  BookingStatus.CONFIRMED,
+  BookingStatus.CANCELLED,
+];
 const VALID_PAYMENT_STATUSES: BookingPaymentStatus[] = [
-  "pending",
-  "paid",
-  "failed",
+  BookingPaymentStatus.PENDING,
+  BookingPaymentStatus.PAID,
+  BookingPaymentStatus.FAILED,
 ];
 
 /**

@@ -1,7 +1,19 @@
+export enum BookingStatus {
+  PENDING = "pending",
+  CONFIRMED = "confirmed",
+  CANCELLED = "cancelled",
+}
+export enum BookingPaymentStatus {
+  PENDING = "pending",
+  PAID = "paid",
+  FAILED = "failed",
+}
 
-export type BookingStatus = "pending" | "confirmed" | "cancelled"
-export type BookingPaymentStatus = "pending" | "paid" | "failed"
-export type BookingPaymentMethod = "bank_transfer" | "card" | "cash"
+export enum BookingPaymentMethod {
+  BANK_TRANSFER = "bank_transfer",
+  CARD = "card",
+  CASH = "cash",
+}
 
 export type Booking = {
   id: string

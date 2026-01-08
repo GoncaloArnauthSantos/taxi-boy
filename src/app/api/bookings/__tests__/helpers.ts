@@ -4,7 +4,7 @@
  * Provides mock data and utilities for testing booking API routes.
  */
 
-import type { Booking } from "@/domain/booking";
+import { BookingPaymentStatus, BookingStatus, type Booking } from "@/domain/booking";
 import type { Tour } from "@/cms/types";
 
 /**
@@ -25,9 +25,9 @@ export const createMockBooking = (overrides?: Partial<Booking>): Booking => {
     clientSelectedDate: futureDate,
     clientMessage: "Test message",
     tourId: "tour-123",
-    status: "pending",
+    status: BookingStatus.PENDING,
     price: 100,
-    paymentStatus: "pending",
+    paymentStatus: BookingPaymentStatus.PENDING,
     paymentMethod: null,
     createdAt: now,
     updatedAt: now,
@@ -97,7 +97,7 @@ export const createMockBookingRow = (overrides?: Partial<BookingRow>): BookingRo
     client_selected_date: futureDate,
     client_message: "Test message",
     tour_id: "tour-123",
-    status: "pending",
+    status: BookingStatus.PENDING,
     price: 100,
     payment_status: "pending",
     payment_method: null,

@@ -6,7 +6,7 @@
  */
 
 import * as z from "zod";
-import type { Booking } from "@/domain/booking";
+import { BookingPaymentMethod, BookingPaymentStatus, BookingStatus, type Booking } from "@/domain/booking";
 import { emailSchema } from "@/lib/utils";
 
 /**
@@ -58,20 +58,17 @@ export type BookingFormValues = z.infer<typeof bookingFormSchema>;
  */
 export const bookingPatchSchema = z
   .object({
-    status: z.enum(["pending", "confirmed", "cancelled"]).optional(),
-    paymentStatus: z.enum(["pending", "paid", "failed"]).optional(),
-    paymentMethod: z.enum(["bank_transfer", "card", "cash"]).optional(),
+    status: z.enum([BookingStatus.PENDING, BookingStatus.CONFIRMED, BookingStatus.CANCELLED]).optional(),
+    paymentStatus: z.enum([BookingPaymentStatus.PENDING, BookingPaymentStatus.PAID, BookingPaymentStatus.FAILED]).optional(),
+    paymentMethod: z.enum([BookingPaymentMethod.BANK_TRANSFER, BookingPaymentMethod.CARD, BookingPaymentMethod.CASH]).optional(),
     price: z.number().positive().optional(),
     clientMessage: z.string().max(1000).optional(),
     clientSelectedDate: z
       .string()
-      .refine(
-        (date) => {
-          const dateObj = new Date(date);
-          return dateObj >= new Date(new Date().setHours(0, 0, 0, 0));
-        },
-        "Date must be today or in the future"
-      )
+      .refine((date) => {
+        const dateObj = new Date(date);
+        return dateObj >= new Date(new Date().setHours(0, 0, 0, 0));
+      }, "Date must be today or in the future")
       .optional(),
   })
   .strict();
@@ -108,8 +105,8 @@ export const transformFormToBooking = (
     clientMessage: message ?? null,
     price,
     tourId,
-    status: "pending",
-    paymentStatus: "pending",
+    status: BookingStatus.PENDING,
+    paymentStatus: BookingPaymentStatus.PENDING,
     paymentMethod: null,
   };
 };

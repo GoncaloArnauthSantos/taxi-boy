@@ -97,7 +97,8 @@ export const getBookingById = async (id: string): Promise<Booking | null> => {
       context: { bookingId: id },
       module: LogModule.Database,
     });
-    throw error;
+    
+    return null;
   }
 };
 
@@ -206,13 +207,13 @@ export const isDateAvailable = async (date: string): Promise<boolean> => {
     const supabase = await createSupabaseServerClient();
     const dateStr = date.split("T")[0]; // Ensure YYYY-MM-DD format
 
-    // Check if there are any active bookings on this date
+    // Check if there are any confirmed  bookings on this date
     const { data, error } = await supabase
       .from("bookings")
       .select("id")
       .eq("client_selected_date", dateStr)
       .is("deleted_at", null) // Exclude soft deleted
-      .in("status", ["pending", "confirmed"]) // Only active bookings
+      .eq("status", "confirmed") // Only confirmed bookings
       .limit(1);
 
     if (error) {
@@ -250,13 +251,13 @@ export const getUnavailableDates = async (): Promise<Date[]> => {
     const supabase = createSupabaseServerPublicClient();
     const now = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
 
-    // Fetch only client_selected_date for future bookings (exclude soft deleted)
+    // Fetch only client_selected_date for future confirmed bookings (exclude soft deleted)
     const { data, error } = await supabase
       .from("bookings")
       .select("client_selected_date")
       .gte("client_selected_date", now) // Only future dates
       .is("deleted_at", null) // Exclude soft deleted
-      .in("status", ["pending", "confirmed"]); // Only active bookings (exclude cancelled)
+      .eq("status", "confirmed") // Only confirmed bookings
 
     if (error) {
       logError({

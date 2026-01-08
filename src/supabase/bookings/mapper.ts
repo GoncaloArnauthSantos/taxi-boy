@@ -21,10 +21,10 @@ type BookingRow = {
   client_selected_date: string;
   client_message: string | null;
   tour_id: string;
-  status: string;
+  status: BookingStatus;
   price: number;
-  payment_status: string;
-  payment_method: string | null;
+  payment_status: BookingPaymentStatus;
+  payment_method: BookingPaymentMethod | null;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
@@ -43,10 +43,10 @@ type BookingInsert = {
   client_selected_date: string;
   client_message: string | null;
   tour_id: string;
-  status: string;
+  status: BookingStatus;
   price: number;
-  payment_status: string;
-  payment_method: string | null;
+  payment_status: BookingPaymentStatus;
+  payment_method: BookingPaymentMethod | null;
 };
 
 /**
@@ -68,7 +68,7 @@ export const mapBookingToInsert = (
     status: input.status,
     price: input.price,
     payment_status: input.paymentStatus,
-    payment_method: input.paymentMethod,
+    payment_method: input.paymentMethod ?? null,
   };
 };
 

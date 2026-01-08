@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -19,7 +20,6 @@ import { createBooking, BookingApiError } from "@/client/api/bookings";
 import { logError, LogModule } from "@/lib/logger";
 
 type Props = {
-  setSubmitted: (submitted: boolean) => void;
   tours: Tour[];
   languages: string[];
   unavailableDates: Date[];
@@ -28,7 +28,8 @@ type Props = {
 
 type BookingFormValues = z.infer<typeof bookingFormSchema>;
 
-const BookingForm = ({ setSubmitted, tours, languages, unavailableDates, initialTourId }: Props) => {
+const BookingForm = ({ tours, languages, unavailableDates, initialTourId }: Props) => {
+  const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
@@ -48,12 +49,14 @@ const BookingForm = ({ setSubmitted, tours, languages, unavailableDates, initial
     },
   });
 
-  const onSubmit = async (formData: BookingFormValues) => {
+  const onSubmit = useCallback(async (formData: BookingFormValues) => {
     try {
       setSubmitError(null);
-      await createBooking(formData);
-      setSubmitted(true);
+      
+      const booking = await createBooking(formData);
       reset();
+
+      router.push(`/checkout/${booking.id}`);
     } catch (error) {
       logError({
         message: "Error submitting booking",
@@ -71,7 +74,7 @@ const BookingForm = ({ setSubmitted, tours, languages, unavailableDates, initial
       
       setSubmitError(errorMessage);
     }
-  };
+  }, [router, reset]);
 
   // Prepare options for selects
   const languageOptions = languages.map((lang) => ({
@@ -257,7 +260,7 @@ const BookingForm = ({ setSubmitted, tours, languages, unavailableDates, initial
               size="lg"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Booking..." : "Booking Request"}
+              {isSubmitting ? "Booking..." : "Book Now"}
             </Button>
           </div>
 
