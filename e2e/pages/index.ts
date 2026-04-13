@@ -9,4 +9,5 @@ export { BookingPage } from './BookingPage';
 export { AdminLoginPage } from './AdminLoginPage';
 export { ToursPage } from './ToursPage';
 export { TourDetailsPage } from './TourDetailsPage';
+export { CheckoutPage } from './CheckoutPage';
 

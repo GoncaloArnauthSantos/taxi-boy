@@ -1,5 +1,6 @@
 import { test } from "@playwright/test";
 import { BookingPage } from "./pages/BookingPage";
+import { CheckoutPage } from "./pages/CheckoutPage";
 import { getFutureDate, TEST_DATA, mockBookingApi } from "./helpers/test-helpers";
 
 test.describe("Booking Flow", () => {
@@ -68,7 +69,7 @@ test.describe("Booking Flow", () => {
   });
 
   test("should successfully submit booking with valid data", async () => {
-    await mockBookingApi(bookingPage.page, true);
+    const checkoutPage = new CheckoutPage(bookingPage.page);
 
     const futureDate = getFutureDate(7); // 7 days from now
 
@@ -87,8 +88,9 @@ test.describe("Booking Flow", () => {
 
     await bookingPage.submitForm();
 
-    // Wait for confirmation
-    await bookingPage.verifyConfirmationShown();
+    // Wait for redirect to checkout page and verify key content
+    await checkoutPage.verifyCheckoutUrl();
+    await checkoutPage.verifyCheckoutCoreContent();
   });
 
   test("should handle API error gracefully", async () => {

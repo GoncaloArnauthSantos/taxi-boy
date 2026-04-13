@@ -51,12 +51,6 @@ export class BookingPage extends BasePage {
   readonly formError = () =>
     this.page.locator('p[role="alert"]').filter({ hasText: /error|failed/i }).first();
 
-  // Success/Confirmation - use data-testid (important state to verify)
-  readonly confirmationCard = () =>
-    this.page.locator('div[data-testid="booking-confirmation-card"]');
-  readonly confirmationTitle = () =>
-    this.page.locator('h2[data-testid="booking-confirmation-title"]');
-
   constructor(page: Page) {
     super(page);
   }
@@ -255,11 +249,17 @@ export class BookingPage extends BasePage {
   }
 
   /**
-   * Verify confirmation is shown
+   * Verify user is redirected to checkout page
    */
-  async verifyConfirmationShown() {
-    await expect(this.confirmationCard()).toBeVisible({ timeout: 10000 });
-    await expect(this.confirmationTitle()).toBeVisible();
+  async verifyRedirectedToCheckout(bookingId?: string) {
+    if (bookingId) {
+      await expect(this.page).toHaveURL(new RegExp(`/checkout/${bookingId}$`), {
+        timeout: 10000,
+      });
+      return;
+    }
+
+    await expect(this.page).toHaveURL(/\/checkout\/[^/]+$/, { timeout: 10000 });
   }
 
   /**
