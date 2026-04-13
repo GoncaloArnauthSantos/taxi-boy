@@ -4,7 +4,7 @@ import {
   mapRowToBooking,
   mapBookingPatchToUpdate,
 } from "../mapper";
-import type { Booking } from "@/domain/booking";
+import { BookingPaymentMethod, BookingPaymentStatus, BookingStatus, type Booking } from "@/domain/booking";
 
 describe("mapBookingToInsert", () => {
   const validBookingInput: Omit<Booking, "id" | "createdAt" | "updatedAt" | "deletedAt"> = {
@@ -17,9 +17,9 @@ describe("mapBookingToInsert", () => {
     clientSelectedDate: "2024-12-25T10:00:00.000Z",
     clientMessage: "Test message",
     tourId: "tour-123",
-    status: "pending",
+    status: BookingStatus.PENDING,
     price: 100,
-    paymentStatus: "pending",
+    paymentStatus: BookingPaymentStatus.PENDING,
     paymentMethod: null,
   };
 
@@ -53,7 +53,7 @@ describe("mapBookingToInsert", () => {
   });
 
   it("should handle different status values", () => {
-    const statuses: Booking["status"][] = ["pending", "confirmed", "cancelled"];
+    const statuses: BookingStatus[] = [BookingStatus.PENDING, BookingStatus.CONFIRMED, BookingStatus.CANCELLED];
 
     statuses.forEach((status) => {
       const input = { ...validBookingInput, status };
@@ -63,7 +63,7 @@ describe("mapBookingToInsert", () => {
   });
 
   it("should handle different payment status values", () => {
-    const paymentStatuses: Booking["paymentStatus"][] = ["pending", "paid", "failed"];
+    const paymentStatuses: BookingPaymentStatus[] = [BookingPaymentStatus.PENDING, BookingPaymentStatus.PAID, BookingPaymentStatus.FAILED];
 
     paymentStatuses.forEach((paymentStatus) => {
       const input = { ...validBookingInput, paymentStatus };
@@ -73,7 +73,7 @@ describe("mapBookingToInsert", () => {
   });
 
   it("should handle different payment method values", () => {
-    const paymentMethods: Booking["paymentMethod"][] = ["bank_transfer", "card", "cash", null];
+    const paymentMethods: (BookingPaymentMethod | null)[] = [BookingPaymentMethod.BANK_TRANSFER, BookingPaymentMethod.CARD, BookingPaymentMethod.CASH, null];
 
     paymentMethods.forEach((paymentMethod) => {
       const input = { ...validBookingInput, paymentMethod };
@@ -109,9 +109,9 @@ describe("mapRowToBooking", () => {
     client_selected_date: "2024-12-25T10:00:00.000Z",
     client_message: "Test message",
     tour_id: "tour-123",
-    status: "pending",
+    status: BookingStatus.PENDING,
     price: 100,
-    payment_status: "pending",
+    payment_status: BookingPaymentStatus.PENDING,
     payment_method: null,
     created_at: "2024-01-01T00:00:00.000Z",
     updated_at: "2024-01-01T00:00:00.000Z",
@@ -131,7 +131,7 @@ describe("mapRowToBooking", () => {
     expect(result.clientSelectedDate).toBe("2024-12-25T10:00:00.000Z");
     expect(result.clientMessage).toBe("Test message");
     expect(result.tourId).toBe("tour-123");
-    expect(result.status).toBe("pending");
+    expect(result.status).toBe(BookingStatus.PENDING);
     expect(result.price).toBe(100);
     expect(result.paymentStatus).toBe("pending");
     expect(result.paymentMethod).toBeNull();
@@ -165,12 +165,12 @@ describe("mapRowToBooking", () => {
   it("should handle non-null paymentMethod", () => {
     const row = {
       ...validBookingRow,
-      payment_method: "card",
+      payment_method: BookingPaymentMethod.CARD,
     };
 
     const result = mapRowToBooking(row);
 
-    expect(result.paymentMethod).toBe("card");
+    expect(result.paymentMethod).toBe(BookingPaymentMethod.CARD);
   });
 
   it("should handle null deletedAt", () => {
@@ -196,7 +196,7 @@ describe("mapRowToBooking", () => {
   });
 
   it("should handle different status values", () => {
-    const statuses = ["pending", "confirmed", "cancelled"];
+    const statuses: BookingStatus[] = [BookingStatus.PENDING, BookingStatus.CONFIRMED, BookingStatus.CANCELLED];
 
     statuses.forEach((status) => {
       const row = { ...validBookingRow, status };
@@ -206,7 +206,7 @@ describe("mapRowToBooking", () => {
   });
 
   it("should handle different payment status values", () => {
-    const paymentStatuses = ["pending", "paid", "failed"];
+    const paymentStatuses: BookingPaymentStatus[] = [BookingPaymentStatus.PENDING, BookingPaymentStatus.PAID, BookingPaymentStatus.FAILED];
 
     paymentStatuses.forEach((paymentStatus) => {
       const row = { ...validBookingRow, payment_status: paymentStatus };
@@ -216,7 +216,7 @@ describe("mapRowToBooking", () => {
   });
 
   it("should handle different payment method values", () => {
-    const paymentMethods = ["bank_transfer", "card", "cash"];
+    const paymentMethods: BookingPaymentMethod[] = [BookingPaymentMethod.BANK_TRANSFER, BookingPaymentMethod.CARD, BookingPaymentMethod.CASH];
 
     paymentMethods.forEach((paymentMethod) => {
       const row = { ...validBookingRow, payment_method: paymentMethod };
@@ -229,12 +229,12 @@ describe("mapRowToBooking", () => {
 describe("mapBookingPatchToUpdate", () => {
   it("should include only provided fields", () => {
     const patch = {
-      status: "confirmed" as const,
+      status: BookingStatus.CONFIRMED,
     };
 
     const result = mapBookingPatchToUpdate(patch);
 
-    expect(result.status).toBe("confirmed");
+    expect(result.status).toBe(BookingStatus.CONFIRMED);
     expect(result.client_name).toBeUndefined();
     expect(result.client_email).toBeUndefined();
     expect(Object.keys(result)).toHaveLength(1);
@@ -242,17 +242,17 @@ describe("mapBookingPatchToUpdate", () => {
 
   it("should handle multiple fields", () => {
     const patch = {
-      status: "confirmed" as const,
-      paymentStatus: "paid" as const,
-      paymentMethod: "card" as const,
+      status: BookingStatus.CONFIRMED,
+      paymentStatus: BookingPaymentStatus.PAID,
+      paymentMethod: BookingPaymentMethod.CARD,
       price: 150,
     };
 
     const result = mapBookingPatchToUpdate(patch);
 
-    expect(result.status).toBe("confirmed");
-    expect(result.payment_status).toBe("paid");
-    expect(result.payment_method).toBe("card");
+    expect(result.status).toBe(BookingStatus.CONFIRMED);
+    expect(result.payment_status).toBe(BookingPaymentStatus.PAID);
+    expect(result.payment_method).toBe(BookingPaymentMethod.CARD);
     expect(result.price).toBe(150);
     expect(Object.keys(result)).toHaveLength(4);
   });
@@ -268,10 +268,10 @@ describe("mapBookingPatchToUpdate", () => {
       clientSelectedDate: "2024-12-26T10:00:00.000Z",
       clientMessage: "Updated message",
       tourId: "tour-456",
-      status: "confirmed",
+      status: BookingStatus.CONFIRMED,
       price: 200,
-      paymentStatus: "paid",
-      paymentMethod: "card",
+      paymentStatus: BookingPaymentStatus.PAID,
+      paymentMethod: BookingPaymentMethod.CARD,
     };
 
     const result = mapBookingPatchToUpdate(patch);
@@ -285,10 +285,10 @@ describe("mapBookingPatchToUpdate", () => {
     expect(result.client_selected_date).toBe("2024-12-26T10:00:00.000Z");
     expect(result.client_message).toBe("Updated message");
     expect(result.tour_id).toBe("tour-456");
-    expect(result.status).toBe("confirmed");
+    expect(result.status).toBe(BookingStatus.CONFIRMED);
     expect(result.price).toBe(200);
-    expect(result.payment_status).toBe("paid");
-    expect(result.payment_method).toBe("card");
+    expect(result.payment_status).toBe(BookingPaymentStatus.PAID);
+    expect(result.payment_method).toBe(BookingPaymentMethod.CARD);
   });
 
   it("should handle null clientMessage", () => {
@@ -313,14 +313,14 @@ describe("mapBookingPatchToUpdate", () => {
 
   it("should not include undefined fields", () => {
     const patch = {
-      status: "confirmed" as const,
+      status: BookingStatus.CONFIRMED,
       clientName: undefined,
       price: undefined,
     };
 
     const result = mapBookingPatchToUpdate(patch);
 
-    expect(result.status).toBe("confirmed");
+    expect(result.status).toBe(BookingStatus.CONFIRMED);
     expect(result.client_name).toBeUndefined();
     expect(result.price).toBeUndefined();
     expect(Object.keys(result)).toHaveLength(1);
@@ -346,7 +346,7 @@ describe("mapBookingPatchToUpdate", () => {
   });
 
   it("should handle all status values", () => {
-    const statuses: Booking["status"][] = ["pending", "confirmed", "cancelled"];
+    const statuses: BookingStatus[] = [BookingStatus.PENDING, BookingStatus.CONFIRMED, BookingStatus.CANCELLED];
 
     statuses.forEach((status) => {
       const result = mapBookingPatchToUpdate({ status });
@@ -355,7 +355,7 @@ describe("mapBookingPatchToUpdate", () => {
   });
 
   it("should handle all payment status values", () => {
-    const paymentStatuses: Booking["paymentStatus"][] = ["pending", "paid", "failed"];
+    const paymentStatuses: BookingPaymentStatus[] = [BookingPaymentStatus.PENDING, BookingPaymentStatus.PAID, BookingPaymentStatus.FAILED];
 
     paymentStatuses.forEach((paymentStatus) => {
       const result = mapBookingPatchToUpdate({ paymentStatus });
@@ -364,7 +364,7 @@ describe("mapBookingPatchToUpdate", () => {
   });
 
   it("should handle all payment method values", () => {
-    const paymentMethods: Booking["paymentMethod"][] = ["bank_transfer", "card", "cash", null];
+    const paymentMethods: (BookingPaymentMethod | null)[] = [BookingPaymentMethod.BANK_TRANSFER, BookingPaymentMethod.CARD, BookingPaymentMethod.CASH, null];
 
     paymentMethods.forEach((paymentMethod) => {
       const result = mapBookingPatchToUpdate({ paymentMethod });

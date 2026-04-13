@@ -9,7 +9,7 @@ import { NextRequest } from "next/server";
 import { GET, POST } from "../route";
 import { createMockBooking, createMockTour } from "./helpers";
 import { createTestRequest, expectErrorResponse, expectSuccessResponse, expectValidationErrors } from "@/__tests__/helpers/test-utils";
-import type { Booking } from "@/domain/booking";
+import { BookingPaymentStatus, BookingStatus, type Booking } from "@/domain/booking";
 
 // Mock dependencies
 vi.mock("../store", () => ({
@@ -63,7 +63,7 @@ describe("GET /api/bookings", () => {
 
   it("should filter bookings by status", async () => {
     const mockBookings: Booking[] = [
-      createMockBooking({ id: "booking-1", status: "confirmed" }),
+      createMockBooking({ id: "booking-1", status: BookingStatus.CONFIRMED }),
     ];
 
     vi.mocked(getAllBookings).mockResolvedValue(mockBookings);
@@ -80,19 +80,19 @@ describe("GET /api/bookings", () => {
 
   it("should filter bookings by paymentStatus", async () => {
     const mockBookings: Booking[] = [
-      createMockBooking({ id: "booking-1", paymentStatus: "paid" }),
+      createMockBooking({ id: "booking-1", paymentStatus: BookingPaymentStatus.PAID }),
     ];
 
     vi.mocked(getAllBookings).mockResolvedValue(mockBookings);
 
     const request = createTestRequest("GET", "/api/bookings", {
-      searchParams: { paymentStatus: "paid" },
+      searchParams: { paymentStatus: BookingPaymentStatus.PAID },
     });
     const response = await GET(request);
     const data = await expectSuccessResponse(response, 200);
 
     expect(data).toEqual(mockBookings);
-    expect(getAllBookings).toHaveBeenCalledWith({ paymentStatus: "paid" });
+    expect(getAllBookings).toHaveBeenCalledWith({ paymentStatus: BookingPaymentStatus.PAID });
   });
 
   it("should filter bookings by future=true", async () => {
@@ -147,23 +147,23 @@ describe("GET /api/bookings", () => {
     const mockBookings: Booking[] = [
       createMockBooking({
         id: "booking-1",
-        status: "confirmed",
-        paymentStatus: "paid",
+        status: BookingStatus.CONFIRMED,
+        paymentStatus: BookingPaymentStatus.PAID,
       }),
     ];
 
     vi.mocked(getAllBookings).mockResolvedValue(mockBookings);
 
     const request = createTestRequest("GET", "/api/bookings", {
-      searchParams: { status: "confirmed", paymentStatus: "paid", future: "true" },
+      searchParams: { status: BookingStatus.CONFIRMED, paymentStatus: BookingPaymentStatus.PAID, future: "true" },
     });
     const response = await GET(request);
     const data = await expectSuccessResponse(response, 200);
 
     expect(data).toEqual(mockBookings);
     expect(getAllBookings).toHaveBeenCalledWith({
-      status: "confirmed",
-      paymentStatus: "paid",
+      status: BookingStatus.CONFIRMED,
+      paymentStatus: BookingPaymentStatus.PAID,
       future: true,
     });
   });
@@ -300,8 +300,8 @@ describe("POST /api/bookings", () => {
   it("should set default status and paymentStatus to pending", async () => {
     const mockTour = createMockTour({ id: "tour-123" });
     const mockBooking = createMockBooking({
-      status: "pending",
-      paymentStatus: "pending",
+      status: BookingStatus.PENDING,
+      paymentStatus: BookingPaymentStatus.PENDING,
     });
 
     vi.mocked(getTourByID).mockResolvedValue(mockTour);
@@ -315,12 +315,12 @@ describe("POST /api/bookings", () => {
     const response = await POST(request);
     const data = await expectSuccessResponse(response, 201);
 
-    expect(data.status).toBe("pending");
-    expect(data.paymentStatus).toBe("pending");
+    expect(data.status).toBe(BookingStatus.PENDING);
+    expect(data.paymentStatus).toBe(BookingPaymentStatus.PENDING);
     expect(createBooking).toHaveBeenCalledWith(
       expect.objectContaining({
-        status: "pending",
-        paymentStatus: "pending",
+        status: BookingStatus.PENDING,
+        paymentStatus: BookingPaymentStatus.PENDING,
       })
     );
   });

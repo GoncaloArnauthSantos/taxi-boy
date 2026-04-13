@@ -10,10 +10,10 @@ CREATE TABLE IF NOT EXISTS bookings (
   client_selected_date TIMESTAMPTZ NOT NULL,
   client_message TEXT,
   tour_id TEXT NOT NULL,
-  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'cancelled')),
+  status TEXT CHECK (status IN ('pending', 'confirmed', 'cancelled')),
   price DECIMAL(10, 2) NOT NULL,
-  payment_status TEXT NOT NULL DEFAULT 'pending' CHECK (payment_status IN ('pending', 'paid', 'failed')),
-  payment_method TEXT CHECK (payment_method IN ('bank_transfer', 'card', 'cash')),
+  payment_status TEXT CHECK (payment_status IN ('pending', 'paid', 'failed')),
+  payment_method TEXT CHECK (payment_method IN ('bank_transfer', 'card', 'cash', null)),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   deleted_at TIMESTAMPTZ

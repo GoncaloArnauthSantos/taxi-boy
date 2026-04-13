@@ -12,7 +12,7 @@ import {
   BookingApiError,
 } from "@/client/api/bookings";
 import DeleteBookingDialog from "./DeleteBookingDialog";
-import type { Booking, BookingStatus } from "@/domain/booking";
+import { BookingStatus, type Booking } from "@/domain/booking";
 import type { Tour } from "@/cms/types";
 import type { BookingFormValues } from "@/app/api/bookings/schema";
 import {
@@ -27,7 +27,7 @@ type Props = {
   tours: Tour[];
 };
 
-const STATUS_OPTIONS: BookingStatus[] = ["pending", "confirmed", "cancelled"];
+const STATUS_OPTIONS: BookingStatus[] = [BookingStatus.PENDING, BookingStatus.CONFIRMED, BookingStatus.CANCELLED];
 
 const AdminPageClient = ({ tours }: Props) => {
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -39,7 +39,7 @@ const AdminPageClient = ({ tours }: Props) => {
 
   // Update state
   const [updateId, setUpdateId] = useState("");
-  const [updateStatus, setUpdateStatus] = useState<BookingStatus>("pending");
+  const [updateStatus, setUpdateStatus] = useState<BookingStatus>(BookingStatus.PENDING);
 
   // Delete confirmation dialog state
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -127,7 +127,7 @@ const AdminPageClient = ({ tours }: Props) => {
       await updateBooking(updateId.trim(), { status: updateStatus });
       showMessage("success", `Booking status updated to "${updateStatus}"!`);
       setUpdateId("");
-      setUpdateStatus("pending");
+      setUpdateStatus(BookingStatus.PENDING);
       await refreshBookings();
     } catch (error) {
       showMessage(

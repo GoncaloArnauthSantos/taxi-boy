@@ -80,6 +80,9 @@ A modern, type-safe web application for personalized tour booking in Lisbon, Por
    
    # Site URL (for SEO - sitemap, Open Graph, etc.)
    NEXT_PUBLIC_SITE_URL=https://www.yourdomain.com
+
+   # Feature Flags
+   NEXT_PUBLIC_PAYMENT_SYSTEM_ENABLED=false
    
    # Cron Reminders (optional but recommended)
    CRON_SECRET=your-secure-random-string

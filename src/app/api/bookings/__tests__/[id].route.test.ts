@@ -33,6 +33,7 @@ vi.mock("@/lib/logger", () => ({
 
 import { getBookingById, updateBooking, deleteBooking, isDateAvailable } from "../store";
 import { requireAuth } from "@/app/api/auth/helpers";
+import { BookingPaymentMethod, BookingPaymentStatus, BookingStatus } from "@/domain/booking";
 
 describe("GET /api/bookings/[id]", () => {
 
@@ -96,8 +97,8 @@ describe("PATCH /api/bookings/[id]", () => {
   it("should update booking successfully", async () => {
     const updatedBooking = createMockBooking({
       id: VALID_UUID,
-      status: "confirmed",
-      paymentStatus: "paid",
+      status: BookingStatus.CONFIRMED,
+      paymentStatus: BookingPaymentStatus.PAID,
     });
 
     vi.mocked(getBookingById).mockResolvedValue(mockBooking);
@@ -105,8 +106,8 @@ describe("PATCH /api/bookings/[id]", () => {
 
     const request = createTestRequest("PATCH", `/api/bookings/${VALID_UUID}`, {
       body: {
-        status: "confirmed",
-        paymentStatus: "paid",
+        status: BookingStatus.CONFIRMED,
+        paymentStatus: BookingPaymentStatus.PAID,
       },
     });
 
@@ -119,8 +120,8 @@ describe("PATCH /api/bookings/[id]", () => {
     expect(updateBooking).toHaveBeenCalledWith(
       VALID_UUID,
       expect.objectContaining({
-        status: "confirmed",
-        paymentStatus: "paid",
+        status: BookingStatus.CONFIRMED,
+        paymentStatus: BookingPaymentStatus.PAID,
       })
     );
   });
@@ -131,7 +132,7 @@ describe("PATCH /api/bookings/[id]", () => {
     );
 
     const request = createTestRequest("PATCH", `/api/bookings/${VALID_UUID}`, {
-      body: { status: "confirmed" },
+      body: { status: BookingStatus.CONFIRMED },
     });
 
     const response = await PATCH(request, {
@@ -160,7 +161,7 @@ describe("PATCH /api/bookings/[id]", () => {
 
   it("should return 400 when ID is not a valid UUID", async () => {
     const request = createTestRequest("PATCH", "/api/bookings/invalid-id", {
-      body: { status: "confirmed" },
+      body: { status: BookingStatus.CONFIRMED },
     });
 
     const response = await PATCH(request, {
@@ -174,7 +175,7 @@ describe("PATCH /api/bookings/[id]", () => {
     vi.mocked(getBookingById).mockResolvedValue(null);
 
     const request = createTestRequest("PATCH", `/api/bookings/${VALID_UUID}`, {
-      body: { status: "confirmed" },
+      body: { status: BookingStatus.CONFIRMED },
     });
 
     const response = await PATCH(request, {
@@ -210,7 +211,7 @@ describe("PATCH /api/bookings/[id]", () => {
   it("should not check date availability if date is unchanged", async () => {
     const updatedBooking = createMockBooking({
       id: VALID_UUID,
-      status: "confirmed",
+      status: BookingStatus.CONFIRMED,
     });
 
     vi.mocked(getBookingById).mockResolvedValue(mockBooking);
@@ -219,7 +220,7 @@ describe("PATCH /api/bookings/[id]", () => {
     const request = createTestRequest("PATCH", `/api/bookings/${VALID_UUID}`, {
       body: {
         clientSelectedDate: mockBooking.clientSelectedDate, // Same date
-        status: "confirmed",
+        status: BookingStatus.CONFIRMED,
       },
     });
 
@@ -234,9 +235,9 @@ describe("PATCH /api/bookings/[id]", () => {
   it("should update multiple fields", async () => {
     const updatedBooking = createMockBooking({
       id: VALID_UUID,
-      status: "confirmed",
-      paymentStatus: "paid",
-      paymentMethod: "card",
+      status: BookingStatus.CONFIRMED,
+      paymentStatus: BookingPaymentStatus.PAID,
+      paymentMethod: BookingPaymentMethod.CARD,
       price: 150,
     });
 
@@ -245,9 +246,9 @@ describe("PATCH /api/bookings/[id]", () => {
 
     const request = createTestRequest("PATCH", `/api/bookings/${VALID_UUID}`, {
       body: {
-        status: "confirmed",
-        paymentStatus: "paid",
-        paymentMethod: "card",
+        status: BookingStatus.CONFIRMED,
+        paymentStatus: BookingPaymentStatus.PAID,
+        paymentMethod: BookingPaymentMethod.CARD,
         price: 150,
       },
     });
@@ -257,9 +258,9 @@ describe("PATCH /api/bookings/[id]", () => {
     });
     const data = await expectSuccessResponse(response, 200);
 
-    expect(data.status).toBe("confirmed");
-    expect(data.paymentStatus).toBe("paid");
-    expect(data.paymentMethod).toBe("card");
+    expect(data.status).toBe(BookingStatus.CONFIRMED);
+    expect(data.paymentStatus).toBe(BookingPaymentStatus.PAID);
+    expect(data.paymentMethod).toBe(BookingPaymentMethod.CARD);
     expect(data.price).toBe(150);
   });
 
@@ -279,7 +280,7 @@ describe("PATCH /api/bookings/[id]", () => {
     vi.mocked(getBookingById).mockRejectedValue(new Error("Unexpected error"));
 
     const request = createTestRequest("PATCH", `/api/bookings/${VALID_UUID}`, {
-      body: { status: "confirmed" },
+      body: { status: BookingStatus.CONFIRMED },
     });
 
     const response = await PATCH(request, {
