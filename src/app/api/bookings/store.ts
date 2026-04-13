@@ -17,11 +17,7 @@ import {
   mapRowToBooking,
 } from "@/supabase/bookings/mapper";
 
-const BOOKINGS_TABLE_NAME = process.env.BOOKINGS_TABLE_NAME;
-
-if (!BOOKINGS_TABLE_NAME) {
-  throw new Error("BOOKINGS_TABLE_NAME environment variable is not set");
-}
+const BOOKINGS_TABLE_NAME = process.env.BOOKINGS_TABLE_NAME || "bookings_test";
 
 /**
  * Create a new booking
