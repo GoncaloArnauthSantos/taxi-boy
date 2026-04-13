@@ -7,11 +7,14 @@ import { BasePage } from "./BasePage";
  * Represents checkout page assertions for booking flow validation.
  */
 export class CheckoutPage extends BasePage {
+  readonly paymentButton = () => this.page.getByRole("button", { name: /Pay €/i });
   readonly pageHeading = () => this.page.getByRole("heading", { level: 1 });
   readonly bookingDetailsTitle = () =>
     this.page.getByText("Booking Details", { exact: true });
   readonly paymentCardTitle = () => this.page.getByText("Payment", { exact: true });
   readonly totalLabel = () => this.page.getByText("Total", { exact: true });
+  readonly tooltip = () =>
+    this.page.getByRole("tooltip", { name: "Payment integration coming soon!" });
 
   constructor(page: Page) {
     super(page);
@@ -39,5 +42,13 @@ export class CheckoutPage extends BasePage {
     await expect(this.bookingDetailsTitle()).toBeVisible();
     await expect(this.paymentCardTitle()).toBeVisible();
     await expect(this.totalLabel()).toBeVisible();
+  }
+
+  /**
+   * Verify payment CTA state when feature flag is OFF
+   */
+  async verifyPaymentDisabledWithInfoTooltip() {
+    await expect(this.paymentButton()).toBeDisabled();
+    await expect(this.tooltip()).toBeVisible();
   }
 }

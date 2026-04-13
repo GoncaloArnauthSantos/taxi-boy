@@ -64,12 +64,18 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
+    command: "npm run dev",
+    url: "http://localhost:3000",
+    env: {
+      ...process.env,
+      BOOKINGS_TABLE_NAME: "bookings_test",
+      DISABLE_BOOKING_EMAILS: "true",
+      NEXT_PUBLIC_PAYMENT_SYSTEM_ENABLED: "false",
+    },
     reuseExistingServer: !process.env.CI,
     timeout: process.env.CI ? 300 * 1000 : 120 * 1000, // Much longer timeout in CI (5 min)
-    stdout: process.env.CI ? 'pipe' : 'ignore', // Show output in CI for debugging
-    stderr: 'pipe',
+    stdout: process.env.CI ? "pipe" : "ignore", // Show output in CI for debugging
+    stderr: "pipe",
   },
 });
 

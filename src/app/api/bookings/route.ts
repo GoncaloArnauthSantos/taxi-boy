@@ -17,6 +17,8 @@ import { logError, logInfo, LogModule } from "@/lib/logger";
 import { BookingPaymentStatus, BookingStatus } from "@/domain/booking";
 import { sendBookingConfirmationEmails } from "@/email/send";
 
+const DISABLE_BOOKING_EMAILS = process.env.DISABLE_BOOKING_EMAILS === "true";
+
 const VALID_STATUSES: BookingStatus[] = [
   BookingStatus.PENDING,
   BookingStatus.CONFIRMED,
@@ -229,19 +231,22 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
       module: LogModule.API,
     });
 
-    // Send confirmation emails asynchronously (fire and forget)
-    // Don't block the response if email sending fails
-    sendBookingConfirmationEmails(booking, tour).catch((error) => {
-      logError({
-        message: "Failed to send booking confirmation emails",
-        error,
-        context: {
-          bookingId: booking.id,
-          clientEmail: booking.clientEmail,
-        },
-        module: LogModule.API,
+    // Send confirmation emails asynchronously (fire and forget).
+    // In E2E we disable this side effect via env var.
+    if (!DISABLE_BOOKING_EMAILS) {
+      // Don't block the response if email sending fails
+      sendBookingConfirmationEmails(booking, tour).catch((error) => {
+        logError({
+          message: "Failed to send booking confirmation emails",
+          error,
+          context: {
+            bookingId: booking.id,
+            clientEmail: booking.clientEmail,
+          },
+          module: LogModule.API,
+        });
       });
-    });
+    }
 
     return NextResponse.json(booking, { status: 201 });
   } catch (error) {

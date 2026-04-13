@@ -91,6 +91,7 @@ test.describe("Booking Flow", () => {
     // Wait for redirect to checkout page and verify key content
     await checkoutPage.verifyCheckoutUrl();
     await checkoutPage.verifyCheckoutCoreContent();
+    await checkoutPage.verifyPaymentDisabledWithInfoTooltip();
   });
 
   test("should handle API error gracefully", async () => {

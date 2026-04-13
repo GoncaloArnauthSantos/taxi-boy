@@ -17,6 +17,11 @@ import {
   mapRowToBooking,
 } from "@/supabase/bookings/mapper";
 
+const BOOKINGS_TABLE_NAME = process.env.BOOKINGS_TABLE_NAME;
+
+if (!BOOKINGS_TABLE_NAME) {
+  throw new Error("BOOKINGS_TABLE_NAME environment variable is not set");
+}
 
 /**
  * Create a new booking
@@ -29,7 +34,7 @@ export const createBooking = async (
     const insertData = mapBookingToInsert(input);
 
     const { data, error } = await supabase
-      .from("bookings")
+      .from(BOOKINGS_TABLE_NAME)
       .insert(insertData)
       .select()
       .single();
@@ -68,7 +73,7 @@ export const getBookingById = async (id: string): Promise<Booking | null> => {
     const supabase = await createSupabaseServerClient();
 
     const { data, error } = await supabase
-      .from("bookings")
+      .from(BOOKINGS_TABLE_NAME)
       .select("*")
       .eq("id", id)
       .is("deleted_at", null)
@@ -124,7 +129,7 @@ export const getAllBookings = async (filters: GetAllBookingsFilters = {}): Promi
     const supabase = await createSupabaseServerClient();
     // Only fetch active bookings (exclude soft deleted)
     let query = supabase
-      .from("bookings")
+      .from(BOOKINGS_TABLE_NAME)
       .select("*")
       .is("deleted_at", null);
 
@@ -209,7 +214,7 @@ export const isDateAvailable = async (date: string): Promise<boolean> => {
 
     // Check if there are any confirmed  bookings on this date
     const { data, error } = await supabase
-      .from("bookings")
+      .from(BOOKINGS_TABLE_NAME)
       .select("id")
       .eq("client_selected_date", dateStr)
       .is("deleted_at", null) // Exclude soft deleted
@@ -253,7 +258,7 @@ export const getUnavailableDates = async (): Promise<Date[]> => {
 
     // Fetch only client_selected_date for future confirmed bookings (exclude soft deleted)
     const { data, error } = await supabase
-      .from("bookings")
+      .from(BOOKINGS_TABLE_NAME)
       .select("client_selected_date")
       .gte("client_selected_date", now) // Only future dates
       .is("deleted_at", null) // Exclude soft deleted
@@ -307,7 +312,7 @@ export const updateBooking = async (
 
     // Only update active bookings (exclude soft deleted)
     const { data, error } = await supabase
-      .from("bookings")
+      .from(BOOKINGS_TABLE_NAME)
       .update(updateData)
       .eq("id", id)
       .is("deleted_at", null)
@@ -352,7 +357,7 @@ export const deleteBooking = async (id: string): Promise<boolean> => {
     // Soft delete: update deleted_at instead of deleting the record
     // Only update if deleted_at is NULL (not already deleted)
     const { data, error } = await supabase
-      .from("bookings")
+      .from(BOOKINGS_TABLE_NAME)
       .update({ deleted_at: new Date().toISOString() })
       .eq("id", id)
       .is("deleted_at", null)
