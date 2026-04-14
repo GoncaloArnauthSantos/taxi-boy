@@ -10,7 +10,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn, toDateOnlyString } from "@/lib/utils";
 import { Control, Controller, FieldPath, FieldValues } from "react-hook-form";
 
 // Lazy load Calendar component - only loads when date picker is opened
@@ -64,11 +64,10 @@ const FormDatePicker = <T extends FieldValues>({
       if (date < today) return true;
 
       if (unavailableDates && unavailableDates.length > 0) {
-        const dateStr = date.toISOString().split("T")[0];
+        const dateStr = toDateOnlyString(date);
 
         const isUnavailable = unavailableDates.some(
-          (unavailableDate) =>
-            unavailableDate.toISOString().split("T")[0] === dateStr
+          (unavailableDate) => toDateOnlyString(unavailableDate) === dateStr
         );
 
         // Disable if date is in unavailableDates

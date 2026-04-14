@@ -18,16 +18,15 @@ export const getAdminSession = async () => {
     const supabase = await createSupabaseServerClient();
     
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+    } = await supabase.auth.getUser();
 
-    if (!session) {
+    if (!user) {
       return null;
     }
 
     return {
-      session,
-      user: session.user,
+      user,
     };
   } catch (error) {
     logError({

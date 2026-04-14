@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/Button";
 import type { Booking } from "@/domain/booking";
+import { formatDateOnly } from "@/lib/utils";
 
 type Props = {
   open: boolean;
@@ -52,7 +53,7 @@ const DeleteBookingDialog = ({
               </p>
               <p>
                 <span className="font-medium">Date:</span>{" "}
-                {new Date(booking.clientSelectedDate).toLocaleDateString()}
+                {formatDateOnly(booking.clientSelectedDate)}
               </p>
               <p>
                 <span className="font-medium">Status:</span> {booking.status}

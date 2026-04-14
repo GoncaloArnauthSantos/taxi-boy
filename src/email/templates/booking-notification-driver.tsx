@@ -49,11 +49,7 @@ export const BookingNotificationDriverTemplate = ({
           <p><strong>Phone:</strong> ${booking.clientPhoneCountryCode} ${booking.clientPhone}</p>
           <p><strong>Country:</strong> ${booking.clientCountry}</p>
           <p><strong>Language:</strong> ${booking.clientLanguage}</p>
-          ${
-            booking.clientMessage
-              ? `<p><strong>Message:</strong> ${booking.clientMessage}</p>`
-              : ""
-          }
+          ${booking.clientMessage ? `<p><strong>Message:</strong> ${booking.clientMessage}</p>` : ""}
         </div>
         
         <div style="margin-top: 30px; padding: 15px; background-color: #eff6ff; border-radius: 8px;">

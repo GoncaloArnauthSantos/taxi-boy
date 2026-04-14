@@ -77,12 +77,21 @@ A modern, type-safe web application for personalized tour booking in Lisbon, Por
    RESEND_API_KEY=your-resend-api-key
    EMAIL_FROM=noreply@yourdomain.com
    DRIVER_EMAIL=driver@yourdomain.com
+
+   # Stripe Payments
+   STRIPE_SECRET_KEY=sk_test_xxx
+   STRIPE_WEBHOOK_SECRET=whsec_xxx
    
    # Site URL (for SEO - sitemap, Open Graph, etc.)
    NEXT_PUBLIC_SITE_URL=https://www.yourdomain.com
 
    # Feature Flags
    NEXT_PUBLIC_PAYMENT_SYSTEM_ENABLED=false
+
+   # Optional test/dev controls
+   # Defaults to bookings_test if not set
+   BOOKINGS_TABLE_NAME=bookings_local
+   DISABLE_BOOKING_EMAILS=false
    
    # Cron Reminders (optional but recommended)
    CRON_SECRET=your-secure-random-string
@@ -212,6 +221,13 @@ npm run test:e2e:ui   # E2E tests with UI
 ```
 
 For detailed testing documentation, see [e2e/README.md](./e2e/README.md).
+
+## **Payments Flow (Stripe)**
+
+- `POST /api/payments/create-checkout` receives `{ bookingId }` and derives all billing data server-side.
+- Checkout session URLs use `request.nextUrl.origin` so local/dev redirects stay in the same environment.
+- `POST /api/payments/webhook` validates Stripe signature and updates booking status (`PAID`/`FAILED`).
+- Source of truth for payment confirmation is the webhook + database state, not only client redirect.
 
 ## **Performance Metrics**
 

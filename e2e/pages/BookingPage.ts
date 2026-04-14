@@ -153,9 +153,24 @@ export class BookingPage extends BasePage {
    */
   async fillDate(date: string) {
     await this.dateInput().click();
-    await this.page.waitForTimeout(500);
+    const calendar = this.page.locator('[data-slot="calendar"]').first();
+    await expect(calendar).toBeVisible({ timeout: 5000 });
 
-    await this.page.locator(`[data-day="${date}"]`).click();
+    for (let i = 0; i < 24; i++) {
+      const dayButton = calendar.locator(`[data-day="${date}"]`).first();
+
+      if ((await dayButton.count()) > 0) {
+        await dayButton.click();
+        return;
+      }
+
+      const nextMonthButton = calendar
+        .getByRole("button", { name: /next month/i })
+        .first();
+      await nextMonthButton.click();
+    }
+
+    throw new Error(`Could not find date "${date}" in calendar`);
   }
 
   /**

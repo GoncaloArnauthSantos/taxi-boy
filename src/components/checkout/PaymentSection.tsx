@@ -45,8 +45,8 @@ const PaymentSection = ({ booking, tour, driverContact }: Props) => {
       new Date(clientSelectedDate),
       "EEEE, MMMM d, yyyy"
     );
-    let message = `Hello! I'm interested in booking "${tour.title}" for ${bookingDate}.\n\n`;
-    message += `My details:\n`;
+    let message = `Hello! I am interested in booking "${tour.title}" for ${bookingDate}.\n\n`;
+    message += "My details:\n";
     message += `- Name: ${clientName}\n`;
     message += `- Booking ID: ${booking.id}\n`;
     message += `- Tour: ${tour.title}\n`;
@@ -56,7 +56,7 @@ const PaymentSection = ({ booking, tour, driverContact }: Props) => {
       message += `\nAdditional information: ${clientMessage}`;
     }
 
-    message += `\n\nCould you please provide more information or help me complete this booking?`;
+    message += "\n\nCould you please provide more information or help me complete this booking?";
 
     return message;
   }, [

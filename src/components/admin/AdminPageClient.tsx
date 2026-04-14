@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/Select";
+import { formatDateOnly } from "@/lib/utils";
 
 type Props = {
   tours: Tour[];
@@ -296,8 +297,8 @@ const AdminPageClient = ({ tours }: Props) => {
                             booking.status === "confirmed"
                               ? "bg-green-100 text-green-800"
                               : booking.status === "cancelled"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-yellow-100 text-yellow-800"
+                                ? "bg-red-100 text-red-800"
+                                : "bg-yellow-100 text-yellow-800"
                           }`}
                         >
                           {booking.status}
@@ -307,8 +308,8 @@ const AdminPageClient = ({ tours }: Props) => {
                             booking.paymentStatus === "paid"
                               ? "bg-green-100 text-green-800"
                               : booking.paymentStatus === "failed"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-gray-100 text-gray-800"
+                                ? "bg-red-100 text-red-800"
+                                : "bg-gray-100 text-gray-800"
                           }`}
                         >
                           {booking.paymentStatus}
@@ -322,9 +323,7 @@ const AdminPageClient = ({ tours }: Props) => {
                       </p>
                       <p className="text-sm text-muted-foreground">
                         Selected Date:{" "}
-                        {new Date(
-                          booking.clientSelectedDate
-                        ).toLocaleDateString()}
+                        {formatDateOnly(booking.clientSelectedDate)}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         Tour ID: {booking.tourId}

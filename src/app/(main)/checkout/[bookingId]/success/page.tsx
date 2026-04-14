@@ -6,14 +6,17 @@
  * Route: /checkout/[bookingId]/success
  */
 
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getBookingById } from "@/app/api/bookings/store";
 import { getTourByID } from "@/cms/tours/api";
 import { Card, CardContent } from "@/components/ui/Card";
 import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
-import { format } from "date-fns";
+import { getStripeClient } from "@/lib/stripe";
+import { logError, LogModule } from "@/lib/logger";
+import { formatDateOnly } from "@/lib/utils";
+import { BookingPaymentStatus } from "@/domain/booking";
 
 type Props = {
   params: Promise<{ bookingId: string }>;
@@ -24,7 +27,29 @@ const PaymentSuccessPage = async ({ params, searchParams }: Props) => {
   const { bookingId } = await params;
   const { session_id } = await searchParams;
 
-  // Fetch booking and tour
+  if (!session_id) {
+    redirect(`/checkout/${bookingId}`);
+  }
+
+  try {
+    const stripe = getStripeClient();
+    const session = await stripe.checkout.sessions.retrieve(session_id);
+    const sessionBookingId = session.metadata?.bookingId;
+
+    if (sessionBookingId !== bookingId || session.payment_status !== "paid") {
+      redirect(`/checkout/${bookingId}`);
+    }
+  } catch (error) {
+    logError({
+      message: "Failed to validate Stripe checkout session on success page",
+      error,
+      context: { bookingId, sessionId: session_id },
+      module: LogModule.Payment,
+    });
+    redirect(`/checkout/${bookingId}`);
+  }
+
+  // Wait briefly for webhook -> DB consistency after Stripe redirects to success_url
   const booking = await getBookingById(bookingId);
 
   if (!booking) {
@@ -32,11 +57,8 @@ const PaymentSuccessPage = async ({ params, searchParams }: Props) => {
   }
 
   const tour = await getTourByID(booking.tourId);
-  const bookingDate = format(new Date(booking.clientSelectedDate), "EEEE, MMMM d, yyyy");
-
-  // PHASE 1: This is just a placeholder
-  // In Phase 2, we'll verify the payment with Stripe using session_id
-  // and redirect if payment is not confirmed
+  const bookingDate = formatDateOnly(booking.clientSelectedDate);
+  const paymentConfirmed = booking.paymentStatus === BookingPaymentStatus.PAID;
 
   return (
     <div className="flex items-center justify-center min-h-screen py-16 px-4 bg-muted/30">
@@ -46,18 +68,25 @@ const PaymentSuccessPage = async ({ params, searchParams }: Props) => {
             <CheckCircle2 className="w-10 h-10 text-white" />
           </div>
           <h2 className="text-2xl font-bold mb-4 text-foreground">
-            Payment Successful!
+            {paymentConfirmed ? "Payment Successful!" : "Payment Received"}
           </h2>
           <p className="text-muted-foreground leading-relaxed mb-6">
-            Thank you for your payment. Your booking for{" "}
-            <span className="font-semibold">{tour?.title || "your tour"}</span> on{" "}
-            <span className="font-semibold">{bookingDate}</span> is now confirmed.
+            {paymentConfirmed ? (
+              <>
+                Thank you for your payment. Your booking for{" "}
+                <span className="font-semibold">{tour?.title}</span> on{" "}
+                <span className="font-semibold">{bookingDate}</span> is now confirmed.
+              </>
+            ) : (
+              <>
+                We received your payment for{" "}
+                <span className="font-semibold">{tour?.title}</span> on{" "}
+                <span className="font-semibold">{bookingDate}</span>. We&apos;re still
+                confirming your booking in our system. Please refresh this page in a few
+                seconds.
+              </>
+            )}
           </p>
-          {session_id && (
-            <p className="text-xs text-muted-foreground mb-6">
-              Session ID: {session_id}
-            </p>
-          )}
           <div className="space-y-3">
             <Button asChild className="w-full">
               <Link href="/">Back to Home</Link>

@@ -7,7 +7,7 @@
 
 import * as z from "zod";
 import { BookingPaymentMethod, BookingPaymentStatus, BookingStatus, type Booking } from "@/domain/booking";
-import { emailSchema } from "@/lib/utils";
+import { emailSchema, toDateOnlyString } from "@/lib/utils";
 
 /**
  * Schema for booking form submission (matches BookingForm)
@@ -66,8 +66,13 @@ export const bookingPatchSchema = z
     clientSelectedDate: z
       .string()
       .refine((date) => {
-        const dateObj = new Date(date);
-        return dateObj >= new Date(new Date().setHours(0, 0, 0, 0));
+        const normalizedDate = toDateOnlyString(date);
+        if (!normalizedDate) {
+          return false;
+        }
+
+        const today = toDateOnlyString(new Date());
+        return normalizedDate >= today;
       }, "Date must be today or in the future")
       .optional(),
   })
@@ -101,7 +106,7 @@ export const transformFormToBooking = (
     clientPhoneCountryCode: phoneCountryCode,
     clientCountry: country,
     clientLanguage: language,
-    clientSelectedDate: date.toISOString(),
+    clientSelectedDate: toDateOnlyString(date),
     clientMessage: message ?? null,
     price,
     tourId,

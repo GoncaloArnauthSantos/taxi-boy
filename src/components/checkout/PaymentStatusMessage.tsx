@@ -1,6 +1,11 @@
 import { memo } from "react";
 import { CheckCircle2, XCircle } from "lucide-react";
-import { type Booking, BookingPaymentStatus, BookingStatus, BookingPaymentMethod } from "@/domain/booking";
+import {
+  type Booking,
+  BookingPaymentStatus,
+  BookingStatus,
+  BookingPaymentMethod,
+} from "@/domain/booking";
 
 type Props = {
   booking: Booking;
@@ -11,14 +16,14 @@ type Props = {
  */
 const formatPaymentMethod = (method: BookingPaymentMethod): string => {
   switch (method) {
-    case BookingPaymentMethod.CARD:
-      return "Card";
-    case BookingPaymentMethod.BANK_TRANSFER:
-      return "Bank Transfer";
-    case BookingPaymentMethod.CASH:
-      return "Cash";
-    default:
-      return method;
+  case BookingPaymentMethod.CARD:
+    return "Card";
+  case BookingPaymentMethod.BANK_TRANSFER:
+    return "Bank Transfer";
+  case BookingPaymentMethod.CASH:
+    return "Cash";
+  default:
+    return method;
   }
 };
 

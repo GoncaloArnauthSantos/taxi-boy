@@ -14,7 +14,10 @@ import { Page } from "@playwright/test";
 export function getFutureDate(daysFromNow: number = 1): string {
   const date = new Date();
   date.setDate(date.getDate() + daysFromNow);
-  return date.toISOString().split("T")[0]; // YYYY-MM-DD format
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`; // YYYY-MM-DD format (local date)
 }
 
 /**
@@ -50,51 +53,6 @@ export async function mockBookingApi(
 }
 
 /**
- * Mock Supabase auth endpoint
- *
- * @param page - Playwright page instance
- * @param success - Whether login should succeed (default: false for error scenario)
- */
-export async function mockSupabaseAuth(
-  page: Page,
-  success: boolean = false
-): Promise<void> {
-  await page.route("**/auth/v1/token**", async (route) => {
-    if (route.request().method() === "POST") {
-      if (success) {
-        // Successful Supabase auth response
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({
-            access_token: "mock-access-token",
-            refresh_token: "mock-refresh-token",
-            expires_in: 3600,
-            expires_at: Math.floor(Date.now() / 1000) + 3600,
-            token_type: "bearer",
-            user: {
-              id: "test-user-id",
-              email: "admin@example.com",
-            },
-          }),
-        });
-      } else {
-        // Error Supabase auth response
-        await route.fulfill({
-          status: 400,
-          contentType: "application/json",
-          body: JSON.stringify({
-            error: "Invalid email or password",
-          }),
-        });
-      }
-    } else {
-      await route.continue();
-    }
-  });
-}
-
-/**
  * Test data constants
  *
  * IMPORTANT: These values are for form inputs only, NOT for CMS content.
@@ -116,7 +74,7 @@ export const TEST_DATA = {
     message: "Test booking message",
   },
   admin: {
-    email: process.env.E2E_ADMIN_EMAIL || "admin@example.com",
-    password: process.env.E2E_ADMIN_PASSWORD || "test-password",
+    email: process.env.E2E_ADMIN_EMAIL || "admin_test@taxiboy.com",
+    password: process.env.E2E_ADMIN_PASSWORD || "Pass1234567890",
   },
 };

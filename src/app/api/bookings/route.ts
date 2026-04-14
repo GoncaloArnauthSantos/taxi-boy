@@ -16,6 +16,7 @@ import { getTourByID } from "@/cms/tours";
 import { logError, logInfo, LogModule } from "@/lib/logger";
 import { BookingPaymentStatus, BookingStatus } from "@/domain/booking";
 import { sendBookingConfirmationEmails } from "@/email/send";
+import { toDateOnlyString } from "@/lib/utils";
 
 const DISABLE_BOOKING_EMAILS = process.env.DISABLE_BOOKING_EMAILS === "true";
 
@@ -180,9 +181,18 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
   try {
     const body = await request.json();
 
-    // Convert date string back to Date object for validation
+    // Convert incoming date strings back to Date for zod validation.
+    // Supports both YYYY-MM-DD and full ISO strings.
     if (body.date && typeof body.date === "string") {
-      body.date = new Date(body.date);
+      const dateOnly = toDateOnlyString(body.date);
+      const parsedDate =
+        /^\d{4}-\d{2}-\d{2}$/.test(body.date)
+          ? new Date(`${dateOnly}T00:00:00`)
+          : new Date(body.date);
+
+      if (!Number.isNaN(parsedDate.getTime())) {
+        body.date = parsedDate;
+      }
     }
 
     // Validate form data
@@ -205,7 +215,7 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
     }
 
     // Validate that the selected date is available
-    const selectedDate = formData.date.toISOString().split("T")[0]; // YYYY-MM-DD format
+    const selectedDate = toDateOnlyString(formData.date); // YYYY-MM-DD format
     const dateAvailable = await isDateAvailable(selectedDate);
 
     if (!dateAvailable) {

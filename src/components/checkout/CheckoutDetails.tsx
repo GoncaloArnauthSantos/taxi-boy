@@ -2,7 +2,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Calendar, User, Mail, Phone, MapPin, Clock, Euro } from "lucide-react";
 import type { Booking } from "@/domain/booking";
 import type { Tour } from "@/cms/types";
-import { format } from "date-fns";
+import { formatDateOnly } from "@/lib/utils";
 
 type Props = {
   booking: Booking;
@@ -29,8 +29,7 @@ const CheckoutDetails = ({ booking, tour }: Props) => {
 
   const { title, description, duration } = tour;
 
-  const bookingDate = new Date(clientSelectedDate);
-  const formattedDate = format(bookingDate, "EEEE, MMMM d, yyyy");
+  const formattedDate = formatDateOnly(clientSelectedDate);
 
   return (
     <Card className="border-border">
