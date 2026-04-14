@@ -12,7 +12,8 @@ import { getTourByID } from "@/cms/tours/api";
 import { getContacts } from "@/cms/contact";
 import CheckoutDetails from "@/components/checkout/CheckoutDetails";
 import PaymentSection from "@/components/checkout/PaymentSection";
-import { BookingPaymentStatus, BookingStatus } from "@/domain/booking";
+import { BookingStatus } from "@/domain/booking";
+import { getCheckoutHeaderContent } from "@/lib/payments/get-checkout-header-content";
 
 type Props = {
   params: Promise<{ bookingId: string }>;
@@ -27,7 +28,7 @@ const CheckoutPage = async ({ params }: Props) => {
     notFound();
   }
 
-  const { paymentStatus, status, tourId } = booking;
+  const { status, tourId } = booking;
 
   // Don't allow checkout if cancelled
   if (status === BookingStatus.CANCELLED) {
@@ -52,34 +53,7 @@ const CheckoutPage = async ({ params }: Props) => {
     );
   }
 
-  // Determine header content based on booking status
-  const getHeaderContent = () => {
-    if (paymentStatus === BookingPaymentStatus.PAID) {
-      return {
-        title: "Payment Confirmed",
-        description: "Your payment has been successfully processed. Your booking is confirmed.",
-      };
-    }
-    if (status === BookingStatus.CONFIRMED && paymentStatus === BookingPaymentStatus.PENDING) {
-      return {
-        title: "Booking Confirmed",
-        description: "Your reservation has been confirmed. Payment will be completed on the day of your tour.",
-      };
-    }
-    if (paymentStatus === BookingPaymentStatus.FAILED) {
-      return {
-        title: "Payment Failed",
-        description: "Your payment could not be processed. Please try again or contact us for assistance.",
-      };
-    }
-    // Default
-    return {
-      title: "Complete Your Payment",
-      description: "Review your booking details and proceed to payment",
-    };
-  };
-
-  const headerContent = getHeaderContent();
+  const headerContent = getCheckoutHeaderContent(booking);
 
   return (
     <div className="py-16 lg:py-24 bg-muted/30 min-h-screen my-8 lg:my-24">

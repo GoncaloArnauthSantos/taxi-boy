@@ -17,6 +17,7 @@ import { logError, logInfo, LogModule } from "@/lib/logger";
 import { BookingPaymentStatus, BookingStatus } from "@/domain/booking";
 import { sendBookingConfirmationEmails } from "@/email/send";
 import { toDateOnlyString } from "@/lib/utils";
+import { parseBookingDateInput } from "@/lib/bookings/parse-booking-date-input";
 
 const DISABLE_BOOKING_EMAILS = process.env.DISABLE_BOOKING_EMAILS === "true";
 
@@ -181,18 +182,9 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
   try {
     const body = await request.json();
 
-    // Convert incoming date strings back to Date for zod validation.
-    // Supports both YYYY-MM-DD and full ISO strings.
-    if (body.date && typeof body.date === "string") {
-      const dateOnly = toDateOnlyString(body.date);
-      const parsedDate =
-        /^\d{4}-\d{2}-\d{2}$/.test(body.date)
-          ? new Date(`${dateOnly}T00:00:00`)
-          : new Date(body.date);
-
-      if (!Number.isNaN(parsedDate.getTime())) {
-        body.date = parsedDate;
-      }
+    const parsedDate = parseBookingDateInput(body.date);
+    if (parsedDate) {
+      body.date = parsedDate;
     }
 
     // Validate form data
