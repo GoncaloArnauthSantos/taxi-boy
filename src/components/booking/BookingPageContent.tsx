@@ -69,7 +69,7 @@ const BookingPageContent = ({
       )}
 
       <div
-        className="py-16 lg:py-24 bg-muted/30"
+        className="py-8 lg:py-24 bg-muted/30"
         data-testid="booking-page-content"
       >
         <div className="container mx-auto px-4 lg:px-8">

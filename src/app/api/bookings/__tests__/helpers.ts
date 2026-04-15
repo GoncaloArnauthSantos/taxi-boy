@@ -12,7 +12,7 @@ import type { Tour } from "@/cms/types";
  */
 export const createMockBooking = (overrides?: Partial<Booking>): Booking => {
   const now = new Date().toISOString();
-  const futureDate = new Date(Date.now() + 86400000).toISOString(); // Tomorrow
+  const futureDate = new Date(Date.now() + 86400000).toISOString().split("T")[0]; // Tomorrow (YYYY-MM-DD)
 
   return {
     id: "booking-123",
@@ -29,6 +29,9 @@ export const createMockBooking = (overrides?: Partial<Booking>): Booking => {
     price: 100,
     paymentStatus: BookingPaymentStatus.PENDING,
     paymentMethod: null,
+    stripeSessionId: null,
+    stripePaymentIntentId: null,
+    paidAt: null,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
@@ -74,6 +77,9 @@ type BookingRow = {
   price: number;
   payment_status: string;
   payment_method: string | null;
+  stripe_session_id: string | null;
+  stripe_payment_intent_id: string | null;
+  paid_at: string | null;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
@@ -84,7 +90,7 @@ type BookingRow = {
  */
 export const createMockBookingRow = (overrides?: Partial<BookingRow>): BookingRow => {
   const now = new Date().toISOString();
-  const futureDate = new Date(Date.now() + 86400000).toISOString();
+  const futureDate = new Date(Date.now() + 86400000).toISOString().split("T")[0];
 
   return {
     id: "booking-123",
@@ -101,6 +107,9 @@ export const createMockBookingRow = (overrides?: Partial<BookingRow>): BookingRo
     price: 100,
     payment_status: "pending",
     payment_method: null,
+    stripe_session_id: null,
+    stripe_payment_intent_id: null,
+    paid_at: null,
     created_at: now,
     updated_at: now,
     deleted_at: null,

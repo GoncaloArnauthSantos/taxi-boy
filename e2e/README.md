@@ -137,6 +137,10 @@ Shared utilities are in `e2e/helpers/test-helpers.ts`:
 - `mockSupabaseAuth()` - Mock Supabase auth endpoint for tests
 - `TEST_DATA` - Test data constants (form inputs only, not CMS content)
 
+### Important behavior
+- Booking date picker now selects calendar dates via `data-day="YYYY-MM-DD"` and may navigate months internally in the page object.
+- For admin auth E2E mocks, both token and user endpoints are mocked to match middleware auth checks.
+
 ## 📝 **Writing New Tests**
 
 ### **Using Page Objects (Recommended)**
@@ -154,21 +158,22 @@ test.describe('Booking Flow', () => {
   });
 
   test('should submit booking successfully', async () => {
+    await mockBookingApi(bookingPage.page, true);
+
     await bookingPage.fillBookingForm({
       name: 'John Doe',
       email: 'john@example.com',
       phone: '912345678',
       phoneCountryCode: '+351',
       country: 'Portugal',
-      date: '2024-12-25',
-      numberOfPeople: 2,
+      date: getFutureDate(7),
     });
     
     await bookingPage.selectFirstAvailableTour();
     await bookingPage.selectFirstAvailableLanguage();
     await bookingPage.submitForm();
     
-    await bookingPage.verifyConfirmationShown();
+    await bookingPage.verifyRedirectedToCheckout();
   });
 });
 ```

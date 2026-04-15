@@ -89,6 +89,53 @@ export const phonePreview = (phone: string): string => {
   return `(${phone.slice(0, 4)}) ${phone.slice(4)}`;
 };
 
+const DATE_ONLY_REGEX = /^(\d{4}-\d{2}-\d{2})/;
+
+/**
+ * Convert a date value to YYYY-MM-DD without timezone drift.
+ */
+export const toDateOnlyString = (value: Date | string): string => {
+  if (typeof value === "string") {
+    const match = value.match(DATE_ONLY_REGEX);
+    if (match?.[1]) {
+      return match[1];
+    }
+  }
+
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+/**
+ * Format a date value into a long readable format:
+ * Example: "Monday, April 14, 2026".
+ *
+ * @param value - Date value as Date object or ISO/string input
+ * @returns Formatted date string (or empty string for invalid values)
+ */
+export const formatDateOnly = (value: Date | string): string => {
+  const dateOnly = toDateOnlyString(value);
+  if (!dateOnly) {
+    return "";
+  }
+
+  const utcDate = new Date(`${dateOnly}T00:00:00.000Z`);
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(utcDate);
+};
+
 /**
  * Email validation regex pattern
  * Matches standard email format: local@domain.tld

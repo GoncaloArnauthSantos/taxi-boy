@@ -14,13 +14,16 @@ describe("mapBookingToInsert", () => {
     clientPhoneCountryCode: "+351",
     clientCountry: "Portugal",
     clientLanguage: "English",
-    clientSelectedDate: "2024-12-25T10:00:00.000Z",
+    clientSelectedDate: "2024-12-25",
     clientMessage: "Test message",
     tourId: "tour-123",
     status: BookingStatus.PENDING,
     price: 100,
     paymentStatus: BookingPaymentStatus.PENDING,
     paymentMethod: null,
+    stripeSessionId: null,
+    stripePaymentIntentId: null,
+    paidAt: null,
   };
 
   it("should map all fields from camelCase to snake_case", () => {
@@ -32,7 +35,7 @@ describe("mapBookingToInsert", () => {
     expect(result.client_phone_country_code).toBe("+351");
     expect(result.client_country).toBe("Portugal");
     expect(result.client_language).toBe("English");
-    expect(result.client_selected_date).toBe("2024-12-25T10:00:00.000Z");
+    expect(result.client_selected_date).toBe("2024-12-25");
     expect(result.client_message).toBe("Test message");
     expect(result.tour_id).toBe("tour-123");
     expect(result.status).toBe("pending");
@@ -106,13 +109,16 @@ describe("mapRowToBooking", () => {
     client_phone_country_code: "+351",
     client_country: "Portugal",
     client_language: "English",
-    client_selected_date: "2024-12-25T10:00:00.000Z",
+    client_selected_date: "2024-12-25",
     client_message: "Test message",
     tour_id: "tour-123",
     status: BookingStatus.PENDING,
     price: 100,
     payment_status: BookingPaymentStatus.PENDING,
     payment_method: null,
+    stripe_session_id: null,
+    stripe_payment_intent_id: null,
+    paid_at: null,
     created_at: "2024-01-01T00:00:00.000Z",
     updated_at: "2024-01-01T00:00:00.000Z",
     deleted_at: null,
@@ -128,13 +134,16 @@ describe("mapRowToBooking", () => {
     expect(result.clientPhoneCountryCode).toBe("+351");
     expect(result.clientCountry).toBe("Portugal");
     expect(result.clientLanguage).toBe("English");
-    expect(result.clientSelectedDate).toBe("2024-12-25T10:00:00.000Z");
+    expect(result.clientSelectedDate).toBe("2024-12-25");
     expect(result.clientMessage).toBe("Test message");
     expect(result.tourId).toBe("tour-123");
     expect(result.status).toBe(BookingStatus.PENDING);
     expect(result.price).toBe(100);
     expect(result.paymentStatus).toBe("pending");
     expect(result.paymentMethod).toBeNull();
+    expect(result.stripeSessionId).toBeNull();
+    expect(result.stripePaymentIntentId).toBeNull();
+    expect(result.paidAt).toBeNull();
     expect(result.createdAt).toBe("2024-01-01T00:00:00.000Z");
     expect(result.updatedAt).toBe("2024-01-01T00:00:00.000Z");
     expect(result.deletedAt).toBeNull();
@@ -265,7 +274,7 @@ describe("mapBookingPatchToUpdate", () => {
       clientPhoneCountryCode: "+351",
       clientCountry: "Spain",
       clientLanguage: "Spanish",
-      clientSelectedDate: "2024-12-26T10:00:00.000Z",
+      clientSelectedDate: "2024-12-26",
       clientMessage: "Updated message",
       tourId: "tour-456",
       status: BookingStatus.CONFIRMED,
@@ -282,7 +291,7 @@ describe("mapBookingPatchToUpdate", () => {
     expect(result.client_phone_country_code).toBe("+351");
     expect(result.client_country).toBe("Spain");
     expect(result.client_language).toBe("Spanish");
-    expect(result.client_selected_date).toBe("2024-12-26T10:00:00.000Z");
+    expect(result.client_selected_date).toBe("2024-12-26");
     expect(result.client_message).toBe("Updated message");
     expect(result.tour_id).toBe("tour-456");
     expect(result.status).toBe(BookingStatus.CONFIRMED);

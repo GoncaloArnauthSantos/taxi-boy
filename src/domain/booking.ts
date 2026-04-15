@@ -32,5 +32,8 @@ export type Booking = {
   price: number
   paymentStatus: BookingPaymentStatus
   paymentMethod: BookingPaymentMethod | null
+  stripeSessionId?: string | null
+  stripePaymentIntentId?: string | null
+  paidAt?: string | null
   deletedAt: string | null
 }

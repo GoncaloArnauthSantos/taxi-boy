@@ -49,7 +49,7 @@ const ContactPage = async () => {
   return (
     <>
       {/* Hero section */}
-      <section className="border-b border-border/40 bg-muted/30 py-12 md:py-20">
+      <section className="border-b border-border/40 bg-muted/30 py-8 md:py-20">
         <div className="container mx-auto px-4">
           <h1 className="text-balance text-center text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
             {title}

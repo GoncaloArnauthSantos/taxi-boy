@@ -25,6 +25,9 @@ type BookingRow = {
   price: number;
   payment_status: BookingPaymentStatus;
   payment_method: BookingPaymentMethod | null;
+  stripe_session_id: string | null;
+  stripe_payment_intent_id: string | null;
+  paid_at: string | null;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
@@ -47,6 +50,9 @@ type BookingInsert = {
   price: number;
   payment_status: BookingPaymentStatus;
   payment_method: BookingPaymentMethod | null;
+  stripe_session_id: string | null;
+  stripe_payment_intent_id: string | null;
+  paid_at: string | null;
 };
 
 /**
@@ -69,6 +75,9 @@ export const mapBookingToInsert = (
     price: input.price,
     payment_status: input.paymentStatus,
     payment_method: input.paymentMethod ?? null,
+    stripe_session_id: input.stripeSessionId ?? null,
+    stripe_payment_intent_id: input.stripePaymentIntentId ?? null,
+    paid_at: input.paidAt ?? null,
   };
 };
 
@@ -121,6 +130,15 @@ export const mapBookingPatchToUpdate = (
   if (patch.price !== undefined) {
     updateData.price = patch.price;
   }
+  if (patch.stripeSessionId !== undefined) {
+    updateData.stripe_session_id = patch.stripeSessionId ?? null;
+  }
+  if (patch.stripePaymentIntentId !== undefined) {
+    updateData.stripe_payment_intent_id = patch.stripePaymentIntentId ?? null;
+  }
+  if (patch.paidAt !== undefined) {
+    updateData.paid_at = patch.paidAt ?? null;
+  }
 
   return updateData;
 };
@@ -144,6 +162,9 @@ export const mapRowToBooking = (row: BookingRow): Booking => {
     price: Number(row.price),
     paymentStatus: row.payment_status as BookingPaymentStatus,
     paymentMethod: (row.payment_method as BookingPaymentMethod),
+    stripeSessionId: row.stripe_session_id,
+    stripePaymentIntentId: row.stripe_payment_intent_id,
+    paidAt: row.paid_at,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     deletedAt: row.deleted_at,

@@ -39,6 +39,7 @@ export enum LogModule {
   Booking = "Booking",
   App = "App",
   Checkout = "Checkout",
+  Payment = "Payment",
 }
 
 /**

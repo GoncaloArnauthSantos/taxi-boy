@@ -70,7 +70,6 @@ test.describe("Booking Flow", () => {
 
   test("should successfully submit booking with valid data", async () => {
     const checkoutPage = new CheckoutPage(bookingPage.page);
-
     const futureDate = getFutureDate(7); // 7 days from now
 
     await bookingPage.fillBookingForm({
@@ -95,7 +94,7 @@ test.describe("Booking Flow", () => {
   });
 
   test("should handle API error gracefully", async () => {
-    await mockBookingApi(bookingPage.page);
+    await mockBookingApi(bookingPage.page, false);
 
     const futureDate = getFutureDate(7);
 

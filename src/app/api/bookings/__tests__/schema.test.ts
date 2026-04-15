@@ -4,6 +4,7 @@ import {
   bookingPatchSchema,
   transformFormToBooking,
 } from "../schema";
+import { toDateOnlyString } from "@/lib/utils";
 
 describe("bookingFormSchema", () => {
   const validFormData = {
@@ -530,7 +531,7 @@ describe("bookingPatchSchema", () => {
 
   describe("clientSelectedDate validation", () => {
     it("should accept future date string", () => {
-      const futureDate = new Date(Date.now() + 86400000).toISOString();
+      const futureDate = new Date(Date.now() + 86400000).toISOString().split("T")[0];
       const result = bookingPatchSchema.safeParse({
         clientSelectedDate: futureDate,
       });
@@ -539,11 +540,8 @@ describe("bookingPatchSchema", () => {
     });
 
     it("should accept today's date string", () => {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
       const result = bookingPatchSchema.safeParse({
-        clientSelectedDate: today.toISOString(),
+        clientSelectedDate: toDateOnlyString(new Date()),
       });
 
       expect(result.success).toBe(true);
@@ -552,10 +550,9 @@ describe("bookingPatchSchema", () => {
     it("should reject past date string", () => {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
-      yesterday.setHours(0, 0, 0, 0);
 
       const result = bookingPatchSchema.safeParse({
-        clientSelectedDate: yesterday.toISOString(),
+        clientSelectedDate: toDateOnlyString(yesterday),
       });
 
       expect(result.success).toBe(false);
@@ -639,10 +636,10 @@ describe("transformFormToBooking", () => {
     expect(result.paymentMethod).toBeNull();
   });
 
-  it("should format date as ISO string", () => {
+  it("should format date as date-only string", () => {
     const result = transformFormToBooking(validFormData, 100);
 
-    expect(result.clientSelectedDate).toBe("2024-12-25T10:00:00.000Z");
+    expect(result.clientSelectedDate).toBe("2024-12-25");
   });
 
   it("should set message to null when message is undefined", () => {

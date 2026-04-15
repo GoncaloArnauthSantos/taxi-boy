@@ -1,5 +1,5 @@
 // app/layout.tsx
-import { Metadata } from "next"
+import { Metadata, Viewport } from "next"
 import "./globals.css"
 import { Analytics } from "@vercel/analytics/next"
 import { Inter } from "next/font/google"
@@ -47,18 +47,10 @@ export const metadata: Metadata = {
     telephone: false,
   },
   manifest: "/manifest.json",
-  themeColor: "#1e293b",
   openGraph: ogMetadata,
   twitter: twitterMetadata,
   alternates: {
     canonical: baseUrl,
-  },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: "cover", // iOS notch support
   },
   appleWebApp: {
     capable: true,
@@ -92,6 +84,15 @@ export const metadata: Metadata = {
     "theme-color": "#1e293b",
   },
 }
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+  themeColor: "#1e293b",
+};
 
 const RootLayout = async ({children}: {
     children: React.ReactNode;

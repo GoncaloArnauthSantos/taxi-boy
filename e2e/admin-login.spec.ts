@@ -1,7 +1,7 @@
 /* eslint-disable quotes */
 import { test } from "@playwright/test";
 import { AdminLoginPage } from "./pages/AdminLoginPage";
-import { TEST_DATA, mockSupabaseAuth } from "./helpers/test-helpers";
+import { TEST_DATA } from "./helpers/test-helpers";
 
 test.describe("Admin Login Flow", () => {
   let loginPage: AdminLoginPage;
@@ -41,8 +41,6 @@ test.describe("Admin Login Flow", () => {
   });
 
   test("should show error for invalid credentials", async () => {
-    await mockSupabaseAuth(loginPage.page);
-
     await loginPage.login("wrong@example.com", "wrong-password");
 
     await loginPage.verifySubmitFormError();
@@ -50,8 +48,6 @@ test.describe("Admin Login Flow", () => {
   });
 
   test("should successfully login with valid credentials", async () => {
-    await mockSupabaseAuth(loginPage.page, true);
-
     await loginPage.login(TEST_DATA.admin.email, TEST_DATA.admin.password);
     await loginPage.verifyNoSubmitFormError();
 
@@ -59,8 +55,6 @@ test.describe("Admin Login Flow", () => {
   });
 
   test("should redirect to admin page if user authenticates and visits login page", async () => {
-    await mockSupabaseAuth(loginPage.page, true);
-    
     await loginPage.login(TEST_DATA.admin.email, TEST_DATA.admin.password);
     await loginPage.verifyNoSubmitFormError();
 

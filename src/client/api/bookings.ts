@@ -12,6 +12,7 @@ import type {
 } from "@/domain/booking";
 import type { BookingFormValues } from "@/app/api/bookings/schema";
 import type { BookingPatch } from "@/app/api/bookings/schema";
+import { toDateOnlyString } from "@/lib/utils";
 
 /**
  * Query parameters for filtering bookings
@@ -110,8 +111,8 @@ export const createBooking = async (
 ): Promise<Booking> => {
   const payload = {
     ...formData,
-    // Convert date to ISO string for API
-    date: formData.date.toISOString(),
+    // Send date-only value to avoid timezone drift (YYYY-MM-DD)
+    date: toDateOnlyString(formData.date),
   };
 
   return apiFetch<Booking>("/api/bookings", {
