@@ -207,6 +207,12 @@ E2E_BOOKINGS_TABLE_NAME=bookings_test
 - Playwright always injects `BOOKINGS_TABLE_NAME` from the resolved E2E table.
 - Global setup refuses to run cleanup if the table name does not look like a test table.
 
+### E2E DB lifecycle
+1. Resolve E2E table name (`E2E_BOOKINGS_TABLE_NAME` or default `bookings_test`).
+2. Run `global-setup.ts` to authenticate and clear all rows from that table.
+3. Start a fresh Next.js server with `BOOKINGS_TABLE_NAME` forced to the E2E table.
+4. Runtime guardrails in booking store reject non-test tables when `E2E_TEST_RUN=true`.
+
 These are optional and have defaults in `test-helpers.ts`.
 
 ## 📊 **Test Reports & Videos**

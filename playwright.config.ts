@@ -77,7 +77,8 @@ export default defineConfig({
       DISABLE_BOOKING_EMAILS: "true",
       NEXT_PUBLIC_PAYMENT_SYSTEM_ENABLED: "false",
     },
-    reuseExistingServer: !process.env.CI,
+    // Always start a fresh server for E2E to guarantee env isolation.
+    reuseExistingServer: false,
     timeout: process.env.CI ? 300 * 1000 : 120 * 1000, // Much longer timeout in CI (5 min)
     stdout: process.env.CI ? "pipe" : "ignore", // Show output in CI for debugging
     stderr: "pipe",
