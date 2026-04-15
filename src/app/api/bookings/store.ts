@@ -16,8 +16,24 @@ import {
   mapBookingPatchToUpdate,
   mapRowToBooking,
 } from "@/supabase/bookings/mapper";
+import {
+  assertTestTableName,
+  DEFAULT_BOOKINGS_TABLE_NAME,
+} from "@/lib/bookings/table-name";
 
-const BOOKINGS_TABLE_NAME = process.env.BOOKINGS_TABLE_NAME || "bookings_test";
+const resolveBookingsTableName = (): string => {
+  const bookingsTableName =
+    process.env.BOOKINGS_TABLE_NAME || DEFAULT_BOOKINGS_TABLE_NAME;
+  const isE2ERun = process.env.E2E_TEST_RUN === "true";
+
+  if (isE2ERun) {
+    assertTestTableName(bookingsTableName, "Unsafe E2E configuration");
+  }
+
+  return bookingsTableName;
+};
+
+const BOOKINGS_TABLE_NAME = resolveBookingsTableName();
 
 /**
  * Create a new booking

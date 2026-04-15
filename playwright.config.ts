@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const E2E_BOOKINGS_TABLE_NAME =
+  process.env.E2E_BOOKINGS_TABLE_NAME || "bookings_test";
+
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -11,6 +14,7 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './e2e',
+  globalSetup: "./e2e/global-setup.ts",
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -68,7 +72,8 @@ export default defineConfig({
     url: "http://localhost:3000",
     env: {
       ...process.env,
-      BOOKINGS_TABLE_NAME: "bookings_test",
+      BOOKINGS_TABLE_NAME: E2E_BOOKINGS_TABLE_NAME,
+      E2E_TEST_RUN: "true",
       DISABLE_BOOKING_EMAILS: "true",
       NEXT_PUBLIC_PAYMENT_SYSTEM_ENABLED: "false",
     },

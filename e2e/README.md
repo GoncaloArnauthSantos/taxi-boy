@@ -37,7 +37,6 @@ e2e/
 - ✅ Phone number validation
 - ✅ Date validation (past dates)
 - ✅ Successful booking submission
-- ✅ API error handling
 
 ### **Admin Login Flow** (`admin-login.spec.ts`)
 - ✅ Login form display
@@ -127,19 +126,19 @@ The Playwright configuration is in `playwright.config.ts`:
 - **Screenshots**: On failure only
 - **Traces**: On first retry
 - **Videos**: Recorded for all tests (saved in `test-results/`)
+- **Global setup cleanup**: Cleans previous E2E bookings before test run
 
 ## 🔧 **Test Helpers**
 
 Shared utilities are in `e2e/helpers/test-helpers.ts`:
 
 - `getFutureDate()` - Get future date for booking (YYYY-MM-DD format)
-- `mockBookingApi()` - Mock booking API endpoint for tests
-- `mockSupabaseAuth()` - Mock Supabase auth endpoint for tests
 - `TEST_DATA` - Test data constants (form inputs only, not CMS content)
 
 ### Important behavior
 - Booking date picker now selects calendar dates via `data-day="YYYY-MM-DD"` and may navigate months internally in the page object.
-- For admin auth E2E mocks, both token and user endpoints are mocked to match middleware auth checks.
+- E2E tests use real API/database flows against the table configured by `BOOKINGS_TABLE_NAME`.
+- E2E booking records use email `*@taxiboy-e2e.test` and are soft-deleted in global setup before each run.
 
 ## 📝 **Writing New Tests**
 
@@ -158,8 +157,6 @@ test.describe('Booking Flow', () => {
   });
 
   test('should submit booking successfully', async () => {
-    await mockBookingApi(bookingPage.page, true);
-
     await bookingPage.fillBookingForm({
       name: 'John Doe',
       email: 'john@example.com',
@@ -195,21 +192,6 @@ test.describe('Feature Name', () => {
 });
 ```
 
-### **Mocking API Calls**
-```typescript
-await page.route('**/api/endpoint', async (route) => {
-  if (route.request().method() === 'POST') {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ data: 'response' }),
-    });
-  } else {
-    await route.continue();
-  }
-});
-```
-
 ## 🌍 **Environment Variables**
 
 For tests that require authentication, you can set:
@@ -217,7 +199,13 @@ For tests that require authentication, you can set:
 ```env
 E2E_ADMIN_EMAIL=admin@example.com
 E2E_ADMIN_PASSWORD=your-password
+E2E_BOOKINGS_TABLE_NAME=bookings_test
 ```
+
+### Safety guardrails
+- E2E defaults to `bookings_test` if `E2E_BOOKINGS_TABLE_NAME` is not set.
+- Playwright always injects `BOOKINGS_TABLE_NAME` from the resolved E2E table.
+- Global setup refuses to run cleanup if the table name does not look like a test table.
 
 These are optional and have defaults in `test-helpers.ts`.
 

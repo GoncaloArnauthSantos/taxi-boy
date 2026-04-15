@@ -186,5 +186,32 @@ describe("POST /api/payments/webhook", () => {
     expect(data.received).toBe(true);
     expect(updateBooking).not.toHaveBeenCalled();
   });
+
+  it("ignores duplicated webhook by event id", async () => {
+    constructEvent.mockReturnValue({
+      id: "evt_same_id",
+      type: "checkout.session.completed",
+      data: {
+        object: {
+          id: "cs_evt_same_1",
+          payment_intent: "pi_evt_same_1",
+          metadata: { bookingId: "booking-123" },
+        },
+      },
+    });
+    vi.mocked(getBookingById).mockResolvedValue(createMockBooking({ id: "booking-123" }));
+
+    const firstResponse = await POST(makeRequest("sig_test"));
+    const firstData = await firstResponse.json();
+    expect(firstResponse.status).toBe(200);
+    expect(firstData.received).toBe(true);
+
+    const secondResponse = await POST(makeRequest("sig_test"));
+    const secondData = await secondResponse.json();
+    expect(secondResponse.status).toBe(200);
+    expect(secondData.received).toBe(true);
+
+    expect(updateBooking).toHaveBeenCalledTimes(1);
+  });
 });
 

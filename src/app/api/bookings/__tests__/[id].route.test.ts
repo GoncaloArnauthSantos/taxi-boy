@@ -39,6 +39,7 @@ describe("GET /api/bookings/[id]", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(requireAuth).mockResolvedValue(null);
   });
 
   it("should return booking when found", async () => {
@@ -83,6 +84,20 @@ describe("GET /api/bookings/[id]", () => {
       params: Promise.resolve({ id: VALID_UUID }),
     });
     await expectErrorResponse(response, 500, "Failed to fetch booking");
+  });
+
+  it("should return 401 when not authenticated", async () => {
+    vi.mocked(requireAuth).mockResolvedValue(
+      NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    );
+
+    const request = createTestRequest("GET", `/api/bookings/${VALID_UUID}`);
+    const response = await GET(request, {
+      params: Promise.resolve({ id: VALID_UUID }),
+    });
+
+    await expectErrorResponse(response, 401);
+    expect(getBookingById).not.toHaveBeenCalled();
   });
 });
 

@@ -69,9 +69,16 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
       );
     }
 
+    const unitAmount = Math.round(price * 100);
+    if (!Number.isFinite(unitAmount) || unitAmount <= 0) {
+      return NextResponse.json(
+        { error: "Invalid booking price for checkout" },
+        { status: 422 }
+      );
+    }
+
     const stripe = getStripeClient();
     const baseUrl = request.nextUrl.origin;
-    const unitAmount =  Math.round(price * 100);
 
     logInfo({
       message: "Create checkout session requested",
@@ -114,6 +121,13 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
     return NextResponse.json({ url: session.url }, { status: 200 });
   } catch (error) {
+    if (error instanceof SyntaxError) {
+      return NextResponse.json(
+        { error: "Invalid JSON in request body" },
+        { status: 400 }
+      );
+    }
+
     logError({
       message: "Error creating checkout session",
       error,

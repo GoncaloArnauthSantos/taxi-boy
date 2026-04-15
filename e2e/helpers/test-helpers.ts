@@ -1,5 +1,3 @@
-import { Page } from "@playwright/test";
-
 /**
  * Test Helpers for E2E Tests
  *
@@ -18,38 +16,6 @@ export function getFutureDate(daysFromNow: number = 1): string {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`; // YYYY-MM-DD format (local date)
-}
-
-/**
- * Mock booking API endpoint
- *
- * @param page - Playwright page instance
- * @param success - Whether request should succeed (default: false for error scenario)
- */
-export async function mockBookingApi(
-  page: Page,
-  success: boolean = false
-): Promise<void> {
-  await page.route("**/api/bookings", async (route) => {
-    if (route.request().method() === "POST") {
-      await route.fulfill({
-        status: success ? 201 : 500,
-        contentType: "application/json",
-        body: JSON.stringify(
-          success
-            ? {
-              id: "test-booking-id",
-              message: "Booking created successfully",
-            }
-            : {
-              error: "Internal server error",
-            }
-        ),
-      });
-    } else {
-      await route.continue();
-    }
-  });
 }
 
 /**

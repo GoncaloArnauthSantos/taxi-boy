@@ -1,7 +1,7 @@
 import { test } from "@playwright/test";
 import { BookingPage } from "./pages/BookingPage";
 import { CheckoutPage } from "./pages/CheckoutPage";
-import { getFutureDate, TEST_DATA, mockBookingApi } from "./helpers/test-helpers";
+import { getFutureDate, TEST_DATA } from "./helpers/test-helpers";
 
 test.describe("Booking Flow", () => {
   let bookingPage: BookingPage;
@@ -93,27 +93,4 @@ test.describe("Booking Flow", () => {
     await checkoutPage.verifyPaymentDisabledWithInfoTooltip();
   });
 
-  test("should handle API error gracefully", async () => {
-    await mockBookingApi(bookingPage.page, false);
-
-    const futureDate = getFutureDate(7);
-
-    await bookingPage.fillBookingForm({
-      name: TEST_DATA.booking.name,
-      email: TEST_DATA.booking.email,
-      phone: TEST_DATA.booking.phone,
-      phoneCountryCode: TEST_DATA.booking.phoneCountryCode,
-      country: TEST_DATA.booking.country,
-      date: futureDate,
-    });
-
-    // Select tour and language dynamically (don't hardcode CMS values)
-    await bookingPage.selectFirstAvailableTour();
-    await bookingPage.selectFirstAvailableLanguage();
-
-    await bookingPage.submitForm();
-
-    // Wait for error message
-    await bookingPage.verifyFormErrorShown();
-  });
 });

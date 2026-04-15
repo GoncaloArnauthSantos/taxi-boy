@@ -8,6 +8,7 @@ import type { Tour } from "@/cms/types";
 import { logError, LogModule } from "@/lib/logger";
 import { isPaymentsEnabled } from "@/lib/features";
 import Tooltip from "../ui/Tooltip";
+import { createCheckoutSession } from "@/client/api/payments";
 
 type Props = {
   booking: Booking;
@@ -28,23 +29,7 @@ const PaymentButton = ({ booking, tour }: Props) => {
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch("/api/payments/create-checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          bookingId,
-        }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        const errorMessage = data.message || "Failed to create checkout session";
-
-        setError(errorMessage);
-        throw new Error(data.error);
-      }
-
-      const { url } = await response.json();
+      const { url } = await createCheckoutSession(bookingId);
 
       if (url) {
         window.location.href = url; // Redirect to Stripe Checkout

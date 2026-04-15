@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { GET, POST } from "../route";
 import { createMockBooking, createMockTour } from "./helpers";
 import { createTestRequest, expectErrorResponse, expectSuccessResponse, expectValidationErrors } from "@/__tests__/helpers/test-utils";
@@ -26,6 +26,10 @@ vi.mock("@/email/send", () => ({
   sendBookingConfirmationEmails: vi.fn().mockResolvedValue(undefined),
 }));
 
+vi.mock("@/app/api/auth/helpers", () => ({
+  requireAuth: vi.fn(),
+}));
+
 vi.mock("@/lib/logger", () => ({
   logError: vi.fn(),
   logInfo: vi.fn(),
@@ -39,10 +43,12 @@ vi.mock("@/lib/logger", () => ({
 import { createBooking, getAllBookings, isDateAvailable } from "../store";
 import { getTourByID } from "@/cms/tours";
 import { sendBookingConfirmationEmails } from "@/email/send";
+import { requireAuth } from "@/app/api/auth/helpers";
 
 describe("GET /api/bookings", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(requireAuth).mockResolvedValue(null);
   });
 
   it("should return all bookings when no filters provided", async () => {
@@ -140,7 +146,11 @@ describe("GET /api/bookings", () => {
       searchParams: { future: "true", past: "true" },
     });
     const response = await GET(request);
-    await expectErrorResponse(response, 500, "Failed to fetch bookings");
+    await expectErrorResponse(
+      response,
+      400,
+      "Conflicting date filters: cannot filter for both future=true and past=true. Use only one date filter or use future=false with past=true for past bookings."
+    );
   });
 
   it("should combine multiple filters", async () => {
@@ -174,6 +184,18 @@ describe("GET /api/bookings", () => {
     const request = createTestRequest("GET", "/api/bookings");
     const response = await GET(request);
     await expectErrorResponse(response, 500, "Failed to fetch bookings");
+  });
+
+  it("should return 401 when not authenticated", async () => {
+    vi.mocked(requireAuth).mockResolvedValue(
+      NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    );
+
+    const request = createTestRequest("GET", "/api/bookings");
+    const response = await GET(request);
+
+    await expectErrorResponse(response, 401);
+    expect(getAllBookings).not.toHaveBeenCalled();
   });
 });
 

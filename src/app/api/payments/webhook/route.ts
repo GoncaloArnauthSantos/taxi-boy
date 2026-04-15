@@ -10,12 +10,11 @@
  * - Only process webhooks that come from Stripe
  * - Use idempotency to prevent duplicate processing
  * 
- * PHASE 1: This is just a skeleton. The actual Stripe integration comes in Phase 2.
- * 
- * Webhook Events We'll Handle:
- * - checkout.session.completed: When customer completes payment
- * - payment_intent.succeeded: When payment is successful
- * - payment_intent.payment_failed: When payment fails
+ * Handled events:
+ * - checkout.session.completed
+ * - checkout.session.async_payment_succeeded
+ * - checkout.session.async_payment_failed
+ * - checkout.session.expired
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -34,6 +33,35 @@ import { getStripeClient, getStripeWebhookSecret } from "@/lib/stripe";
  * Stripe needs the raw body to verify the signature
  */
 export const runtime = "nodejs";
+
+const PROCESSED_EVENT_TTL_MS = 1000 * 60 * 60; // 1 hour
+const processedEventIds = new Map<string, number>();
+
+const markEventProcessed = (eventId: string, now = Date.now()): void => {
+  processedEventIds.set(eventId, now + PROCESSED_EVENT_TTL_MS);
+};
+
+const isProcessedEvent = (eventId: string, now = Date.now()): boolean => {
+  const expiresAt = processedEventIds.get(eventId);
+  if (!expiresAt) {
+    return false;
+  }
+
+  if (expiresAt <= now) {
+    processedEventIds.delete(eventId);
+    return false;
+  }
+
+  return true;
+};
+
+const pruneProcessedEvents = (now = Date.now()): void => {
+  for (const [eventId, expiresAt] of processedEventIds.entries()) {
+    if (expiresAt <= now) {
+      processedEventIds.delete(eventId);
+    }
+  }
+};
 
 const getPaymentIntentId = (
   paymentIntent: string | Stripe.PaymentIntent | null
@@ -73,6 +101,20 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
       return NextResponse.json({ error: "Invalid webhook signature" }, { status: 400 });
     }
 
+    pruneProcessedEvents();
+    if (isProcessedEvent(event.id)) {
+      logInfo({
+        message: "Stripe webhook duplicate event ignored",
+        context: {
+          eventType: event.type,
+          eventId: event.id,
+          eventOutcome: "ignored_duplicate_event_id",
+        },
+        module: LogModule.Payment,
+      });
+      return NextResponse.json({ received: true }, { status: 200 });
+    }
+
     if (
       event.type === "checkout.session.completed" ||
       event.type === "checkout.session.async_payment_succeeded"
@@ -87,7 +129,12 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
         if (!booking) {
           logInfo({
             message: "Stripe webhook booking not found",
-            context: { bookingId, stripeSessionId, eventId: event.id },
+            context: {
+              bookingId,
+              stripeSessionId,
+              eventId: event.id,
+              eventOutcome: "ignored_booking_not_found",
+            },
             module: LogModule.Payment,
           });
           return NextResponse.json({ received: true }, { status: 200 });
@@ -96,7 +143,12 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
         if (booking.stripeSessionId === stripeSessionId) {
           logInfo({
             message: "Stripe webhook duplicate ignored",
-            context: { bookingId, stripeSessionId, eventId: event.id },
+            context: {
+              bookingId,
+              stripeSessionId,
+              eventId: event.id,
+              eventOutcome: "ignored_duplicate_success",
+            },
             module: LogModule.Payment,
           });
           return NextResponse.json({ received: true }, { status: 200 });
@@ -113,7 +165,13 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
         logInfo({
           message: "Booking marked as paid from Stripe webhook",
-          context: { bookingId, stripeSessionId, stripePaymentIntentId, eventId: event.id },
+          context: {
+            bookingId,
+            stripeSessionId,
+            stripePaymentIntentId,
+            eventId: event.id,
+            eventOutcome: "updated_paid",
+          },
           module: LogModule.Payment,
         });
       }
@@ -133,7 +191,12 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
         if (!booking) {
           logInfo({
             message: "Stripe webhook booking not found for failure event",
-            context: { bookingId, stripeSessionId, eventId: event.id },
+            context: {
+              bookingId,
+              stripeSessionId,
+              eventId: event.id,
+              eventOutcome: "ignored_failure_booking_not_found",
+            },
             module: LogModule.Payment,
           });
           return NextResponse.json({ received: true }, { status: 200 });
@@ -142,7 +205,12 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
         if (booking.paymentStatus === BookingPaymentStatus.PAID) {
           logInfo({
             message: "Stripe failure event ignored for already paid booking",
-            context: { bookingId, stripeSessionId, eventId: event.id },
+            context: {
+              bookingId,
+              stripeSessionId,
+              eventId: event.id,
+              eventOutcome: "ignored_failure_already_paid",
+            },
             module: LogModule.Payment,
           });
           return NextResponse.json({ received: true }, { status: 200 });
@@ -151,7 +219,12 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
         if (booking.stripeSessionId === stripeSessionId) {
           logInfo({
             message: "Stripe webhook duplicate failure ignored",
-            context: { bookingId, stripeSessionId, eventId: event.id },
+            context: {
+              bookingId,
+              stripeSessionId,
+              eventId: event.id,
+              eventOutcome: "ignored_duplicate_failure",
+            },
             module: LogModule.Payment,
           });
           return NextResponse.json({ received: true }, { status: 200 });
@@ -166,7 +239,13 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
         logInfo({
           message: "Booking marked as failed from Stripe webhook",
-          context: { bookingId, stripeSessionId, stripePaymentIntentId, eventId: event.id },
+          context: {
+            bookingId,
+            stripeSessionId,
+            stripePaymentIntentId,
+            eventId: event.id,
+            eventOutcome: "updated_failed",
+          },
           module: LogModule.Payment,
         });
       }
@@ -174,9 +253,10 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
     logInfo({
       message: "Stripe webhook processed",
-      context: { eventType: event.type, eventId: event.id },
+      context: { eventType: event.type, eventId: event.id, eventOutcome: "processed" },
       module: LogModule.Payment,
     });
+    markEventProcessed(event.id);
 
     return NextResponse.json({ received: true }, { status: 200 });
   } catch (error) {
