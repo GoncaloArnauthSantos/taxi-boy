@@ -134,7 +134,10 @@ jobs:
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          PLAYWRIGHT_TEST_BASE_URL: ${{ secrets.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3000' }}
+          E2E_ADMIN_EMAIL: ${{ secrets.E2E_ADMIN_EMAIL }}
+          E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
+          E2E_BOOKINGS_TABLE_NAME: ${{ secrets.E2E_BOOKINGS_TABLE_NAME }}
+          PLAYWRIGHT_TEST_BASE_URL: ${{ secrets.PLAYWRIGHT_TEST_BASE_URL }}
           # Additional env vars that Next.js might need
           NODE_ENV: test
 
