@@ -13,10 +13,10 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
-import { getStripeClient } from "@/lib/stripe";
 import { logError, LogModule } from "@/lib/logger";
 import { formatDateOnly } from "@/lib/utils";
 import { BookingPaymentStatus } from "@/domain/booking";
+import { validateCheckoutSession } from "@/lib/payments/validate-checkout-session";
 
 type Props = {
   params: Promise<{ bookingId: string }>;
@@ -31,12 +31,14 @@ const PaymentSuccessPage = async ({ params, searchParams }: Props) => {
     redirect(`/checkout/${bookingId}`);
   }
 
+  // Validate Stripe checkout session
   try {
-    const stripe = getStripeClient();
-    const session = await stripe.checkout.sessions.retrieve(session_id);
-    const sessionBookingId = session.metadata?.bookingId;
+    const isValidSession = await validateCheckoutSession({
+      sessionId: session_id,
+      bookingId,
+    });
 
-    if (sessionBookingId !== bookingId || session.payment_status !== "paid") {
+    if (!isValidSession) {
       redirect(`/checkout/${bookingId}`);
     }
   } catch (error) {
@@ -49,7 +51,7 @@ const PaymentSuccessPage = async ({ params, searchParams }: Props) => {
     redirect(`/checkout/${bookingId}`);
   }
 
-  // Wait briefly for webhook -> DB consistency after Stripe redirects to success_url
+  // Get booking from database
   const booking = await getBookingById(bookingId);
 
   if (!booking) {

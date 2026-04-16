@@ -61,6 +61,22 @@ describe("POST /api/payments/create-checkout", () => {
     expect(getBookingById).not.toHaveBeenCalled();
   });
 
+  it("returns 400 when request body is invalid JSON", async () => {
+    const request = new NextRequest(
+      "http://localhost:3000/api/payments/create-checkout",
+      {
+        method: "POST",
+        body: "invalid json",
+      }
+    );
+
+    const response = await POST(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(data.error).toBe("Invalid JSON in request body");
+  });
+
   it("returns 404 when booking does not exist", async () => {
     vi.mocked(getBookingById).mockResolvedValue(null);
 
@@ -108,6 +124,30 @@ describe("POST /api/payments/create-checkout", () => {
 
     expect(response.status).toBe(400);
     expect(data.error).toBe("Booking already paid");
+    expect(createCheckoutSession).not.toHaveBeenCalled();
+  });
+
+  it("returns 422 when booking price is invalid", async () => {
+    vi.mocked(getBookingById).mockResolvedValue(
+      createMockBooking({
+        price: 0,
+        paymentStatus: BookingPaymentStatus.PENDING,
+      })
+    );
+    vi.mocked(getTourByID).mockResolvedValue({
+      id: "tour-123",
+      title: "Lisbon Tour",
+    } as never);
+
+    const response = await POST(
+      makeRequest({
+        bookingId: "booking-123",
+      })
+    );
+    const data = await response.json();
+
+    expect(response.status).toBe(422);
+    expect(data.error).toBe("Invalid booking price for checkout");
     expect(createCheckoutSession).not.toHaveBeenCalled();
   });
 

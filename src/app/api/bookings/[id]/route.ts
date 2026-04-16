@@ -52,6 +52,11 @@ export const GET = async (
   request: NextRequest,
   { params }: BookingRouteContext
 ) => {
+  const authError = await requireAuth(request);
+  if (authError) {
+    return authError;
+  }
+
   try {
     const { id } = await params
 

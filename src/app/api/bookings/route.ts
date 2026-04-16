@@ -17,6 +17,8 @@ import { logError, logInfo, LogModule } from "@/lib/logger";
 import { BookingPaymentStatus, BookingStatus } from "@/domain/booking";
 import { sendBookingConfirmationEmails } from "@/email/send";
 import { toDateOnlyString } from "@/lib/utils";
+import { parseBookingDateInput } from "@/lib/bookings/parse-booking-date-input";
+import { requireAuth } from "@/app/api/auth/helpers";
 
 const DISABLE_BOOKING_EMAILS = process.env.DISABLE_BOOKING_EMAILS === "true";
 
@@ -30,6 +32,13 @@ const VALID_PAYMENT_STATUSES: BookingPaymentStatus[] = [
   BookingPaymentStatus.PAID,
   BookingPaymentStatus.FAILED,
 ];
+
+class BookingsQueryValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "BookingsQueryValidationError";
+  }
+}
 
 /**
  * Parse and validate query parameters for bookings filtering
@@ -83,7 +92,7 @@ const parseBookingsQuery = (
 
   // Validate: cannot have both future=true and past=true (conflicting filters)
   if (futureValue === true && pastValue === true) {
-    throw new Error(
+    throw new BookingsQueryValidationError(
       "Conflicting date filters: cannot filter for both future=true and past=true. " +
         "Use only one date filter or use future=false with past=true for past bookings."
     );
@@ -126,6 +135,11 @@ const parseBookingsQuery = (
  * GET /api/bookings
  */
 export const GET = async (request: NextRequest): Promise<NextResponse> => {
+  const authError = await requireAuth(request);
+  if (authError) {
+    return authError;
+  }
+
   try {
     const filters = parseBookingsQuery(request.nextUrl.searchParams);
 
@@ -133,6 +147,13 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
 
     return NextResponse.json(bookings, { status: 200 });
   } catch (error) {
+    if (error instanceof BookingsQueryValidationError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 400 }
+      );
+    }
+
     logError({
       message: "Error fetching bookings",
       error,
@@ -181,18 +202,9 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
   try {
     const body = await request.json();
 
-    // Convert incoming date strings back to Date for zod validation.
-    // Supports both YYYY-MM-DD and full ISO strings.
-    if (body.date && typeof body.date === "string") {
-      const dateOnly = toDateOnlyString(body.date);
-      const parsedDate =
-        /^\d{4}-\d{2}-\d{2}$/.test(body.date)
-          ? new Date(`${dateOnly}T00:00:00`)
-          : new Date(body.date);
-
-      if (!Number.isNaN(parsedDate.getTime())) {
-        body.date = parsedDate;
-      }
+    const parsedDate = parseBookingDateInput(body.date);
+    if (parsedDate) {
+      body.date = parsedDate;
     }
 
     // Validate form data
