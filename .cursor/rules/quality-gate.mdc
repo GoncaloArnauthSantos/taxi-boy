@@ -22,7 +22,7 @@ Fix all errors. Do not disable rules or skip hooks unless the user explicitly as
 - Unused vars prefixed with `_` when intentionally unused
 - Double quotes, 2-space indent, trailing commas in multiline
 - Zod for API input validation; domain types in `src/domain/`
-- No secrets in code or commits (`.env*`, `.cursor/secrets/`, `docs-local/`)
+- No secrets in code or commits (`.env*`, `.cursor/secrets.env`, `.cursor/secrets/`, `docs-local/`)
 
 ## When tests apply
 

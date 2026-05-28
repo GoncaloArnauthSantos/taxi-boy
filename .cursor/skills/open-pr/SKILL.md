@@ -1,6 +1,6 @@
 ---
 name: open-pr
-description: Push branch and open a GitHub pull request using gh CLI and local GitHub credentials from .cursor/secrets. Use when the user asks to open a PR, create a pull request, or invokes /open-pr.
+description: Push branch and open a GitHub pull request using gh CLI and local GitHub credentials from .cursor/secrets.env. Use when the user asks to open a PR, create a pull request, or invokes /open-pr.
 disable-model-invocation: true
 ---
 
@@ -12,19 +12,19 @@ Load credentials before any `gh` or `git push` that needs auth.
 
 **Option A — secrets file (recommended for agent)**
 
-1. `mkdir -p .cursor/secrets && cp .cursor/secrets.example.env .cursor/secrets/github.env`
+1. `cp .cursor/secrets.example.env .cursor/secrets.env`
 2. Set `GITHUB_TOKEN` (PAT with `repo` scope) or fine-grained token with PR access
 3. Before `gh` / authenticated `git push`:
 
 ```bash
-set -a && source .cursor/secrets/github.env && set +a
+set -a && source .cursor/secrets.env && set +a
 ```
 
 **Option B — gh CLI login**
 
 If `gh auth status` succeeds, skip the secrets file.
 
-Never commit `.cursor/secrets/` or paste tokens into chat or PR bodies.
+Never commit `.cursor/secrets.env`, `.cursor/secrets/`, or paste tokens into chat or PR bodies.
 
 ## Prerequisites
 

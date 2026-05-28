@@ -31,10 +31,17 @@ cp -R .cursor/templates/docs-local docs-local
 
 ## GitHub auth for `/open-pr`
 
+Copy the template and add your token locally (never committed):
+
 ```bash
-mkdir -p .cursor/secrets
-cp .cursor/secrets.example.env .cursor/secrets/github.env
-# Edit github.env — set GITHUB_TOKEN
+cp .cursor/secrets.example.env .cursor/secrets.env
+# Edit secrets.env — set GITHUB_TOKEN
 ```
 
-Or use `gh auth login`. Never commit `.cursor/secrets/`.
+Before `gh` / authenticated `git push`:
+
+```bash
+set -a && source .cursor/secrets.env && set +a
+```
+
+Or use `gh auth login`. Never commit `.cursor/secrets.env` or `.cursor/secrets/`.
