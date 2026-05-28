@@ -31,11 +31,12 @@ cp -R .cursor/templates/docs-local docs-local
 
 ## GitHub auth for `/open-pr`
 
-Copy the template and add your token locally (never committed):
+Create `.cursor/secrets.env` locally (never committed):
 
-```bash
-cp .cursor/secrets.example.env .cursor/secrets.env
-# Edit secrets.env — set GITHUB_TOKEN
+```env
+GITHUB_TOKEN=your_pat_here
+# GH_HOST=github.example.com
+# GH_REPO=your-org/taxi-boy
 ```
 
 Before `gh` / authenticated `git push`:

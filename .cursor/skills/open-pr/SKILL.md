@@ -12,9 +12,8 @@ Load credentials before any `gh` or `git push` that needs auth.
 
 **Option A — secrets file (recommended for agent)**
 
-1. `cp .cursor/secrets.example.env .cursor/secrets.env`
-2. Set `GITHUB_TOKEN` (PAT with `repo` scope) or fine-grained token with PR access
-3. Before `gh` / authenticated `git push`:
+1. Create `.cursor/secrets.env` with `GITHUB_TOKEN` (PAT with `repo` scope or fine-grained token with PR access)
+2. Before `gh` / authenticated `git push`:
 
 ```bash
 set -a && source .cursor/secrets.env && set +a
@@ -73,6 +72,6 @@ Only commit when the user explicitly requested it. Use HEREDOC commit messages; 
 
 ## On failure
 
-- `401` / auth errors → verify `github.env` or run `gh auth login`
+- `401` / auth errors → verify `.cursor/secrets.env` or run `gh auth login`
 - No upstream → push with `-u origin HEAD` first
 - Dirty tree → ask whether to commit or stash before PR
