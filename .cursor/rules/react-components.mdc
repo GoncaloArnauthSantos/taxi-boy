@@ -1,0 +1,26 @@
+---
+description: React and Next.js UI component conventions
+globs: src/**/*.tsx
+alwaysApply: false
+---
+
+# React components
+
+## Stack
+
+- Functional components; `"use client"` only when needed (hooks, events, browser APIs)
+- shadcn/ui + Radix in `src/components/ui/`; Tailwind v4 for styling
+- Forms: React Hook Form + Zod resolver; match existing field components
+
+## Structure
+
+- Page-specific UI: colocate under route or `src/components/<feature>/`
+- Shared primitives: `src/components/ui/`
+- Props interfaces named `<Component>Props`; export types when reused
+
+## Patterns
+
+- Prefer server components for data fetching; pass serializable props to client children
+- Use existing `cn()` from `@/lib/utils` for conditional classes
+- No `console.*`; surface user-facing errors in UI state, log server-side via `@/lib/logger`
+- Match existing naming: PascalCase files, kebab-case route folders

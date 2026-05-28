@@ -1,0 +1,38 @@
+---
+description: Enforce code quality, lint, type-check, and tests before shipping
+alwaysApply: true
+---
+
+# Quality Gate
+
+Before marking work done, committing, or opening a PR, run and pass:
+
+```bash
+npm run type-check
+npm run lint:strict
+npm run test
+```
+
+Fix all errors. Do not disable rules or skip hooks unless the user explicitly asks.
+
+## Standards
+
+- Match existing patterns in touched files; minimal scoped diffs
+- No raw `console.*` in app code — use `@/lib/logger` (eslint `no-console: error`)
+- Unused vars prefixed with `_` when intentionally unused
+- Double quotes, 2-space indent, trailing commas in multiline
+- Zod for API input validation; domain types in `src/domain/`
+- No secrets in code or commits (`.env*`, `.cursor/secrets.env`, `.cursor/secrets/`, `docs-local/`)
+
+## When tests apply
+
+- Bug fixes and behavior changes: add or update tests in `src/**/__tests__/`
+- Pure UI/layout tweaks: tests optional unless logic changed
+- Booking, checkout, auth, or payment flows: consider `npm run test:e2e:<suite>` when behavior is user-facing
+
+## Failure loop
+
+1. Run the failing command
+2. Fix root cause (not suppressions)
+3. Re-run until all three pass
+4. Use `ReadLints` on edited files before finishing
