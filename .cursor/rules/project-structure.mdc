@@ -1,0 +1,30 @@
+---
+description: TaxiBoy folder layout, layering, and naming conventions
+alwaysApply: true
+---
+
+# Project structure
+
+Next.js 15 App Router + TypeScript. Keep layers separated:
+
+| Layer | Path | Role |
+|-------|------|------|
+| Domain | `src/domain/` | Business types and enums — no I/O |
+| API | `src/app/api/` | HTTP handlers; Zod in `schema.ts` |
+| Data | `src/supabase/` | DB access, mappers, migrations |
+| CMS | `src/cms/` | Prismic fetchers and types |
+| UI | `src/components/`, `src/app/` | React components and pages |
+| Shared | `src/lib/` | Utilities, logger, SEO helpers |
+
+## Conventions
+
+- Import domain types from `@/domain/*`; do not duplicate enums in API or UI
+- DB row shapes stay in `src/supabase/`; map to domain types via mappers
+- Use `@/lib/logger` (`logError`, `logInfo`, `LogModule`) — never raw `console.*` outside `logger.ts`
+- Path alias: `@/` → `src/`
+- README-* files document integrations (Supabase, Prismic, Auth, Sentry)
+
+## Admin
+
+- Legacy admin: `src/app/admin/`
+- Admin v2 (in progress): `src/app/admin/v2/` + `src/components/admin-v2/`

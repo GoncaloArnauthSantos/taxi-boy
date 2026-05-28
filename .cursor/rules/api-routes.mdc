@@ -1,0 +1,30 @@
+---
+description: API route handlers, validation, and error responses
+globs: src/app/api/**/*
+alwaysApply: false
+---
+
+# API routes
+
+## Layout
+
+```
+src/app/api/<resource>/
+  route.ts       # GET/POST handlers
+  schema.ts      # Zod schemas (request/response)
+  store.ts       # Data access (optional)
+  __tests__/     # Schema and handler tests
+```
+
+## Handler pattern
+
+- Validate input with Zod; return `400` with a clear message on failure
+- Use domain enums from `@/domain/*` for status values — do not hardcode strings
+- Auth: reuse helpers from `@/app/api/auth/helpers` (e.g. `requireAuth`)
+- Log errors with `logError({ message, error, module: LogModule.API, context })`
+- Return `NextResponse.json(...)` with appropriate status codes
+
+## Tests
+
+- Colocate tests in `__tests__/` next to the route
+- Test schema validation and edge cases; mock external I/O in handler tests

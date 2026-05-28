@@ -1,0 +1,34 @@
+---
+description: Use docs-local as local source of truth for decisions and tasks
+alwaysApply: true
+---
+
+# docs-local (local only, gitignored)
+
+`docs-local/` holds project decisions and task context. It is never committed.
+
+## Layout
+
+```
+docs-local/
+  README.md
+  decisions/          # ADRs and cross-cutting choices
+  tasks/<slug>/     # One folder per task (plan, notes, review)
+  releases/<version>/ # Release notes and scope per version
+```
+
+Bootstrap if missing:
+
+```bash
+cp -R .cursor/templates/docs-local docs-local
+```
+
+## When to read / write
+
+| Phase | Action |
+|-------|--------|
+| Start task | Read `decisions/` + related `tasks/`; write `tasks/<slug>/plan.md` |
+| During work | Append to `tasks/<slug>/notes.md` for non-obvious choices |
+| Before PR | Update `tasks/<slug>/review.md`; link release folder if applicable |
+
+Keep entries short: goal, constraints, decisions, acceptance criteria, open questions.
