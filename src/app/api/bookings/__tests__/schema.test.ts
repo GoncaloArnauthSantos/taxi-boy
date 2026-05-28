@@ -603,6 +603,7 @@ describe("bookingPatchSchema", () => {
 });
 
 describe("transformFormToBooking", () => {
+  const tourTitle = "Lisbon Highlights Tour";
   const validFormData = {
     name: "John Doe",
     email: "john@example.com",
@@ -616,7 +617,7 @@ describe("transformFormToBooking", () => {
   };
 
   it("should transform form data to booking correctly", () => {
-    const result = transformFormToBooking(validFormData, 100);
+    const result = transformFormToBooking(validFormData, 100, tourTitle);
 
     expect(result.clientName).toBe("John Doe");
     expect(result.clientEmail).toBe("john@example.com");
@@ -625,11 +626,13 @@ describe("transformFormToBooking", () => {
     expect(result.clientCountry).toBe("Portugal");
     expect(result.clientLanguage).toBe("English");
     expect(result.tourId).toBe("tour-123");
+    expect(result.tourTitle).toBe(tourTitle);
     expect(result.price).toBe(100);
+    expect(result.adminNotes).toBeNull();
   });
 
   it("should set correct default values", () => {
-    const result = transformFormToBooking(validFormData, 100);
+    const result = transformFormToBooking(validFormData, 100, tourTitle);
 
     expect(result.status).toBe("pending");
     expect(result.paymentStatus).toBe("pending");
@@ -637,14 +640,14 @@ describe("transformFormToBooking", () => {
   });
 
   it("should format date as date-only string", () => {
-    const result = transformFormToBooking(validFormData, 100);
+    const result = transformFormToBooking(validFormData, 100, tourTitle);
 
     expect(result.clientSelectedDate).toBe("2024-12-25");
   });
 
   it("should set message to null when message is undefined", () => {
     const { message: _message, ...dataWithoutMessage } = validFormData;
-    const result = transformFormToBooking(dataWithoutMessage, 100);
+    const result = transformFormToBooking(dataWithoutMessage, 100, tourTitle);
 
     expect(result.clientMessage).toBeNull();
   });
@@ -652,7 +655,8 @@ describe("transformFormToBooking", () => {
   it("should preserve empty string message (not convert to null)", () => {
     const result = transformFormToBooking(
       { ...validFormData, message: "" },
-      100
+      100,
+      tourTitle
     );
 
     // Empty string is preserved, only undefined/null becomes null
@@ -660,13 +664,13 @@ describe("transformFormToBooking", () => {
   });
 
   it("should preserve message when provided", () => {
-    const result = transformFormToBooking(validFormData, 100);
+    const result = transformFormToBooking(validFormData, 100, tourTitle);
 
     expect(result.clientMessage).toBe("Test message");
   });
 
   it("should use provided price", () => {
-    const result = transformFormToBooking(validFormData, 250);
+    const result = transformFormToBooking(validFormData, 250, tourTitle);
 
     expect(result.price).toBe(250);
   });
