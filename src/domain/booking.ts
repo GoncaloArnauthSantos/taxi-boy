@@ -25,7 +25,9 @@ export type Booking = {
   clientLanguage: string
   clientSelectedDate: string
   clientMessage: string | null
+  adminNotes?: string | null
   tourId: string  
+  tourTitle: string
   createdAt: string
   updatedAt: string
   status: BookingStatus

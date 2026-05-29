@@ -20,7 +20,9 @@ type BookingRow = {
   client_language: string;
   client_selected_date: string;
   client_message: string | null;
+  admin_notes?: string | null;
   tour_id: string;
+  tour_title: string | null;
   status: BookingStatus;
   price: number;
   payment_status: BookingPaymentStatus;
@@ -45,7 +47,9 @@ type BookingInsert = {
   client_language: string;
   client_selected_date: string;
   client_message: string | null;
+  admin_notes?: string | null;
   tour_id: string;
+  tour_title: string;
   status: BookingStatus;
   price: number;
   payment_status: BookingPaymentStatus;
@@ -70,7 +74,9 @@ export const mapBookingToInsert = (
     client_language: input.clientLanguage,
     client_selected_date: input.clientSelectedDate,
     client_message: input.clientMessage,
+    admin_notes: input.adminNotes ?? null,
     tour_id: input.tourId,
+    tour_title: input.tourTitle,
     status: input.status,
     price: input.price,
     payment_status: input.paymentStatus,
@@ -115,8 +121,14 @@ export const mapBookingPatchToUpdate = (
   if (patch.clientMessage !== undefined) {
     updateData.client_message = patch.clientMessage ?? null;
   }
+  if (patch.adminNotes !== undefined) {
+    updateData.admin_notes = patch.adminNotes ?? null;
+  }
   if (patch.tourId !== undefined) {
     updateData.tour_id = patch.tourId;
+  }
+  if (patch.tourTitle !== undefined) {
+    updateData.tour_title = patch.tourTitle;
   }
   if (patch.status !== undefined) {
     updateData.status = patch.status;
@@ -157,7 +169,10 @@ export const mapRowToBooking = (row: BookingRow): Booking => {
     clientLanguage: row.client_language,
     clientSelectedDate: row.client_selected_date,
     clientMessage: row.client_message,
+    adminNotes: row.admin_notes ?? null,
     tourId: row.tour_id,
+    // Fallback protects old rows before migration backfill.
+    tourTitle: row.tour_title ?? row.tour_id,
     status: row.status as BookingStatus,
     price: Number(row.price),
     paymentStatus: row.payment_status as BookingPaymentStatus,

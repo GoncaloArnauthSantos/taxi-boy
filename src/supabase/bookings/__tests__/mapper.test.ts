@@ -17,6 +17,7 @@ describe("mapBookingToInsert", () => {
     clientSelectedDate: "2024-12-25",
     clientMessage: "Test message",
     tourId: "tour-123",
+    tourTitle: "Lisbon Highlights Tour",
     status: BookingStatus.PENDING,
     price: 100,
     paymentStatus: BookingPaymentStatus.PENDING,
@@ -38,6 +39,7 @@ describe("mapBookingToInsert", () => {
     expect(result.client_selected_date).toBe("2024-12-25");
     expect(result.client_message).toBe("Test message");
     expect(result.tour_id).toBe("tour-123");
+    expect(result.tour_title).toBe("Lisbon Highlights Tour");
     expect(result.status).toBe("pending");
     expect(result.price).toBe(100);
     expect(result.payment_status).toBe("pending");
@@ -111,7 +113,9 @@ describe("mapRowToBooking", () => {
     client_language: "English",
     client_selected_date: "2024-12-25",
     client_message: "Test message",
+    admin_notes: null,
     tour_id: "tour-123",
+    tour_title: "Lisbon Highlights Tour",
     status: BookingStatus.PENDING,
     price: 100,
     payment_status: BookingPaymentStatus.PENDING,
@@ -137,6 +141,7 @@ describe("mapRowToBooking", () => {
     expect(result.clientSelectedDate).toBe("2024-12-25");
     expect(result.clientMessage).toBe("Test message");
     expect(result.tourId).toBe("tour-123");
+    expect(result.tourTitle).toBe("Lisbon Highlights Tour");
     expect(result.status).toBe(BookingStatus.PENDING);
     expect(result.price).toBe(100);
     expect(result.paymentStatus).toBe("pending");
@@ -202,6 +207,17 @@ describe("mapRowToBooking", () => {
     const result = mapRowToBooking(row);
 
     expect(result.deletedAt).toBe("2024-01-02T00:00:00.000Z");
+  });
+
+  it("should fallback tourTitle to tourId when tour_title is null", () => {
+    const row = {
+      ...validBookingRow,
+      tour_title: null,
+    };
+
+    const result = mapRowToBooking(row);
+
+    expect(result.tourTitle).toBe("tour-123");
   });
 
   it("should handle different status values", () => {
@@ -276,7 +292,9 @@ describe("mapBookingPatchToUpdate", () => {
       clientLanguage: "Spanish",
       clientSelectedDate: "2024-12-26",
       clientMessage: "Updated message",
+      adminNotes: "Driver confirmed pickup time",
       tourId: "tour-456",
+      tourTitle: "Sintra Day Trip",
       status: BookingStatus.CONFIRMED,
       price: 200,
       paymentStatus: BookingPaymentStatus.PAID,
@@ -293,7 +311,9 @@ describe("mapBookingPatchToUpdate", () => {
     expect(result.client_language).toBe("Spanish");
     expect(result.client_selected_date).toBe("2024-12-26");
     expect(result.client_message).toBe("Updated message");
+    expect(result.admin_notes).toBe("Driver confirmed pickup time");
     expect(result.tour_id).toBe("tour-456");
+    expect(result.tour_title).toBe("Sintra Day Trip");
     expect(result.status).toBe(BookingStatus.CONFIRMED);
     expect(result.price).toBe(200);
     expect(result.payment_status).toBe(BookingPaymentStatus.PAID);

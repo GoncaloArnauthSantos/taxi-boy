@@ -63,6 +63,7 @@ export const bookingPatchSchema = z
     paymentMethod: z.enum([BookingPaymentMethod.BANK_TRANSFER, BookingPaymentMethod.CARD, BookingPaymentMethod.CASH]).optional(),
     price: z.number().positive().optional(),
     clientMessage: z.string().max(1000).optional(),
+    adminNotes: z.string().max(2000).optional(),
     clientSelectedDate: z
       .string()
       .refine((date) => {
@@ -85,7 +86,8 @@ export type BookingPatch = z.infer<typeof bookingPatchSchema>;
  */
 export const transformFormToBooking = (
   formData: BookingFormValues,
-  price: number
+  price: number,
+  tourTitle: string
 ): Omit<Booking, "id" | "createdAt" | "updatedAt" | "deletedAt"> => {
   const {
     name,
@@ -108,8 +110,10 @@ export const transformFormToBooking = (
     clientLanguage: language,
     clientSelectedDate: toDateOnlyString(date),
     clientMessage: message ?? null,
+    adminNotes: null,
     price,
     tourId,
+    tourTitle,
     status: BookingStatus.PENDING,
     paymentStatus: BookingPaymentStatus.PENDING,
     paymentMethod: null,

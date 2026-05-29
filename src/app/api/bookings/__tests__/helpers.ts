@@ -24,7 +24,9 @@ export const createMockBooking = (overrides?: Partial<Booking>): Booking => {
     clientLanguage: "English",
     clientSelectedDate: futureDate,
     clientMessage: "Test message",
+    adminNotes: null,
     tourId: "tour-123",
+    tourTitle: "Lisbon City Tour",
     status: BookingStatus.PENDING,
     price: 100,
     paymentStatus: BookingPaymentStatus.PENDING,
@@ -72,7 +74,9 @@ type BookingRow = {
   client_language: string;
   client_selected_date: string;
   client_message: string | null;
+  admin_notes?: string | null;
   tour_id: string;
+  tour_title?: string | null;
   status: string;
   price: number;
   payment_status: string;
@@ -102,7 +106,9 @@ export const createMockBookingRow = (overrides?: Partial<BookingRow>): BookingRo
     client_language: "English",
     client_selected_date: futureDate,
     client_message: "Test message",
+    admin_notes: null,
     tour_id: "tour-123",
+    tour_title: "Lisbon City Tour",
     status: BookingStatus.PENDING,
     price: 100,
     payment_status: "pending",

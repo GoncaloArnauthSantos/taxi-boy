@@ -242,7 +242,7 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
     }
 
     // Transform form data to booking
-    const bookingInput = transformFormToBooking(formData, tour.price);
+    const bookingInput = transformFormToBooking(formData, tour.price, tour.title);
 
     // Create booking
     const booking = await createBooking(bookingInput);
